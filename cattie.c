@@ -1,8 +1,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <windows.h>
 #include <inttypes.h>
 #include <time.h>
+
+#ifdef _WIN32
+  #include <windows.h>
+#elif LINUX
+  #include <unistd.h>
+#endif
+
 
 #define TILE_ADDER 6 // Level + ADDER
 #define VSYNC_TIME 16.666666666 //tempo em ms para atualização em 60 FPS
