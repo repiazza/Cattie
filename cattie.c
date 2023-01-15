@@ -7,6 +7,7 @@
   #include <windows.h>
 #elif LINUX
   #include <unistd.h>
+  #definde _MAX_PATH 256
 #endif
 
 

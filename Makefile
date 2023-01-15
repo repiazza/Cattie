@@ -9,12 +9,14 @@ endif
 INCDIR=
 CC     = gcc
 
-
 LIBS=
 #ifdef WIN32
 LIBS+= -LC:/msys64/mingw64/bin/../lib -lSDL2_image -lmingw32 -lSDL2main -lSDL2 -mwindows -lSDL_ttf
-#elif LINUX
-LIBS+= -DLINUX
+#endif
+
+#ifdef LINUX
+LIBS+=
+CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags -lSDL2
 #endif
 
 CATTIE_EXEC=cattie
