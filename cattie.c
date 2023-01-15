@@ -55,6 +55,9 @@ char *ppszImagePath[] = {
 
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 800
+#define WINDOW_RATIO  WINDOW_WIDTH/WINDOW_HEIGHT
+#define ROW_RATIO  WINDOW_HEIGHT/BOARD_ROWS
+#define COL_RATIO  WINDOW_WIDTH/BOARD_COLS
 
 #define REDRAW_IMAGE 1
 #define ERROR_WALKING 10
@@ -120,6 +123,13 @@ void vInitializeBoard(){
   for (iX = 0; iX < BOARD_ROWS; iX++)
     for (iY = 0; iY < BOARD_COLS; iY++)
       giBoard[iX][iY] = 0;
+}
+
+void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
+  pSDL_RECT->x = iX;
+  pSDL_RECT->y = iX;
+  pSDL_RECT->w = iWidth;
+  pSDL_RECT->h = iHeight;
 }
 
 void vTraceMsg(char *szMsg){
@@ -366,12 +376,10 @@ void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButton
 }
 
 void vInitializeImagePosition(SDL_Rect *pSDL_Rect_Im){
-  pSDL_Rect_Im->w = WINDOW_WIDTH/BOARD_COLS;
-  pSDL_Rect_Im->h = WINDOW_WIDTH/BOARD_ROWS;
-  pSDL_Rect_Im->x = -2;
-  pSDL_Rect_Im->y = -2;
+  int iLocation = -2;
+  int iDimensions = COL_RATIO;
+  vInitRect(pSDL_Rect_Im, iLocation, iLocation, iDimensions, iDimensions);
 }
-
 
 int iMovementIsOutOfBounds(int iNextX, int iNextY){
   if ( iNextX < 0 || iNextX >= BOARD_COLS )
@@ -467,14 +475,14 @@ void vSetButtonDimensions(SDL_Rect *pSDL_RECT_Btn, int iTrslt){
 void vSetHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
   pSDL_RECT_Hud->x = WINDOW_WIDTH/4;
   pSDL_RECT_Hud->y = 0;
-  pSDL_RECT_Hud->w = 2*WINDOW_WIDTH/4;
-  pSDL_RECT_Hud->h = WINDOW_WIDTH/BOARD_ROWS;
+  pSDL_RECT_Hud->w = 2*pSDL_RECT_Hud->x;
+  pSDL_RECT_Hud->h = COL_RATIO;
 }
 void vSetButtonHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
   pSDL_RECT_Hud->x = 0.06*WINDOW_WIDTH - 10;
   pSDL_RECT_Hud->y = WINDOW_HEIGHT - 0.06*WINDOW_HEIGHT - 30;
   pSDL_RECT_Hud->w = 2*WINDOW_WIDTH/4 - 20;
-  pSDL_RECT_Hud->h = WINDOW_WIDTH/BOARD_ROWS - 10;
+  pSDL_RECT_Hud->h = COL_RATIO - 10;
 }
 
 int iWasClicked(SDL_Event *pSDL_EVENT_Ev){
@@ -710,7 +718,7 @@ int SDL_main(int argc, char *argv[]){
   vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
 
   // Calculate the size of the squares
-  giSquareSize = WINDOW_WIDTH / BOARD_COLS;
+  giSquareSize = COL_RATIO;
 
   // Generate a unique path.
   iGenerateRandomPath();
