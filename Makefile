@@ -16,7 +16,7 @@ LIBS+= -LC:/msys64/mingw64/bin/../lib -lSDL2_image -lmingw32 -lSDL2main -lSDL2 -
 
 #ifdef LINUX
 LIBS+=
-CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags -lSDL2
+CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags -lSDL2 -DLINUX
 #endif
 
 CATTIE_EXEC=cattie
