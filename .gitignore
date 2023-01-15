@@ -3,3 +3,4 @@
 *.exe
 cattie.log
 .vscode/settings.json
+menu.c

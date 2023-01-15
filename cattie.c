@@ -19,6 +19,7 @@
 
 #define BOARD_ROWS 10
 #define BOARD_COLS 10
+#define MAX_MENU_OPTIONS 6
 // #define BOARD_ROWS 5
 // #define BOARD_COLS 5
 // #define BOARD_ROWS 20
@@ -40,6 +41,7 @@
 #define _MAX_IMG_PATH 4
 
 #define DEBUG_MSGS 1
+#define DEBUG_MORE_MSGS 9
 
 char *ppszImagePath[] = {
   "cat2.png",
@@ -101,6 +103,7 @@ typedef struct STRUCT_PLAYER {
 STRUCT_PLAYER gstPlayer;
 
 int giSquareSize;
+int giSelectedItem;
 int giDeg = 0;
 int gbRunning = TRUE;
 int gbCheckActions = FALSE;
@@ -585,6 +588,59 @@ int iExecuteActionFromList(int iAction){
   return iRsl;   
 }
 
+void vInitMenu(SDL_Rect *pSDL_RECT_Mn, int iOptionCt){
+  SDL_Rect *pSDL_RECT_Wrk;
+  int iInitCt = 0;
+  int iMenuOptWidth = iOptionCt*20;
+  int iMenuOptHeight = iMenuOptWidth;
+  for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; 
+    iInitCt < iOptionCt; 
+    pSDL_RECT_Wrk++, iInitCt++ ){
+    pSDL_RECT_Wrk->x= WINDOW_WIDTH / 2 - iMenuOptWidth;
+    pSDL_RECT_Wrk->y= WINDOW_HEIGHT / 2 - iMenuOptHeight;
+    iMenuOptHeight -=20;
+    pSDL_RECT_Wrk->w = 100;
+    pSDL_RECT_Wrk->h = 25;
+  }
+}
+
+void vDrawMenu(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Mn, int iOptionCt){
+  int iInitCt = 0;
+  SDL_Rect *pSDL_RECT_Wrk;
+  for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; 
+        iInitCt < iOptionCt; 
+        pSDL_RECT_Wrk++, iInitCt++) {
+      if (iInitCt == giSelectedItem) {
+          SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+      }
+      else {
+          SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+      }
+      SDL_RenderFillRect(renderer, pSDL_RECT_Wrk);
+  }
+}
+
+int iHandleEventKey(SDL_Event *pSDL_EVENT_Ev){
+  switch (pSDL_EVENT_Ev->key.keysym.sym) {
+    case SDLK_UP:
+      giSelectedItem--;
+      if (giSelectedItem < 0) {
+          giSelectedItem = MAX_MENU_OPTIONS-1;
+      }
+      break;
+    case SDLK_DOWN:
+      giSelectedItem++;
+      if (giSelectedItem >= MAX_MENU_OPTIONS) {
+          giSelectedItem = 0;
+      }
+      break;
+    case SDLK_RETURN:
+      // Handle menu item selection
+      break;
+  }
+  return 0;
+}
+
 int SDL_main(int argc, char *argv[]){
   int iXTranslation = 0;
   int iRedrawAction = -1;
@@ -604,14 +660,10 @@ int SDL_main(int argc, char *argv[]){
   SDL_Rect SDL_RECT_ButtonFireLaser;
   SDL_Rect SDL_RECT_ButtonUndoLast;
   SDL_Rect SDL_RECT_ButtonConfirmAction;
+  SDL_Rect *pSDL_RECT_Menu;
   SDL_Window* window;
   SDL_Renderer* renderer;
   char *pTok;
-  SDL_MenuItem menuItem;
-  menuItem.label = "Menu Item";
-  menuItem.enabled = 1;
-  SDL_AddMenuItem(menuID, &menuItem, 0);
-  SDL_ShowMenu(menuID, 100, 100);
 
   sprintf(gszLogTitle, "%s", argv[0]);
   if ( (pTok = strstr(gszLogTitle, ".exe")) != NULL ){
@@ -695,13 +747,16 @@ int SDL_main(int argc, char *argv[]){
 
   pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszImagePath[PLAYER_IMG_PATH_IDX]); 
   pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszImagePath[FORWARD_IMG_PATH_IDX]); 
-  pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszImagePath[LASER_IMG_PATH_IDX]); ;
+  pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszImagePath[LASER_IMG_PATH_IDX]);
   pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszImagePath[ROTATE_IMG_PATH_IDX]); 
   pSDL_TXTR_Hud          = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_Hud.w, SDL_RECT_Hud.h);
   pSDL_TXTR_ButtonHud    = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_ButtonHud.w, SDL_RECT_ButtonHud.h);
   pSDL_TXTR_SquareBorder = createSquareTexture(renderer); 
 
   vInitializeImagePosition(&SDL_RECT_Rect);
+
+  pSDL_RECT_Menu = (SDL_Rect *) malloc(MAX_MENU_OPTIONS*sizeof(SDL_Rect));
+  vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
 
   gstPlayer.pSDL_RECT_Player = &SDL_RECT_Rect;
   
@@ -747,10 +802,44 @@ int SDL_main(int argc, char *argv[]){
             gbRunning = FALSE;
           }
           break;
+        case SDL_KEYDOWN:
+          iHandleEventKey(&event);
+          iRedrawAction = REDRAW_IMAGE;
+          break;
+        case SDL_MOUSEMOTION:
+          {
+            int iX, iY, iInitCt = 0;
+            SDL_Rect *pSDL_RECT_Wrk;
+            SDL_GetMouseState(&iX, &iY);
+            
+            for ( pSDL_RECT_Wrk = pSDL_RECT_Menu; 
+                  iInitCt < MAX_MENU_OPTIONS; 
+                  pSDL_RECT_Wrk++, iInitCt++){
+              if ( DEBUG_MORE_MSGS ) {
+                char szMsg[256];
+                sprintf(szMsg,
+                "SDL_MOUSEMOTION iX[%d]iY[%d] RECTX[%d] RECTY[%d]\n ", 
+                  iX,
+                  iY,
+                  pSDL_RECT_Wrk->x,
+                  pSDL_RECT_Wrk->y
+                );
+                vTraceMsg(szMsg);
+              }
+              if (iX >= pSDL_RECT_Wrk->x 
+                  && iX <= pSDL_RECT_Wrk->x + pSDL_RECT_Wrk->w 
+                  && iY >= pSDL_RECT_Wrk->y 
+                  && iY <= pSDL_RECT_Wrk->y + pSDL_RECT_Wrk->h) {
+                vTraceMsg("Hover\n");
+                giSelectedItem = iInitCt;
+                iRedrawAction = REDRAW_IMAGE;
+              }
+            }
+          }
+          break;
         default:
           break;
       }
-      
     }
     if ( iRedrawAction == ERROR_WALKING )
       break;
@@ -782,6 +871,7 @@ int SDL_main(int argc, char *argv[]){
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageRotate, NULL, &SDL_RECT_ButtonTurnArrow);
 
+    vDrawMenu(renderer, pSDL_RECT_Menu, MAX_MENU_OPTIONS);
     // Update the screen
     SDL_RenderPresent(renderer);
     ui64ElapsedTime -= SDL_GetTicks64();
@@ -792,6 +882,7 @@ int SDL_main(int argc, char *argv[]){
   
   // Clean up
   vFreeButtonList();
+  free(pSDL_RECT_Menu);
   // Don't forget to destroy the texture when you're done with it
   SDL_DestroyTexture(pSDL_TXTR_Hud);
   SDL_DestroyTexture(pSDL_TXTR_ButtonHud);
