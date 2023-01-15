@@ -5,6 +5,7 @@
 
 #ifdef _WIN32
   #include <windows.h>
+  #define getpid _getpid 
 #elif LINUX
   #include <unistd.h>
   #define _MAX_PATH 256
@@ -38,10 +39,6 @@
 #define _MAX_IMG_PATH 4
 
 #define DEBUG_MSGS 1
-
-#ifdef _WIN32
-  #define getpid _getpid 
-#endif
 
 char *ppszImagePath[] = {
   "cat2.png",
