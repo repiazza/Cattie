@@ -11,6 +11,7 @@ CC     = gcc
 
 
 ifdef _WIN32
+CCOPT += -LC:/msys64/mingw64/bin/../lib -lSDL2_image -lmingw32 -lSDL2main -lSDL2 -mwindows -lSDL_ttf
 LIBS= -LC:/msys64/mingw64/bin/../lib -lSDL2_image -lmingw32 -lSDL2main -lSDL2 -mwindows -lSDL_ttf
 endif
 

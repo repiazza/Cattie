@@ -607,6 +607,11 @@ int SDL_main(int argc, char *argv[]){
   SDL_Window* window;
   SDL_Renderer* renderer;
   char *pTok;
+  SDL_MenuItem menuItem;
+  menuItem.label = "Menu Item";
+  menuItem.enabled = 1;
+  SDL_AddMenuItem(menuID, &menuItem, 0);
+  SDL_ShowMenu(menuID, 100, 100);
 
   sprintf(gszLogTitle, "%s", argv[0]);
   if ( (pTok = strstr(gszLogTitle, ".exe")) != NULL ){
