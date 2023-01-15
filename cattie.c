@@ -7,6 +7,7 @@
   #include <windows.h>
   #define getpid _getpid 
 #elif LINUX
+  #define main SDL_main
   #include <unistd.h>
   #define _MAX_PATH 256
 #endif
