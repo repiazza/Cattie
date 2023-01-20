@@ -517,22 +517,7 @@ int iTurn(){
   gstPlayer.iFacingPos = (gstPlayer.iFacingPos == WEST) ? NORTH : gstPlayer.iFacingPos+1;
   return REDRAW_IMAGE;
 }
-void vLogActionList();
 
-int iAddCommandToActionList(int iCmd){
-  if ( iCmd == ERASE ){
-    if ( giActionCt <= 0 )
-      return 0;
-
-    giActionList[giActionCt--] = 0;
-    return 0;
-  }
-  if ( giActionCt >= _MAX_MOVEMENT )
-    return -1;
-  
-  giActionList[giActionCt++] = iCmd;
-  return 0;
-}
 void vLogActionList(){
   int ii;
   vTraceMsg("==========Action List========");
@@ -548,6 +533,21 @@ void vLogActionList(){
      
   vTraceMsg("\n========================\n");
 
+}
+
+int iAddCommandToActionList(int iCmd){
+  if ( iCmd == ERASE ){
+    if ( giActionCt <= 0 )
+      return 0;
+
+    giActionList[giActionCt--] = 0;
+    return 0;
+  }
+  if ( giActionCt >= _MAX_MOVEMENT )
+    return -1;
+  
+  giActionList[giActionCt++] = iCmd;
+  return 0;
 }
 
 int iHandleClick(SDL_Event *pSDL_EVENT_Ev){
@@ -570,7 +570,6 @@ int iHandleClick(SDL_Event *pSDL_EVENT_Ev){
 
   return 0;
 }
-
 
 int iExecuteActionFromList(int iAction){
   int iRsl = 0;
@@ -649,6 +648,44 @@ int iHandleEventKey(SDL_Event *pSDL_EVENT_Ev){
   return 0;
 }
 
+int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_Menu, int iXCursor, int iYCursor){
+  int iInitCt = 0;
+  SDL_Rect *pSDL_RECT_Wrk;
+  for ( pSDL_RECT_Wrk = pSDL_RECT_Menu; 
+        iInitCt < MAX_MENU_OPTIONS; 
+        pSDL_RECT_Wrk++, iInitCt++){
+    if ( DEBUG_MORE_MSGS ) {
+      char szMsg[256];
+      sprintf(szMsg,
+      "SDL_MOUSEMOTION iXCursor[%d]iYCursor[%d] RECTX[%d] RECTY[%d]\n ", 
+        iXCursor,
+        iYCursor,
+        pSDL_RECT_Wrk->x,
+        pSDL_RECT_Wrk->y
+      );
+      vTraceMsg(szMsg);
+    }
+    if (iXCursor >= pSDL_RECT_Wrk->x 
+        && iXCursor <= pSDL_RECT_Wrk->x + pSDL_RECT_Wrk->w 
+        && iYCursor >= pSDL_RECT_Wrk->y 
+        && iYCursor <= pSDL_RECT_Wrk->y + pSDL_RECT_Wrk->h) {
+      vTraceMsg("Hover\n");
+      giSelectedItem = iInitCt;
+      return REDRAW_IMAGE;
+    }
+  }
+  return 0;
+}
+int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu){
+  int iX, iY;
+  SDL_GetMouseState(&iX, &iY);
+
+  if ( iCheckMenuInteraction(pSDL_RECT_Menu, iX, iY) == REDRAW_IMAGE )
+    return REDRAW_IMAGE;
+
+  return 0;
+}
+
 int SDL_main(int argc, char *argv[]){
   int iXTranslation = 0;
   int iRedrawAction = -1;
@@ -660,7 +697,7 @@ int SDL_main(int argc, char *argv[]){
   SDL_Texture *pSDL_TXTR_Hud;
   SDL_Texture *pSDL_TXTR_ButtonHud;
   SDL_Texture *pSDL_TXTR_SquareBorder;
-  SDL_Rect SDL_RECT_Rect;
+  SDL_Rect SDL_RECT_Player;
   SDL_Rect SDL_RECT_Hud;
   SDL_Rect SDL_RECT_ButtonHud;
   SDL_Rect SDL_RECT_ButtonArrowRight;
@@ -761,19 +798,22 @@ int SDL_main(int argc, char *argv[]){
   pSDL_TXTR_ButtonHud    = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_ButtonHud.w, SDL_RECT_ButtonHud.h);
   pSDL_TXTR_SquareBorder = createSquareTexture(renderer); 
 
-  vInitializeImagePosition(&SDL_RECT_Rect);
+  vInitializeImagePosition(&SDL_RECT_Player);
 
   pSDL_RECT_Menu = (SDL_Rect *) malloc(MAX_MENU_OPTIONS*sizeof(SDL_Rect));
-  vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
+  // vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
 
-  gstPlayer.pSDL_RECT_Player = &SDL_RECT_Rect;
+  gstPlayer.pSDL_RECT_Player = &SDL_RECT_Player;
   
+  // Main loop
   SDL_Event event;
   while (gbRunning) {
-    while (gbCheckActions){    
 
+    // The player has choose its route already?
+    while (gbCheckActions){
+      // yes ...
       if (giCheckActions > 0)
-        SDL_Delay(2000);
+        SDL_Delay(1000);
 
       if ( giCheckActions >= giActionCt ){
         gbCheckActions = FALSE;
@@ -799,8 +839,10 @@ int SDL_main(int argc, char *argv[]){
       }
       break;
     }
-    while(!gbCheckActions && SDL_PollEvent(&event))
-    {
+
+    while(!gbCheckActions && SDL_PollEvent(&event)){
+      // The player hasn't choose its route yet,
+      // so we must watch all interaction events... 
       switch (event.type) {
         case SDL_QUIT:
           gbRunning = FALSE;
@@ -815,35 +857,7 @@ int SDL_main(int argc, char *argv[]){
           iRedrawAction = REDRAW_IMAGE;
           break;
         case SDL_MOUSEMOTION:
-          {
-            int iX, iY, iInitCt = 0;
-            SDL_Rect *pSDL_RECT_Wrk;
-            SDL_GetMouseState(&iX, &iY);
-            
-            for ( pSDL_RECT_Wrk = pSDL_RECT_Menu; 
-                  iInitCt < MAX_MENU_OPTIONS; 
-                  pSDL_RECT_Wrk++, iInitCt++){
-              if ( DEBUG_MORE_MSGS ) {
-                char szMsg[256];
-                sprintf(szMsg,
-                "SDL_MOUSEMOTION iX[%d]iY[%d] RECTX[%d] RECTY[%d]\n ", 
-                  iX,
-                  iY,
-                  pSDL_RECT_Wrk->x,
-                  pSDL_RECT_Wrk->y
-                );
-                vTraceMsg(szMsg);
-              }
-              if (iX >= pSDL_RECT_Wrk->x 
-                  && iX <= pSDL_RECT_Wrk->x + pSDL_RECT_Wrk->w 
-                  && iY >= pSDL_RECT_Wrk->y 
-                  && iY <= pSDL_RECT_Wrk->y + pSDL_RECT_Wrk->h) {
-                vTraceMsg("Hover\n");
-                giSelectedItem = iInitCt;
-                iRedrawAction = REDRAW_IMAGE;
-              }
-            }
-          }
+          iHandleMouseMotion(pSDL_RECT_Menu);
           break;
         default:
           break;
@@ -851,20 +865,25 @@ int SDL_main(int argc, char *argv[]){
     }
     if ( iRedrawAction == ERROR_WALKING )
       break;
-
+    // If nothing has changed, we will not redraw...
     if ( iRedrawAction != REDRAW_IMAGE && iRedrawAction != -1 ){
       continue;
     }
-    vTraceMsg("Draw Scope\n");
-    ui64ElapsedTime = SDL_GetTicks64();
-    SDL_RenderClear(renderer);
+    //
+    // Redraw 
+    //
+    if ( DEBUG_MSGS ) vTraceMsg("Main loop drawing section\n");
 
+    ui64ElapsedTime = SDL_GetTicks64();
+   
+    SDL_RenderClear(renderer);
+    
     iColorBoard(renderer);
     
     vSetHUDRectSize(&SDL_RECT_Hud);
     vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
 
-    SDL_RenderCopyEx(renderer, pSDL_TXTR_ImagePlayer, NULL, &SDL_RECT_Rect, giDeg, NULL, SDL_FLIP_HORIZONTAL);
+    SDL_RenderCopyEx(renderer, pSDL_TXTR_ImagePlayer, NULL, &SDL_RECT_Player, giDeg, NULL, SDL_FLIP_HORIZONTAL);
 
     vDrawCommandHUD(renderer, pSDL_TXTR_Hud, &SDL_RECT_Hud);
     vDrawButtonHUD(renderer, pSDL_TXTR_ButtonHud, &SDL_RECT_ButtonHud);
@@ -879,12 +898,15 @@ int SDL_main(int argc, char *argv[]){
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageRotate, NULL, &SDL_RECT_ButtonTurnArrow);
 
-    vDrawMenu(renderer, pSDL_RECT_Menu, MAX_MENU_OPTIONS);
+    // vDrawMenu(renderer, pSDL_RECT_Menu, MAX_MENU_OPTIONS);
     // Update the screen
     SDL_RenderPresent(renderer);
+    
+    // Vamos sincronizar o refreshrate..
     ui64ElapsedTime -= SDL_GetTicks64();
     if (ui64ElapsedTime <= VSYNC_TIME) SDL_Delay(VSYNC_TIME - ui64ElapsedTime);
     
+    // Redoing action, as we got no relevant interaction, no draw allowed.
     iRedrawAction = 0;
   }
   
