@@ -1,7 +1,6 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <inttypes.h>
 #include <time.h>
+#include "cattie.h"
 
 #ifdef _WIN32
   #include <windows.h>
@@ -12,110 +11,20 @@
   #define _MAX_PATH 256
 #endif
 
-
-#define TILE_ADDER 6 // Level + ADDER
-#define VSYNC_TIME 16.666666666 //tempo em ms para atualização em 60 FPS
-#define _MAX_MOVEMENT 1000  // Level + ADDER
-
-#define BOARD_ROWS 10
-#define BOARD_COLS 10
-#define MAX_MENU_OPTIONS 6
-// #define BOARD_ROWS 5
-// #define BOARD_COLS 5
-// #define BOARD_ROWS 20
-// #define BOARD_COLS 20
-
-#define BUTTON_DIRECTION 1
-#define BUTTON_CONFIRM   2
-#define BUTTON_ERASE     3
-
-#define BOARD_SIZE (BOARD_ROWS * BOARD_COLS)
-
-#define IMG_PATH "img.png"
-
-#define PLAYER_IMG_PATH_IDX  0
-#define FORWARD_IMG_PATH_IDX 1
-#define LASER_IMG_PATH_IDX   2
-#define ROTATE_IMG_PATH_IDX  3
-
-#define _MAX_IMG_PATH 4
-
-#define DEBUG_MSGS 1
-#define DEBUG_MORE_MSGS 9
-
-char *ppszImagePath[] = {
-  "cat2.png",
-  "forward.png",
-  "laser.png",
-  "rotate2.png"
-};
-
-#define TRUE 1
-#define FALSE 0
-
-#define WINDOW_WIDTH  800
-#define WINDOW_HEIGHT 800
-#define WINDOW_RATIO  WINDOW_WIDTH/WINDOW_HEIGHT
-#define ROW_RATIO  WINDOW_HEIGHT/BOARD_ROWS
-#define COL_RATIO  WINDOW_WIDTH/BOARD_COLS
-
-#define REDRAW_IMAGE 1
-#define ERROR_WALKING 10
-
-char gszLogTitle[_MAX_PATH];
-
-typedef struct STRUCT_BUTTON_LIST{
-  SDL_Rect *pSDL_RECT_Button;
-  int iAction;
-  struct STRUCT_BUTTON_LIST* pstNext;
-}STRUCT_BUTTON_LIST;
-
-STRUCT_BUTTON_LIST gstButtonList;
-
-enum SquareColors{
-  WALL_SQUARE = 0,
-  PATH_SQUARE,
-  END_SQUARE
-}eSqColors;
-
-enum MovementAction{
-  FORWARD = 1,
-  TURN,
-  FIRE_LASER,
-  ERASE,
-  CONFIRM
-}eMovAction;
-
-int giActionList[_MAX_MOVEMENT];
-int giActionCt = 0;
-int giCheckActions = 0;
-enum WindRose{
-  NORTH = 1,
-  EAST,
-  SOUTH,
-  WEST
-}eWndRose;
-
-typedef struct STRUCT_PLAYER {
-  int iCurrX;
-  int iCurrY;
-  int iFacingPos;
-  SDL_Rect *pSDL_RECT_Player;
-}STRUCT_PLAYER;
-
-STRUCT_PLAYER gstPlayer;
-
+/**
+ * Globals
+*/
 int giSquareSize;
 int giSelectedItem;
 int giDeg = 0;
 int gbRunning = TRUE;
 int gbCheckActions = FALSE;
-
 int giBoard[BOARD_ROWS][BOARD_COLS];
+char gszLogTitle[_MAX_PATH];
 
-int iSetTotalPlayableTiles(int iLevel){
-  return iLevel + TILE_ADDER;
-}
+/*
+* Procedures and functions
+*/
 
 void vInitializeBoard(){
   int iX;
@@ -297,7 +206,6 @@ SDL_Texture *pSDL_TXTR_CreateTextureFromSurface(SDL_Renderer *renderer, SDL_Surf
   return SDL_TXTR_Texture;
 }
 
-// Dinamizar as cores...
 int iColorBoard(SDL_Renderer *renderer){
   int ii;
   int jj;
@@ -361,6 +269,11 @@ void vDrawButtonHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL
   SDL_SetRenderDrawColor(renderer, 128, 0, 0, 255);
   SDL_RenderDrawRect(renderer, pSDL_RECT_Hud);
 }
+
+// SDL_Color();
+
+SDL_Color *astSDL_COLOR_Colors;
+
 
 void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButtonType){
   if ( iButtonType == BUTTON_DIRECTION )
@@ -676,11 +589,28 @@ int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_Menu, int iXCursor, int iYCursor){
   }
   return 0;
 }
-int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu){
+
+int iCheckButtonInteraction(SDL_Event *pSDL_EVENT_Ev, int iXCursor, int iYCursor){
+  STRUCT_BUTTON_LIST *pstWrkButtonList;
+  for ( pstWrkButtonList = &gstButtonList; pstWrkButtonList != NULL; pstWrkButtonList = pstWrkButtonList->pstNext){
+    SDL_Rect *pSDL_RECT_Btn = pstWrkButtonList->pSDL_RECT_Button;
+    if (iXCursor >= pSDL_RECT_Btn->x 
+      && iXCursor < pSDL_RECT_Btn->x + pSDL_RECT_Btn->w 
+      && iYCursor >= pSDL_RECT_Btn->y 
+      && iYCursor < pSDL_RECT_Btn->y + pSDL_RECT_Btn->h) {
+      return pstWrkButtonList->iAction;
+    }
+  }
+  return 0;
+}
+int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
   int iX, iY;
   SDL_GetMouseState(&iX, &iY);
 
   if ( iCheckMenuInteraction(pSDL_RECT_Menu, iX, iY) == REDRAW_IMAGE )
+    return REDRAW_IMAGE;
+
+  if ( iCheckButtonInteraction(pSDL_EVENT_Ev, iX, iY) == REDRAW_IMAGE )
     return REDRAW_IMAGE;
 
   return 0;
@@ -888,11 +818,12 @@ int SDL_main(int argc, char *argv[]){
     vDrawCommandHUD(renderer, pSDL_TXTR_Hud, &SDL_RECT_Hud);
     vDrawButtonHUD(renderer, pSDL_TXTR_ButtonHud, &SDL_RECT_ButtonHud);
     
-    vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-    vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
+    vDrawButtons(renderer);
+    // vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+    // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
 
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageFoward, NULL, &SDL_RECT_ButtonArrowRight);
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
