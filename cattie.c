@@ -787,7 +787,7 @@ int SDL_main(int argc, char *argv[]){
           iRedrawAction = REDRAW_IMAGE;
           break;
         case SDL_MOUSEMOTION:
-          iHandleMouseMotion(pSDL_RECT_Menu);
+          iHandleMouseMotion(pSDL_RECT_Menu, &event);
           break;
         default:
           break;
@@ -818,12 +818,12 @@ int SDL_main(int argc, char *argv[]){
     vDrawCommandHUD(renderer, pSDL_TXTR_Hud, &SDL_RECT_Hud);
     vDrawButtonHUD(renderer, pSDL_TXTR_ButtonHud, &SDL_RECT_ButtonHud);
     
-    vDrawButtons(renderer);
-    // vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-    // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-    // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-    // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-    // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
+    // vDrawButtons(renderer);
+    vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+    vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
 
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageFoward, NULL, &SDL_RECT_ButtonArrowRight);
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
