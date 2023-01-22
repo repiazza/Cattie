@@ -8,6 +8,7 @@
   #elif LINUX
     #include <unistd.h>
     #define SDL_main main
+    #define _MAX_PATH 256
   #endif
 
   void vTraceMsg(char *szMsg);
