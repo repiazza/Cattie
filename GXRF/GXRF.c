@@ -16,7 +16,6 @@
 #elif LINUX
   #include <unistd.h>
   #define SDL_main main
-  #define _MAX_PATH 256
 #endif
 
 #ifndef FALSE

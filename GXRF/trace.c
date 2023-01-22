@@ -11,7 +11,6 @@
   #include <unistd.h>
   #define SDL_main main
 #endif
-x
 
 void vTraceMsg(char *szMsg){
   FILE *pfLog;
