@@ -3,14 +3,7 @@
 #include <string.h>
 
 
-#ifdef _WIN32
-  #include <windows.h>
-  #define getpid _getpid 
-  #define gettimeoftheday mingw_gettimeofday
-#elif LINUX
-  #include <unistd.h>
-  #define SDL_main main
-#endif
+
 
 void vTraceMsg(char *szMsg){
   FILE *pfLog;
