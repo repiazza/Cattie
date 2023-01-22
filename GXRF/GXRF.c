@@ -26,8 +26,6 @@
   #define TRUE  1
 #endif
 
-int gbRunning = TRUE;
-
 STRUCT_GXRF_RENDER *gpstGXRF_Render;
 
 enum SDLTypes{
@@ -35,7 +33,7 @@ enum SDLTypes{
   SDL_IMAGE,
   SDL_TTF,
   SDL_TEXTURE
-}eWndRose;
+}eSDLT;
 
 
 int iGXRF_Init(){

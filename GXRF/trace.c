@@ -1,9 +1,10 @@
 #include <stdio.h>
-#include <time.h>
 #include <string.h>
+#include <stdlib.h>
 
+#include "GXRF/trace.h"
 
-
+char gszLogTitle[_MAX_PATH];
 
 void vTraceMsg(char *szMsg){
   FILE *pfLog;
@@ -14,7 +15,7 @@ void vTraceMsg(char *szMsg){
 
   time(&lTime);
   st_tm_Now = localtime(&lTime);
-  gettimeoftheday(&tv, NULL);
+  gettimeofday(&tv, NULL);
 
   memset(szDateTimeNow_us, 0, sizeof(szDateTimeNow_us));
   sprintf(szDateTimeNow_us,

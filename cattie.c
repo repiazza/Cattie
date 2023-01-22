@@ -5,7 +5,7 @@
 #ifdef _WIN32
   #include <windows.h>
   #define getpid _getpid 
-  #define gettimeoftheday mingw_gettimeofday
+  #define gettimeofday mingw_gettimeofday
 #elif LINUX
   #include <unistd.h>
   #define SDL_main main
