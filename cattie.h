@@ -1,8 +1,9 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "GXRF/GXRF.h"
+// #include "GXRF/trace.h"
 /*
 * Window
 */
+#define WINDOW_TITLE "Cattie"
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 800
 #define WINDOW_RATIO  WINDOW_WIDTH/WINDOW_HEIGHT
@@ -10,8 +11,13 @@
 #define REDRAW_IMAGE 1
 #define ERROR_WALKING 10
 
-#define TRUE 1
-#define FALSE 0
+#ifndef FALSE
+  #define FALSE 0
+#endif
+
+#ifndef TRUE
+  #define TRUE  1
+#endif
 
 /*
 * Board
@@ -23,7 +29,7 @@
 #define BOARD_SIZE BOARD_ROWS * BOARD_COLS
 
 #define ROW_RATIO  WINDOW_HEIGHT / BOARD_ROWS
-#define COL_RATIO  WINDOW_WIDTH / BOARD_COLS
+#define COL_RATIO  WINDOW_WIDTH  / BOARD_COLS
 
 #define VSYNC_TIME 16.666666666 //tempo em ms para atualização em 60 FPS
 #define _MAX_MOVEMENT BOARD_COLS*BOARD_ROWS*10
@@ -68,6 +74,7 @@ enum SquareColors{
   END_SQUARE
 }eSqColors;
 
+
 enum MovementAction{
   FORWARD = 1,
   TURN,
@@ -76,9 +83,7 @@ enum MovementAction{
   CONFIRM
 }eMovAction;
 
-int giActionList[_MAX_MOVEMENT];
-int giActionCt = 0;
-int giCheckActions = 0;
+
 enum WindRose{
   NORTH = 1,
   EAST,

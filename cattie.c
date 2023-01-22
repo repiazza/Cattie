@@ -5,6 +5,7 @@
 #ifdef _WIN32
   #include <windows.h>
   #define getpid _getpid 
+  #define gettimeoftheday mingw_gettimeofday
 #elif LINUX
   #include <unistd.h>
   #define SDL_main main
@@ -12,19 +13,27 @@
 #endif
 
 /**
+ * 
  * Globals
-*/
+ * 
+ **/
+
+// char gszLogTitle[_MAX_PATH];
+int giBoard[BOARD_ROWS][BOARD_COLS];
 int giSquareSize;
 int giSelectedItem;
 int giDeg = 0;
 int gbRunning = TRUE;
 int gbCheckActions = FALSE;
-int giBoard[BOARD_ROWS][BOARD_COLS];
-char gszLogTitle[_MAX_PATH];
+int giActionList[_MAX_MOVEMENT];
+int giActionCt = 0;
+int giCheckActions = 0;
 
-/*
-* Procedures and functions
-*/
+/**
+ * 
+ * Procedures and functions
+ * 
+ **/
 
 void vInitializeBoard(){
   int iX;
@@ -41,50 +50,6 @@ void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
   pSDL_RECT->h = iHeight;
 }
 
-void vTraceMsg(char *szMsg){
-   FILE *pfLog;
-  time_t lTime;
-  struct tm *st_tm_Now;
-  char szDateTimeNow_us[128];
-  // struct timeval tv;
-  time (&lTime);
-  st_tm_Now = localtime(&lTime);
-  // mingw_gettimeofday(&tv, NULL);
-
-  memset(szDateTimeNow_us, 0, sizeof(szDateTimeNow_us));
-  sprintf(szDateTimeNow_us,
-    "[%02d/%02d/%04d %02d:%02d:%02d] ",
-    (int)st_tm_Now->tm_mday, 
-    (int)st_tm_Now->tm_mon+1, 
-    (int)st_tm_Now->tm_mday,
-    (int)st_tm_Now->tm_hour,
-    (int)st_tm_Now->tm_min,
-    (int)st_tm_Now->tm_sec
-  );  
-
-  if ( (pfLog=fopen(gszLogTitle, "a+")) == NULL )
-    return;
-
-  fprintf(pfLog, "%s", szMsg);
-
-  fclose(pfLog);
-}
-void vTracePid(char *szMsg, int iMsgLen){
-  char *pszMyMsg;
-  int iNewMsgLen = iMsgLen + 16;
-  int iPid;
-  iPid = getpid();
-  
-  if ( (pszMyMsg = (char *) malloc(iNewMsgLen)) == NULL)
-    return;
-
-  memset(pszMyMsg, 0, iNewMsgLen);
-  sprintf(pszMyMsg, "%d %s", iPid, szMsg);
-
-  vTraceMsg(pszMyMsg);
-
-  free(pszMyMsg);
-}
 void vTraceBoard(){
   int ii;
   int jj;
@@ -115,7 +80,7 @@ int iAddButtonToList(SDL_Rect *pSDL_RECT_Btm, int iAction){
     pstWrkButtonList->pstNext = NULL;
     return 0;
   }
-  if ( (pstWrkButtonList->pstNext = (STRUCT_BUTTON_LIST *) malloc (sizeof(STRUCT_BUTTON_LIST))) == NULL )
+  if ( (pstWrkButtonList->pstNext = (STRUCT_BUTTON_LIST *) malloc(sizeof(STRUCT_BUTTON_LIST))) == NULL )
     return -1;
   
   memset(pstWrkButtonList->pstNext, 0, sizeof(STRUCT_BUTTON_LIST));
@@ -262,6 +227,7 @@ void vDrawCommandHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSD
   SDL_SetRenderDrawColor(renderer, 17, 84, 143, 255);
   SDL_RenderDrawRect(renderer, pSDL_RECT_Hud);
 }
+
 void vDrawButtonHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL_RECT_Hud){
   SDL_SetRenderTarget(renderer, NULL);
   SDL_SetRenderDrawColor(renderer, 128, 4, 0, 128);
@@ -270,10 +236,7 @@ void vDrawButtonHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL
   SDL_RenderDrawRect(renderer, pSDL_RECT_Hud);
 }
 
-// SDL_Color();
-
 SDL_Color *astSDL_COLOR_Colors;
-
 
 void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButtonType){
   if ( iButtonType == BUTTON_DIRECTION )
@@ -316,6 +279,7 @@ int iValidateSquare(int iX, int iY){
   }
   return (eSqColors = giBoard[iX][iY]); 
 }
+
 int iWalk(){
   int iNextX = gstPlayer.iCurrX;
   int iNextY = gstPlayer.iCurrY;
@@ -379,18 +343,21 @@ int iWalk(){
   }
   return gstPlayer.iFacingPos;
 }
+
 void vSetButtonDimensions(SDL_Rect *pSDL_RECT_Btn, int iTrslt){
   pSDL_RECT_Btn->w = 0.06*WINDOW_WIDTH;
   pSDL_RECT_Btn->h = 0.06*WINDOW_HEIGHT;
   pSDL_RECT_Btn->x = pSDL_RECT_Btn->w + iTrslt;
   pSDL_RECT_Btn->y = WINDOW_HEIGHT - pSDL_RECT_Btn->h - 20;
 }
+
 void vSetHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
   pSDL_RECT_Hud->x = WINDOW_WIDTH/4;
   pSDL_RECT_Hud->y = 0;
   pSDL_RECT_Hud->w = 2*pSDL_RECT_Hud->x;
   pSDL_RECT_Hud->h = COL_RATIO;
 }
+
 void vSetButtonHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
   pSDL_RECT_Hud->x = 0.06*WINDOW_WIDTH - 10;
   pSDL_RECT_Hud->y = WINDOW_HEIGHT - 0.06*WINDOW_HEIGHT - 30;
@@ -514,9 +481,9 @@ void vInitMenu(SDL_Rect *pSDL_RECT_Mn, int iOptionCt){
   int iMenuOptWidth = iOptionCt*20;
   int iMenuOptHeight = iMenuOptWidth;
   for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; 
-    iInitCt < iOptionCt; 
-    pSDL_RECT_Wrk++, iInitCt++ ){
-    pSDL_RECT_Wrk->x= WINDOW_WIDTH / 2 - iMenuOptWidth;
+        iInitCt < iOptionCt; 
+        pSDL_RECT_Wrk++, iInitCt++ ){
+    pSDL_RECT_Wrk->x= WINDOW_WIDTH  / 2 - iMenuOptWidth;
     pSDL_RECT_Wrk->y= WINDOW_HEIGHT / 2 - iMenuOptHeight;
     iMenuOptHeight -=20;
     pSDL_RECT_Wrk->w = 100;
@@ -530,13 +497,13 @@ void vDrawMenu(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Mn, int iOptionCt){
   for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; 
         iInitCt < iOptionCt; 
         pSDL_RECT_Wrk++, iInitCt++) {
-      if (iInitCt == giSelectedItem) {
-          SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-      }
-      else {
-          SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-      }
-      SDL_RenderFillRect(renderer, pSDL_RECT_Wrk);
+    if (iInitCt == giSelectedItem) {
+      SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    }
+    else {
+      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    }
+    SDL_RenderFillRect(renderer, pSDL_RECT_Wrk);
   }
 }
 
@@ -603,6 +570,7 @@ int iCheckButtonInteraction(SDL_Event *pSDL_EVENT_Ev, int iXCursor, int iYCursor
   }
   return 0;
 }
+
 int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
   int iX, iY;
   SDL_GetMouseState(&iX, &iY);
@@ -616,6 +584,11 @@ int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
   return 0;
 }
 
+/**
+ *
+ * main
+ *  
+ **/
 int SDL_main(int argc, char *argv[]){
   int iXTranslation = 0;
   int iRedrawAction = -1;
@@ -638,20 +611,15 @@ int SDL_main(int argc, char *argv[]){
   SDL_Rect *pSDL_RECT_Menu;
   SDL_Window* window;
   SDL_Renderer* renderer;
-  char *pTok;
 
-  sprintf(gszLogTitle, "%s", argv[0]);
-  if ( (pTok = strstr(gszLogTitle, ".exe")) != NULL ){
-    *pTok = 0;
-  }
-  strcat(gszLogTitle, ".log");
-
-  vTraceMsg("SDL_Main --- Init\n");
+  vInitLogs(argv[0]);
+  
+  if ( DEBUG_MSGS ) vTraceMsg("SDL_Main --- Init\n");
 
   SDL_SetMainReady();
   
   // Initialize SDL
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+  if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
     if ( DEBUG_MSGS ) { 
       char szMsg[256];
       sprintf(szMsg,
@@ -665,14 +633,13 @@ int SDL_main(int argc, char *argv[]){
   
   // Create a window
   window = SDL_CreateWindow(
-    "Cattie",
+    WINDOW_TITLE,
     SDL_WINDOWPOS_UNDEFINED,
     SDL_WINDOWPOS_UNDEFINED, 
     WINDOW_WIDTH, 
     WINDOW_HEIGHT, 
     SDL_WINDOW_SHOWN
   );
-
 
   // Create a renderer
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -731,6 +698,7 @@ int SDL_main(int argc, char *argv[]){
   vInitializeImagePosition(&SDL_RECT_Player);
 
   pSDL_RECT_Menu = (SDL_Rect *) malloc(MAX_MENU_OPTIONS*sizeof(SDL_Rect));
+  
   // vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
 
   gstPlayer.pSDL_RECT_Player = &SDL_RECT_Player;
@@ -816,7 +784,7 @@ int SDL_main(int argc, char *argv[]){
     SDL_RenderCopyEx(renderer, pSDL_TXTR_ImagePlayer, NULL, &SDL_RECT_Player, giDeg, NULL, SDL_FLIP_HORIZONTAL);
 
     vDrawCommandHUD(renderer, pSDL_TXTR_Hud, &SDL_RECT_Hud);
-    vDrawButtonHUD(renderer, pSDL_TXTR_ButtonHud, &SDL_RECT_ButtonHud);
+    vDrawButtonHUD (renderer, pSDL_TXTR_ButtonHud, &SDL_RECT_ButtonHud);
     
     // vDrawButtons(renderer);
     vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);

@@ -1,29 +1,40 @@
+# 
+#   Makefile for Cattie
+#
+#   Written by Renato Fermi <repiazza@gmail.com> in January 2023
+#
+#
+
 CCOPT = -Wall
 
-ifdef   DEBUG
-CCOPT += -g
-else
-CCOPT += -O2
-endif
+INCDIR= -I.
 
-INCDIR=
-CC     = gcc
+CC    = gcc
 
+SDLADDONLIBS = -lSDL2 -lSDL2main -lSDL_ttf -lSDL2_image
 
 ifdef _WIN32
-CCOPT += -LC:/msys64/mingw64/bin/../lib -lSDL2_image -lmingw32 -lSDL2main -lSDL2 -mwindows -lSDL_ttf
-LIBS= -LC:/msys64/mingw64/bin/../lib -lSDL2_image -lmingw32 -lSDL2main -lSDL2 -mwindows -lSDL_ttf
+CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) -mwindows -D_WIN32
+LIBS  =  -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) -mwindows -D_WIN32
 endif
 
 ifdef LINUX
-LIBS=-Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags -lSDL2 -lSDL2main -lSDL_ttf -lSDL2_image -DLINUX
-CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags -lSDL2 -lSDL2main -lSDL_ttf -lSDL2_image -DLINUX
+CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) -DLINUX
+LIBS  =  -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) -DLINUX
+endif
+
+ifdef DEBUG
+CCOPT += -g -ggdb
+else
+CCOPT += -O2
 endif
 
 CATTIE_EXEC=cattie
 
 OBJS += \
-  cattie.o 
+  cattie.o \
+  GXRF/trace.o \
+  GXRF/GXRF.o 
 
 all: clean $(CATTIE_EXEC)
 
