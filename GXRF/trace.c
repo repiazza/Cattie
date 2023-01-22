@@ -10,9 +10,8 @@
 #elif LINUX
   #include <unistd.h>
   #define SDL_main main
-  #define _MAX_PATH 256
 #endif
-
+x
 
 void vTraceMsg(char *szMsg){
   FILE *pfLog;
