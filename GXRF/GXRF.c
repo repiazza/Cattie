@@ -36,11 +36,34 @@ enum SDLTypes{
 }eSDLT;
 
 
+int bGXRF_SetObjectRenderable(void *vRenderObject){
+   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+  // Looking for the Object
+  for( pstGXRF_WrkRender = gpstGXRF_Render;
+       ( 
+        pstGXRF_WrkRender != NULL
+        && pstGXRF_WrkRender->vSDL_ObjToRender != vRenderObject
+       );
+       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj
+  );
+  
+  if ( pstGXRF_WrkRender == NULL )
+    return; // Not Found
+
+  // Thats our guy...
+  pstGXRF_WrkRender->bIsObjToRender = TRUE;
+}
+
 int iGXRF_Init(){
   return ( gpstGXRF_Render == NULL ) ? -1 : 0;
 }
 
-void vInitRenderList(SDL_Renderer *renderer, void *vRenderObject, int iSDL_RenderType, void* vpfnRenderFnc, va_list* vFncArgs){
+void vGXRF_InitRenderList(){
+  memset(gpstGXRF_Render, 0, sizeof(STRUCT_GXRF_RENDER));
+  gpstGXRF_Render->pNextObj = NULL;
+}
+
+void vGXRF_AssignObj2RenderList(SDL_Renderer *renderer, void *vRenderObject, int iSDL_RenderType, void* vpfnRenderFnc, va_list* vFncArgs){
   gpstGXRF_Render->iSDL_RenderType  = iSDL_RenderType;
   gpstGXRF_Render->vSDL_ObjToRender = vRenderObject;
   gpstGXRF_Render->vpfnRenderMethod = vpfnRenderFnc;
@@ -49,10 +72,24 @@ void vInitRenderList(SDL_Renderer *renderer, void *vRenderObject, int iSDL_Rende
 }
 
 void vRenderObjectFromList(void *vRenderObject, ...){
-  // for() // whenever its gpstSDLRender->vSDL_ObjToRender == vRenderObject
-  
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+  // Looking for the Object
+  for( pstGXRF_WrkRender = gpstGXRF_Render;
+       ( 
+        pstGXRF_WrkRender != NULL
+        && pstGXRF_WrkRender->vSDL_ObjToRender != vRenderObject
+       );
+       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj
+  );
+
+  if ( pstGXRF_WrkRender == NULL )
+    return; // Not Found
+
   // SDL_SetRenderDrawColor(gstSDLRender.pSDL_Renderer, 255, 0, 0, 255); 
-  gpstGXRF_Render->vpfnRenderMethod(gpstGXRF_Render->pSDL_Renderer, gpstGXRF_Render->vargRenderArgs);
+  gpstGXRF_Render->vpfnRenderMethod(
+    gpstGXRF_Render->pSDL_Renderer,
+    gpstGXRF_Render->vargRenderArgs
+  );
 }
 // 
 // #define VSYNC_TIME 16.666666666 //tempo em ms para atualização em 60 FPS

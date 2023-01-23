@@ -400,7 +400,10 @@ int iTurn(){
 
 void vLogActionList(){
   int ii;
-  vTraceMsg("==========Action List========");
+  
+  if ( DEBUG_MSGS )
+    vTraceMsg("==========Action List========");
+  
   for ( ii=0; ii<giActionCt; ii++){
     char szWrk[32];
     memset(szWrk, 0, sizeof(szWrk));
@@ -410,8 +413,8 @@ void vLogActionList(){
 
     vTraceMsg(szWrk);
   }
-     
-  vTraceMsg("\n========================\n");
+  if ( DEBUG_MSGS )   
+    vTraceMsg("\n========================\n");
 
 }
 
@@ -777,6 +780,7 @@ int SDL_main(int argc, char *argv[]){
     SDL_RenderClear(renderer);
     
     iColorBoard(renderer);
+    
     
     vSetHUDRectSize(&SDL_RECT_Hud);
     vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);

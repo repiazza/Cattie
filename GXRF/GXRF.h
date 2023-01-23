@@ -13,6 +13,7 @@
     SDL_Renderer *pSDL_Renderer;
     va_list *vargRenderArgs;
     struct STRUCT_GXRF_RENDER *pNextObj;
+    int bIsObjToRender;
   }STRUCT_GXRF_RENDER;
 
   extern STRUCT_GXRF_RENDER *gpstGXRF_Render;

@@ -5,6 +5,7 @@
 
   #ifdef _WIN32
     #include <windows.h>
+    #include <process.h>
     #define getpid _getpid 
     #define gettimeofday mingw_gettimeofday
   #elif LINUX

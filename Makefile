@@ -6,9 +6,7 @@
 #
 
 CCOPT = -Wall
-
 INCDIR= -I.
-
 CC    = gcc
 
 SDLADDONLIBS = -lSDL2 -lSDL2main -lSDL_ttf -lSDL2_image
