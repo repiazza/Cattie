@@ -5,6 +5,7 @@
 * Written by repiazza@gmail.com in January 2023 
 *
 */
+
 #ifndef GXRF_h_
   #define GXRF_h_
   #include <SDL2/SDL.h>
@@ -44,13 +45,11 @@
     void *vpfnRenderFnc,
     int iVArgsCt,
     ...);
-  
-
-  int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
-  STRUCT_GXRF_RENDER *pstGXRF_FindRenderizable(void *vGXRF_Renderizable);
+    
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
   STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType (STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy);
-  
+
+  int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
   void vGXRF_RenderObject(void *vGXRF_Renderizable);
   void vGXRF_RenderAll();
   extern STRUCT_GXRF_RENDER *gpstGXRF_RenderList;

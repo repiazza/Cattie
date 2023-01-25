@@ -38,9 +38,6 @@
 #define BUTTON_CONFIRM   2
 #define BUTTON_ERASE     3
 
-
-#define IMG_PATH "img.png"
-
 #define PLAYER_IMG_PATH_IDX  0
 #define FORWARD_IMG_PATH_IDX 1
 #define LASER_IMG_PATH_IDX   2
