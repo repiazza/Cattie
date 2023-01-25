@@ -9,7 +9,7 @@ CCOPT = -Wall
 INCDIR= -I.
 CC    = gcc
 
-SDLADDONLIBS = -lSDL2 -lSDL2main -lSDL_ttf -lSDL2_image
+SDLADDONLIBS = -lSDL2main -lSDL2 -lSDL_ttf -lSDL2_image
 
 ifdef _WIN32
 CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) -mwindows -D_WIN32

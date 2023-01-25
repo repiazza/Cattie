@@ -1,14 +1,15 @@
 /*
 *
-* GXRF Framework for SDL2 in C lang
+* GXRF Framework source for SDL2
+*
+* Written by repiazza@gmail.com in January 2023
 *
 */
-
 #include <stdio.h>
 #include <inttypes.h>
 #include <time.h>
 #include <stdarg.h>
-#include <GXRF/GXRF.h>
+#include "GXRF.h"
 
 #ifdef _WIN32
   #include <windows.h>
@@ -26,153 +27,172 @@
   #define TRUE  1
 #endif
 
-STRUCT_GXRF_RENDER *gpstGXRF_Render;
+STRUCT_GXRF_RENDER *gpstGXRF_RenderList;      // pointer to renderizable object list
+STRUCT_GXRF_RENDER *gpstGXRF_FirstRenderizable; // pointer to first renderizable obj
 
-enum SDLTypes{
-  SDL_RECT = 1,
-  SDL_IMAGE,
-  SDL_TTF,
-  SDL_TEXTURE
-}eSDLT;
-
-
-int bGXRF_SetObjectRenderable(void *vRenderObject){
-   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+//
+// Finds some specific object
+//
+STRUCT_GXRF_RENDER *pstGXRF_FindRenderizable(void *vGXRF_Renderizable){
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   // Looking for the Object
-  for( pstGXRF_WrkRender = gpstGXRF_Render;
+  // Running All of'em, until we get vGXRF_Renderizable
+  for ( 
+       pstGXRF_WrkRender = gpstGXRF_FirstRenderizable;               // Init.
        ( 
-        pstGXRF_WrkRender != NULL
-        && pstGXRF_WrkRender->vSDL_ObjToRender != vRenderObject
-       );
-       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj
+        pstGXRF_WrkRender != NULL                                    //
+        && pstGXRF_WrkRender->vSDL_ObjToRender != vGXRF_Renderizable // Cond.
+       );                                                        
+       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj               // Incr.
   );
+
+  return pstGXRF_WrkRender;
+}
+
+
+STRUCT_GXRF_RENDER *pstGXRF_FindLastRenderizable(){
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+
+  for ( 
+       pstGXRF_WrkRender = gpstGXRF_FirstRenderizable;    // Init.
+       pstGXRF_WrkRender ->pNextObj != NULL;              // Cond.                                                        
+       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj    // Incr.
+  );
+
+  return pstGXRF_WrkRender;
+}
+
+//
+// Finds first object using Renderizable types
+//
+STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy){
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+  // Looking for the Object
+  // Running All of'em, until we get vRenderObject
+  //
+  for ( 
+       pstGXRF_WrkRender = gpstGXRF_FirstRenderizable;     // Init.
+       ( 
+        pstGXRF_WrkRender != NULL                          //
+        && pstGXRF_WrkRender->iSDL_RenderType != eSDLTy    // Cond.
+       );                                                        
+       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj     // Incr.
+  );
+
+  return pstGXRF_WrkRender;
+}
+
+STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType(STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy){
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+  // Looking for the next object of eSDLTy type 
+  // begins from the last one found, pstGXRF_CurrRenderObj
+  //
+  for ( 
+       pstGXRF_WrkRender = pstGXRF_CurrRenderObj;            // Init.
+       ( 
+        pstGXRF_WrkRender != NULL                            //
+        && pstGXRF_WrkRender->iSDL_RenderType != eSDLTy      // Cond.
+       );                                                        
+       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj       // Incr.
+  );
+
+  // Found someone else, or NULL
+  return (pstGXRF_CurrRenderObj = pstGXRF_WrkRender);
+}
+
+int bGXRF_SetRenderizable2Render(void *vRenderObject){
+   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   
-  if ( pstGXRF_WrkRender == NULL )
-    return; // Not Found
+  if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) == NULL )
+    return FALSE; // Not Found
 
   // Thats our guy...
-  pstGXRF_WrkRender->bIsObjToRender = TRUE;
+  return (pstGXRF_WrkRender->bEnabled2Render = TRUE);
+}
+
+int iGXRF_AllocList(STRUCT_GXRF_RENDER **ppstGXRF_RenderizableList){
+  *ppstGXRF_RenderizableList = (STRUCT_GXRF_RENDER *) malloc(sizeof(STRUCT_GXRF_RENDER));
+    if ( *ppstGXRF_RenderizableList == NULL ) 
+      return -1;
+
+  return 0;
 }
 
 int iGXRF_Init(){
-  return ( gpstGXRF_Render == NULL ) ? -1 : 0;
+  if ( gpstGXRF_FirstRenderizable == NULL ){
+    if ( iGXRF_AllocList(&gpstGXRF_RenderList) < 0 ) 
+      return -1;
+  }
+
+  gpstGXRF_FirstRenderizable = gpstGXRF_RenderList;
+  memset(gpstGXRF_FirstRenderizable, 0, sizeof(STRUCT_GXRF_RENDER));
+  gpstGXRF_FirstRenderizable->pNextObj = NULL;
+  return 0;
 }
 
-void vGXRF_InitRenderList(){
-  memset(gpstGXRF_Render, 0, sizeof(STRUCT_GXRF_RENDER));
-  gpstGXRF_Render->pNextObj = NULL;
-}
+int iGXRF_Add2RenderList(
+    SDL_Renderer *renderer,
+    int bIs2Render, 
+    int iSDL_RenderType,
+    void *vRenderObject, 
+    void *vpfnRenderFnc, 
+    va_list* vFncArgs){
 
-void vGXRF_AssignObj2RenderList(SDL_Renderer *renderer, void *vRenderObject, int iSDL_RenderType, void* vpfnRenderFnc, va_list* vFncArgs){
-  gpstGXRF_Render->iSDL_RenderType  = iSDL_RenderType;
-  gpstGXRF_Render->vSDL_ObjToRender = vRenderObject;
-  gpstGXRF_Render->vpfnRenderMethod = vpfnRenderFnc;
-  gpstGXRF_Render->pSDL_Renderer    = renderer;
-  gpstGXRF_Render->vargRenderArgs   = vFncArgs;
-}
-
-void vRenderObjectFromList(void *vRenderObject, ...){
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
-  // Looking for the Object
-  for( pstGXRF_WrkRender = gpstGXRF_Render;
-       ( 
-        pstGXRF_WrkRender != NULL
-        && pstGXRF_WrkRender->vSDL_ObjToRender != vRenderObject
-       );
-       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj
-  );
+    
+  if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) != NULL )
+    return RENDERIZABLE_EXISTS; // Already Exists 
 
-  if ( pstGXRF_WrkRender == NULL )
+  if ( (pstGXRF_WrkRender = pstGXRF_FindLastRenderizable(vRenderObject)) == NULL )
+    return -1; // Error 
+  
+  if ( (pstGXRF_WrkRender->pNextObj = (STRUCT_GXRF_RENDER *) malloc(sizeof(STRUCT_GXRF_RENDER))) == NULL )
+    return -2; // Erro Malloc
+
+  pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj;
+  pstGXRF_WrkRender->bEnabled2Render  = bIs2Render;
+  pstGXRF_WrkRender->iSDL_RenderType  = iSDL_RenderType;
+  pstGXRF_WrkRender->vSDL_ObjToRender = vRenderObject;
+  pstGXRF_WrkRender->vpfnRenderMethod = vpfnRenderFnc;
+  pstGXRF_WrkRender->pSDL_Renderer    = renderer;
+  pstGXRF_WrkRender->vargRenderArgs   = vFncArgs;
+  pstGXRF_WrkRender->pNextObj = NULL;
+
+  return 0;
+}
+
+void vGXRF_RenderObject(void *vRenderObject){
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+
+  if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) == NULL )
     return; // Not Found
 
   // SDL_SetRenderDrawColor(gstSDLRender.pSDL_Renderer, 255, 0, 0, 255); 
-  gpstGXRF_Render->vpfnRenderMethod(
-    gpstGXRF_Render->pSDL_Renderer,
-    gpstGXRF_Render->vargRenderArgs
+  pstGXRF_WrkRender->vpfnRenderMethod(
+    pstGXRF_WrkRender->pSDL_Renderer,
+    pstGXRF_WrkRender->vargRenderArgs
   );
 }
-// 
-// #define VSYNC_TIME 16.666666666 //tempo em ms para atualização em 60 FPS
-// #define WINDOW_WIDTH  800
-// #define WINDOW_HEIGHT 800
-// #define DEBUG_MSGS 1
-// #define DEBUG_MORE_MSGS 9
-// int SDL_main(int argc, char *argv[]){
-//   int iXTranslation = 0;
-//   uint64_t ui64ElapsedTime;
-//   SDL_Window* window;
-//   SDL_Renderer* renderer;
-//   char *pTok;
-//   
-//   sprintf(gszLogTitle, "%s", argv[0]);
-//   if ( (pTok = strstr(gszLogTitle, ".exe")) != NULL ){
-//     *pTok = 0;
-//   }
-//   strcat(gszLogTitle, ".log");
-// 
-//   vTraceMsg("SDL_Main --- Init\n");
-// 
-//   SDL_SetMainReady();
-//   
-//   // Initialize SDL
-//   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-//     if ( DEBUG_MSGS ) { 
-//       char szMsg[256];
-//       sprintf(szMsg,
-//     "Couldn't initialize SDL: %s\n", 
-//          SDL_GetError()
-//       );
-//       sMsg(szMsg);
-//     }
-//     return 1;
-//   }
-//   
-//   // Create a window
-//   window = SDL_CreateWindow(
-//     "SDLFW",
-//     SDL_WINDOWPOS_UNDEFINED,
-//     SDL_WINDOWPOS_UNDEFINED, 
-//     WINDOW_WIDTH, 
-//     WINDOW_HEIGHT, 
-//     SDL_WINDOW_SHOWN
-//   );
 
-  // Create a renderer
-  // renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-  // SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-
-  // SDL_RenderPresent(renderer);
- 
-  // vInitRenderList(renderer, &SDL_RECT_Hud, SDL_RECT, SDL_RenderDrawRect, &SDL_RECT_Hud);
- 
-  // SDL_Event event;
-  // while (gbRunning) {
-  //   while ( SDL_PollEvent(&event) ){
-  //     if (event.type == SDL_QUIT )
-  //       gbRunning = FALSE;
-  //       
-  //     break;
-  //   }
-  //   ui64ElapsedTime = SDL_GetTicks64();
-  //   
-  //   SDL_SetRenderDrawColor(gpstGXRF_Render->pSDL_Renderer, 255, 255, 255, 255); 
-  //   SDL_RenderClear(renderer);
-    
-    // vRenderObjectFromList(&SDL_RECT_Hud);
-    // Update the screen
-//     SDL_RenderPresent(renderer);
-//     ui64ElapsedTime -= SDL_GetTicks64();
-//     if (ui64ElapsedTime <= 20) SDL_Delay(20 - ui64ElapsedTime);
-// 
-//   }
+void vGXRF_FreeRenderList(){
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   
-  // Don't forget to destroy the texture when you're done with it
-  // SDL_DestroyTexture(pSDL_TXTR_Hud);
+  for ( pstGXRF_WrkRender = gpstGXRF_FirstRenderizable;
+        pstGXRF_WrkRender != NULL;
+        ){
 
-  // SDL_DestroyRenderer(renderer);
-  // SDL_DestroyWindow(window);
-  // SDL_Quit();
+        pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj;
+        free(gpstGXRF_FirstRenderizable);
+        gpstGXRF_FirstRenderizable = pstGXRF_WrkRender;
+  }
+  gpstGXRF_RenderList = NULL;
+  gpstGXRF_FirstRenderizable = NULL;
+}
 
-  // return 0;
-// }
+int iGXRF_End(){
+  vGXRF_FreeRenderList();
+  return 0;
+}
+
+
+

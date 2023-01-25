@@ -649,6 +649,8 @@ int SDL_main(int argc, char *argv[]){
 
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
+  iGXRF_Init();
+
   // Set Hud Rect Dimensions
   vSetHUDRectSize(&SDL_RECT_Hud);
 
@@ -705,7 +707,11 @@ int SDL_main(int argc, char *argv[]){
   // vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
 
   gstPlayer.pSDL_RECT_Player = &SDL_RECT_Player;
-  
+   vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+    vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
   // Main loop
   SDL_Event event;
   while (gbRunning) {
@@ -779,11 +785,10 @@ int SDL_main(int argc, char *argv[]){
    
     SDL_RenderClear(renderer);
     
-    iColorBoard(renderer);
+    iColorBoard(renderer); 
     
-    
-    vSetHUDRectSize(&SDL_RECT_Hud);
-    vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
+    // vSetHUDRectSize(&SDL_RECT_Hud);
+    // vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
 
     SDL_RenderCopyEx(renderer, pSDL_TXTR_ImagePlayer, NULL, &SDL_RECT_Player, giDeg, NULL, SDL_FLIP_HORIZONTAL);
 
@@ -814,6 +819,7 @@ int SDL_main(int argc, char *argv[]){
   }
   
   // Clean up
+  iGXRF_End();
   vFreeButtonList();
   free(pSDL_RECT_Menu);
   // Don't forget to destroy the texture when you're done with it
