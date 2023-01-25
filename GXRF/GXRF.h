@@ -9,6 +9,7 @@
   #define GXRF_h_
   #include <SDL2/SDL.h>
   #include <SDL2/SDL_image.h>
+  #include <stdarg.h>
   #include "trace.h"
 
   #define RENDERIZABLE_EXISTS 1
@@ -18,32 +19,33 @@
     SDL_IMAGE,
     SDL_TTF,
     SDL_TEXTURE
-  }eSDLT_Renderizable;
+  } eSDLT_Renderizable;
 
   // Creates the generic render callback function
   typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer, ...);
 
   typedef struct STRUCT_GXRF_RENDER{
     int bEnabled2Render;
-    int iSDL_RenderType;
+    eSDLT_Renderizable eSDLTy;
     void *vSDL_ObjToRender;
     GXRFCALLBACK vpfnRenderMethod;
-    va_list *vargRenderArgs;
+    va_list vargRenderArgs;
     SDL_Renderer *pSDL_Renderer;
     struct STRUCT_GXRF_RENDER *pNextObj;
   } STRUCT_GXRF_RENDER;
 
   int iGXRF_Init();
   int iGXRF_End();
-  int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
   int iGXRF_Add2RenderList(
     SDL_Renderer *renderer,
     int bIs2Render, 
-    int iSDL_RenderType,
+    eSDLT_Renderizable eSDLTy,
     void *vRenderObject, 
-    void *vpfnRenderFnc, 
-    va_list* vFncArgs);
+    void *vpfnRenderFnc,
+    int iVArgsCt,
+    ...);
   
+
   int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
   STRUCT_GXRF_RENDER *pstGXRF_FindRenderizable(void *vGXRF_Renderizable);
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
