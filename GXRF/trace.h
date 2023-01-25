@@ -18,5 +18,7 @@
   void vTraceMsg(char *szMsg);
   void vTracePid(char *szMsg, int iMsgLen);
   void vInitLogs(char *argv0);
+  #define DEBUG_MSGS 1
+  #define DEBUG_MORE_MSGS 9
   
 #endif

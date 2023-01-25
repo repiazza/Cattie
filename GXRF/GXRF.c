@@ -142,7 +142,7 @@ int iGXRF_Add2RenderList(
 
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   // va_list vFncArgs;
-  va_list vWrkArgs;
+  // va_list vWrkArgs;
     
   if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) != NULL )
     return RENDERIZABLE_EXISTS; // Already Exists 
@@ -160,15 +160,24 @@ int iGXRF_Add2RenderList(
   
 
 
-  va_start(vWrkArgs, iVArgsCt);
   pstGXRF_WrkRender->bEnabled2Render  = bIs2Render;
   pstGXRF_WrkRender->eSDLTy  = eSDLTy;
   pstGXRF_WrkRender->vSDL_ObjToRender = vRenderObject;
   pstGXRF_WrkRender->vpfnRenderMethod = vpfnRenderFnc;
   pstGXRF_WrkRender->pSDL_Renderer    = renderer;
-  va_copy(pstGXRF_WrkRender->vargRenderArgs, vWrkArgs);
+  va_start(pstGXRF_WrkRender->vargRenderArgs, iVArgsCt);
+  if ( DEBUG_MSGS ) { 
+    char szMsg[256];
+    sprintf(szMsg,
+  "vargs=%d", va_arg(pstGXRF_WrkRender->vargRenderArgs, int)
+    );
+    vTraceMsg(szMsg);
+  //   sprintf(szMsg,
+  // "vargs=0X%X", va_arg(pstGXRF_WrkRender->vargRenderArgs, (SDL_Renderer *))
+  //   );
+  //   vTraceMsg(szMsg);
+  }
   pstGXRF_WrkRender->pNextObj = NULL;
-  va_end(vWrkArgs);
 
   return 0;
 }
@@ -182,7 +191,7 @@ void vGXRF_RenderObject(void *vGXRF_Renderizable){
   if (pstGXRF_WrkRender->bEnabled2Render == FALSE )
     return;
   
-  SDL_SetRenderDrawColor(pstGXRF_WrkRender->pSDL_Renderer, 255, 0, 0, 255); 
+  // SDL_SetRenderDrawColor(pstGXRF_WrkRender->pSDL_Renderer, 255, 0, 0, 255); 
   pstGXRF_WrkRender->vpfnRenderMethod(
     pstGXRF_WrkRender->pSDL_Renderer,
     pstGXRF_WrkRender->vargRenderArgs
@@ -208,6 +217,7 @@ void vGXRF_FreeRenderList(){
         ){
 
         pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj;
+        va_end(gpstGXRF_FirstRenderizable->vargRenderArgs);
         free(gpstGXRF_FirstRenderizable);
         gpstGXRF_FirstRenderizable = pstGXRF_WrkRender;
   }
@@ -219,6 +229,7 @@ int iGXRF_End(){
   vGXRF_FreeRenderList();
   return 0;
 }
+
 
 
 

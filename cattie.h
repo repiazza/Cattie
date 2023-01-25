@@ -45,8 +45,7 @@
 
 #define _MAX_IMG_PATH 4
 
-#define DEBUG_MSGS 1
-#define DEBUG_MORE_MSGS 9
+
 
 #define MAX_MENU_OPTIONS 6
 
