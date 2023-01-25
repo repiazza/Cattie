@@ -54,10 +54,10 @@
 #define MAX_MENU_OPTIONS 6
 
 char *ppszImagePath[] = {
-  "cat2.png",
-  "forward.png",
-  "laser.png",
-  "rotate2.png"
+  "img/cat2.png",
+  "img/forward.png",
+  "img/laser.png",
+  "img/rotate2.png"
 };
 
 typedef struct STRUCT_BUTTON_LIST{
