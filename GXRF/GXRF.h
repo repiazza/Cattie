@@ -35,11 +35,22 @@
 
   int iGXRF_Init();
   int iGXRF_End();
+  int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
+  int iGXRF_Add2RenderList(
+    SDL_Renderer *renderer,
+    int bIs2Render, 
+    int iSDL_RenderType,
+    void *vRenderObject, 
+    void *vpfnRenderFnc, 
+    va_list* vFncArgs);
+  
+  int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
   STRUCT_GXRF_RENDER *pstGXRF_FindRenderizable(void *vGXRF_Renderizable);
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
   STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType (STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy);
-
   
+  void vGXRF_RenderObject(void *vGXRF_Renderizable);
+  void vGXRF_RenderAll();
   extern STRUCT_GXRF_RENDER *gpstGXRF_RenderList;
   extern STRUCT_GXRF_RENDER *gpstGXRF_FirstRenderizable;
   

@@ -49,7 +49,6 @@ STRUCT_GXRF_RENDER *pstGXRF_FindRenderizable(void *vGXRF_Renderizable){
   return pstGXRF_WrkRender;
 }
 
-
 STRUCT_GXRF_RENDER *pstGXRF_FindLastRenderizable(){
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
 
@@ -100,10 +99,10 @@ STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType(STRUCT_GXRF_RENDER *pstGX
   return (pstGXRF_CurrRenderObj = pstGXRF_WrkRender);
 }
 
-int bGXRF_SetRenderizable2Render(void *vRenderObject){
+int bGXRF_EnableRenderizable(void *vGXRF_Renderizable){
    STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   
-  if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) == NULL )
+  if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vGXRF_Renderizable)) == NULL )
     return FALSE; // Not Found
 
   // Thats our guy...
@@ -161,17 +160,30 @@ int iGXRF_Add2RenderList(
   return 0;
 }
 
-void vGXRF_RenderObject(void *vRenderObject){
+void vGXRF_RenderObject(void *vGXRF_Renderizable){
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
 
-  if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) == NULL )
+  if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vGXRF_Renderizable)) == NULL )
     return; // Not Found
 
+  if (pstGXRF_WrkRender->bEnabled2Render == FALSE )
+    return;
   // SDL_SetRenderDrawColor(gstSDLRender.pSDL_Renderer, 255, 0, 0, 255); 
   pstGXRF_WrkRender->vpfnRenderMethod(
     pstGXRF_WrkRender->pSDL_Renderer,
     pstGXRF_WrkRender->vargRenderArgs
   );
+}
+
+void vGXRF_RenderAll(){
+  STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+  for ( 
+       pstGXRF_WrkRender = gpstGXRF_FirstRenderizable;               // Init.
+       pstGXRF_WrkRender != NULL ;                                   // Cond.
+       pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj               // Incr.
+  ){
+    vGXRF_RenderObject(pstGXRF_WrkRender->vSDL_ObjToRender);
+  }
 }
 
 void vGXRF_FreeRenderList(){
@@ -193,6 +205,7 @@ int iGXRF_End(){
   vGXRF_FreeRenderList();
   return 0;
 }
+
 
 
 
