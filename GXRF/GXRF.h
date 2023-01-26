@@ -39,7 +39,7 @@
   int iGXRF_End();
   int iGXRF_Add2RenderList(
     SDL_Renderer *renderer,
-    int bIs2Render, 
+    int bIs2Render,
     eSDLT_Renderizable eSDLTy,
     void *vRenderObject, 
     void *vpfnRenderFnc,

@@ -239,7 +239,7 @@ void vDrawButtonHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL
 SDL_Color *astSDL_COLOR_Colors;
 
 void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButtonType){
-  if ( iButtonType == BUTTON_DIRECTION )
+  if ( 1 )
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
   else if ( iButtonType == BUTTON_CONFIRM)
     SDL_SetRenderDrawColor(renderer, 0, 200, 50, 255);
@@ -707,11 +707,16 @@ int SDL_main(int argc, char *argv[]){
   // vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
 
   gstPlayer.pSDL_RECT_Player = &SDL_RECT_Player;
-   vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-    vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
+
+
+  
+  // vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+  // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+  // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+  // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+  // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
+  iGXRF_Add2RenderList(renderer, TRUE, SDL_RECT, &SDL_RECT_ButtonArrowRight, vDrawButton, 3, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+
   // Main loop
   SDL_Event event;
   while (gbRunning) {
@@ -796,15 +801,16 @@ int SDL_main(int argc, char *argv[]){
     vDrawButtonHUD (renderer, pSDL_TXTR_ButtonHud, &SDL_RECT_ButtonHud);
     
     // vDrawButtons(renderer);
-    vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-    vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
+    vGXRF_RenderObject(&SDL_RECT_ButtonArrowRight);
+    // vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+    // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
 
     SDL_RenderCopy(renderer, pSDL_TXTR_ImageFoward, NULL, &SDL_RECT_ButtonArrowRight);
-    SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
-    SDL_RenderCopy(renderer, pSDL_TXTR_ImageRotate, NULL, &SDL_RECT_ButtonTurnArrow);
+    // SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
+    // SDL_RenderCopy(renderer, pSDL_TXTR_ImageRotate, NULL, &SDL_RECT_ButtonTurnArrow);
 
     // vDrawMenu(renderer, pSDL_RECT_Menu, MAX_MENU_OPTIONS);
     // Update the screen

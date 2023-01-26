@@ -143,6 +143,9 @@ int iGXRF_Add2RenderList(
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   // va_list vFncArgs;
   // va_list vWrkArgs;
+  int iVaCtr =0;
+  // SDL_Renderer *pSDL_WrkRenderer;
+  SDL_Rect *pSDL_Rect_test;
     
   if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) != NULL )
     return RENDERIZABLE_EXISTS; // Already Exists 
@@ -158,25 +161,20 @@ int iGXRF_Add2RenderList(
     pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj;
   }
   
-
+  //  va_start(vWrkArgs, iVArgsCt);
 
   pstGXRF_WrkRender->bEnabled2Render  = bIs2Render;
   pstGXRF_WrkRender->eSDLTy  = eSDLTy;
   pstGXRF_WrkRender->vSDL_ObjToRender = vRenderObject;
   pstGXRF_WrkRender->vpfnRenderMethod = vpfnRenderFnc;
   pstGXRF_WrkRender->pSDL_Renderer    = renderer;
-  va_start(pstGXRF_WrkRender->vargRenderArgs, iVArgsCt);
-  if ( DEBUG_MSGS ) { 
-    char szMsg[256];
-    sprintf(szMsg,
-  "vargs=%d", va_arg(pstGXRF_WrkRender->vargRenderArgs, int)
-    );
-    vTraceMsg(szMsg);
-  //   sprintf(szMsg,
-  // "vargs=0X%X", va_arg(pstGXRF_WrkRender->vargRenderArgs, (SDL_Renderer *))
-  //   );
-  //   vTraceMsg(szMsg);
-  }
+  va_start(pstGXRF_WrkRender->vargRenderArgs, iVArgsCt); 
+  // va_copy(pstGXRF_WrkRender->vargRenderArgs, va_arg(vWrkArgs, va_list));
+  
+  // pSDL_WrkRenderer = va_arg(pstGXRF_WrkRender->vargRenderArgs, SDL_Renderer *);
+  pSDL_Rect_test = va_arg(pstGXRF_WrkRender->vargRenderArgs, SDL_Rect *);
+  iVaCtr  = va_arg(pstGXRF_WrkRender->vargRenderArgs, int );
+  va_end(pstGXRF_WrkRender->vargRenderArgs);
   pstGXRF_WrkRender->pNextObj = NULL;
 
   return 0;
@@ -184,6 +182,10 @@ int iGXRF_Add2RenderList(
 
 void vGXRF_RenderObject(void *vGXRF_Renderizable){
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
+  // SDL_Renderer *pSDL_WrkRenderer;
+  SDL_Rect *pSDL_Rect_test;
+  int iVaCtr =0;
+  char szMsg[32];
 
   if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vGXRF_Renderizable)) == NULL )
     return; // Not Found
@@ -192,6 +194,12 @@ void vGXRF_RenderObject(void *vGXRF_Renderizable){
     return;
   
   // SDL_SetRenderDrawColor(pstGXRF_WrkRender->pSDL_Renderer, 255, 0, 0, 255); 
+  // pSDL_WrkRenderer = va_arg(pstGXRF_WrkRender->vargRenderArgs, SDL_Renderer *);
+  pSDL_Rect_test = va_arg(pstGXRF_WrkRender->vargRenderArgs, SDL_Rect *);
+  sprintf(szMsg, "%p", pSDL_Rect_test);
+  iVaCtr = va_arg(pstGXRF_WrkRender->vargRenderArgs, int );
+  pstGXRF_WrkRender->vargRenderArgs += (int)(pSDL_Rect_test) * sizeof(int) - sizeof(pstGXRF_WrkRender->vargRenderArgs);
+  
   pstGXRF_WrkRender->vpfnRenderMethod(
     pstGXRF_WrkRender->pSDL_Renderer,
     pstGXRF_WrkRender->vargRenderArgs
