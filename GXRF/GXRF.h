@@ -19,22 +19,36 @@
     SDL_RECT = 1,
     SDL_IMAGE,
     SDL_TTF,
-    SDL_TEXTURE
+    SDL_TEXTURE,
   } eSDLT_Renderizable;
 
   // Creates the generic render callback function
   typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer, ...);
-
+  
+  // Renderizable Objects.
+  //  bEnabled2Render - 1 Render | 0 Do nothing
+  //  eSDLTy SDL type for vSDL_ObjToRender
+  //  vSDL_ObjToRender ptr to SDL structure (Object)
+  //  vlstRenderArgs - Arg list of this SDL Object 
   typedef struct STRUCT_GXRF_RENDER{
     int bEnabled2Render;
     eSDLT_Renderizable eSDLTy;
     void *vSDL_ObjToRender;
     GXRFCALLBACK vpfnRenderMethod;
-    va_list vargRenderArgs;
+    va_list vlstRenderArgs;
     SDL_Renderer *pSDL_Renderer;
     struct STRUCT_GXRF_RENDER *pNextObj;
   } STRUCT_GXRF_RENDER;
 
+  // Tipos de dados dos prms, para construcao do 
+  // va_list
+  typedef struct STRUCT_GXRF_FNCLIST{
+    GXRFCALLBACK vpfnRenderMethod;
+    eSDLT_Renderizable *peSDLTypes;
+    struct STRUCT_GXRF_FNCLIST *pNextFnc;
+  } STRUCT_GXRF_FNCLIST;
+  
+  void vGXRF_AttachValues2Fnc(STRUCT_GXRF_FNCLIST *pstFnctList, eSDLT_Renderizable *peSDLTypes, void* vpfnRenderMethod);
   int iGXRF_Init();
   int iGXRF_End();
   int iGXRF_Add2RenderList(
@@ -44,7 +58,7 @@
     void *vRenderObject, 
     void *vpfnRenderFnc,
     int iVArgsCt,
-    ...);
+    va_list *pvlstFnArgList);
     
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
   STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType (STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy);

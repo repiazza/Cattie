@@ -60,38 +60,38 @@ typedef struct STRUCT_BUTTON_LIST{
   SDL_Rect *pSDL_RECT_Button;
   int iAction;
   struct STRUCT_BUTTON_LIST* pstNext;
-}STRUCT_BUTTON_LIST;
+} STRUCT_BUTTON_LIST;
 
 STRUCT_BUTTON_LIST gstButtonList;
 
-enum SquareColors{
+typedef enum SquareColors{
   WALL_SQUARE = 0,
   PATH_SQUARE,
   END_SQUARE
-}eSqColors;
+} eSqColors;
 
 
-enum MovementAction{
+typedef enum MovementAction{
   FORWARD = 1,
   TURN,
   FIRE_LASER,
   ERASE,
   CONFIRM
-}eMovAction;
+} eMovAction;
 
 
-enum WindRose{
+typedef enum WindRose{
   NORTH = 1,
   EAST,
   SOUTH,
   WEST
-}eWndRose;
+} eWndRose;
 
 typedef struct STRUCT_PLAYER {
   int iCurrX;
   int iCurrY;
   int iFacingPos;
   SDL_Rect *pSDL_RECT_Player;
-}STRUCT_PLAYER;
+} STRUCT_PLAYER;
 
 STRUCT_PLAYER gstPlayer;
