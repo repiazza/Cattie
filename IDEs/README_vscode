@@ -1,0 +1,7 @@
+${default}
+${workspaceFolder}/src
+${workspaceFolder}/GXRF
+
+Compiled in windows with mingw64 
+(-LC:/msys64/mingw64/bin/../lib -lmingw32 -lSDL2main -lSDL2 -lSDL_ttf -lSDL2_image)
+Type pkg-config SDL2 --libs to further information

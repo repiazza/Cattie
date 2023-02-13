@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#include "GXRF/trace.h"
+#include <trace.h>
 
 char gszLogTitle[_MAX_PATH];
 

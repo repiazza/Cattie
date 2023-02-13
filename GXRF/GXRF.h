@@ -6,25 +6,44 @@
 *
 */
 
-#ifndef GXRF_h_
-  #define GXRF_h_
+#ifndef GXRF_H_INC
+  #define GXRF_H_INC
   #include <SDL2/SDL.h>
   #include <SDL2/SDL_image.h>
+  #include <SDL2/SDL_TTF.h>
+  // #include <stdarg.h>
   #include <stdarg.h>
-  #include "trace.h"
+  #include <trace.h>
+  #define SDL_NONE 0
+  #define GRX_SDL_TYPES 4
 
   #define RENDERIZABLE_EXISTS 1
 
   typedef enum SDLTypes{
     SDL_RECT = 1,
-    SDL_IMAGE,
+    SDL_SURFACE,
     SDL_TTF,
     SDL_TEXTURE,
   } eSDLT_Renderizable;
 
+  typedef int (GXRFTYPES)[GRX_SDL_TYPES];
+  
+  // GXRFTYPES szSDLTypes = {
+  //   sizeof(SDL_Rect),       
+  //   sizeof(SDL_Surface),    
+  //   sizeof(TTF_Font *),      
+  //   sizeof(SDL_Texture *)   
+  // };
+
   // Creates the generic render callback function
   typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer, ...);
-  
+
+  // Renderizable Object List
+  typedef struct STRUCT_GXRF_RENDER_LIST{
+    struct STRUCT_GXRF_RENDER *pstGXRF_FirstRenderizable;
+    struct STRUCT_GXRF_RENDER *pstGXRF_LastRenderizable;
+  }STRUCT_GXRF_RENDER_LIST, *PSTRUCT_GXRF_RENDER_LIST;
+
   // Renderizable Objects.
   //  bEnabled2Render - 1 Render | 0 Do nothing
   //  eSDLTy SDL type for vSDL_ObjToRender
@@ -33,15 +52,14 @@
   typedef struct STRUCT_GXRF_RENDER{
     int bEnabled2Render;
     eSDLT_Renderizable eSDLTy;
+    SDL_Renderer *pSDL_Renderer;
     void *vSDL_ObjToRender;
     GXRFCALLBACK vpfnRenderMethod;
     va_list vlstRenderArgs;
-    SDL_Renderer *pSDL_Renderer;
     struct STRUCT_GXRF_RENDER *pNextObj;
-  } STRUCT_GXRF_RENDER;
+  } STRUCT_GXRF_RENDER, *PSTRUCT_GXRF_RENDER;
 
-  // Tipos de dados dos prms, para construcao do 
-  // va_list
+  // Tipos de dados dos prms, para construcao do va_list
   typedef struct STRUCT_GXRF_FNCLIST{
     GXRFCALLBACK vpfnRenderMethod;
     eSDLT_Renderizable *peSDLTypes;
@@ -49,6 +67,8 @@
   } STRUCT_GXRF_FNCLIST;
   
   void vGXRF_AttachValues2Fnc(STRUCT_GXRF_FNCLIST *pstFnctList, eSDLT_Renderizable *peSDLTypes, void* vpfnRenderMethod);
+  
+  extern va_list gpvlstGXRF_ArgList;
   int iGXRF_Init();
   int iGXRF_End();
   int iGXRF_Add2RenderList(
@@ -58,15 +78,14 @@
     void *vRenderObject, 
     void *vpfnRenderFnc,
     int iVArgsCt,
-    va_list *pvlstFnArgList);
-    
+       ...);
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
   STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType (STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy);
 
   int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
   void vGXRF_RenderObject(void *vGXRF_Renderizable);
   void vGXRF_RenderAll();
-  extern STRUCT_GXRF_RENDER *gpstGXRF_RenderList;
-  extern STRUCT_GXRF_RENDER *gpstGXRF_FirstRenderizable;
+
+  extern PSTRUCT_GXRF_RENDER_LIST gpstGXRF_RenderList;
   
 #endif // ifndef GXRF_h_

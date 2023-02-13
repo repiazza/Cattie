@@ -1,6 +1,10 @@
 #include <inttypes.h>
 #include <time.h>
-#include "cattie.h"
+#include <cattie.h>
+#include <board.h>
+#include <menu.h>
+#include <action.h>
+#include <button.h>
 
 #ifdef _WIN32
   #include <windows.h>
@@ -18,16 +22,15 @@
  * 
  **/
 
-// char gszLogTitle[_MAX_PATH];
-int giBoard[BOARD_ROWS][BOARD_COLS];
-int giSquareSize;
-int giSelectedItem;
+STRUCT_BUTTON_LIST gstButtonList;
+int giBOARD_Main[BOARD_ROWS][BOARD_COLS];
 int giDeg = 0;
 int gbRunning = TRUE;
-int gbCheckActions = FALSE;
-int giActionList[_MAX_MOVEMENT];
-int giActionCt = 0;
-int giCheckActions = 0;
+int gbACTION_Check = FALSE;
+int giACTION_List[_MAX_MOV_ACTION];
+int giACTION_StepCtr = 0;
+int giACTION_AssertedSteps = 0;
+int giMENU_SelectedItem = 0;
 
 /**
  * 
@@ -35,119 +38,11 @@ int giCheckActions = 0;
  * 
  **/
 
-void vInitializeBoard(){
-  int iX;
-  int iY;
-  for (iX = 0; iX < BOARD_ROWS; iX++)
-    for (iY = 0; iY < BOARD_COLS; iY++)
-      giBoard[iX][iY] = 0;
-}
-
 void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
   pSDL_RECT->x = iX;
   pSDL_RECT->y = iX;
   pSDL_RECT->w = iWidth;
   pSDL_RECT->h = iHeight;
-}
-
-void vTraceBoard(){
-  int ii;
-  int jj;
-  
-  vTraceMsg("========================\n");
-  for (ii = 0; ii < BOARD_ROWS; ii++) {
-    for (jj = 0; jj < BOARD_COLS; jj++) {
-      char szWrk[8];
-      memset(szWrk, 0, sizeof(szWrk));
-      sprintf(szWrk, "[%d] ", giBoard[ii][jj]);
-      vTraceMsg(szWrk);
-    }
-    vTraceMsg("\n");
-  }
-  vTraceMsg("========================\n");
-}
-
-int iAddButtonToList(SDL_Rect *pSDL_RECT_Btm, int iAction){
-  STRUCT_BUTTON_LIST *pstWrkButtonList;
-
-  eMovAction eMvAct = iAction;
-
-  for ( pstWrkButtonList = &gstButtonList; pstWrkButtonList->pstNext != NULL; pstWrkButtonList = pstWrkButtonList->pstNext );
-  
-  if ( pstWrkButtonList->iAction == 0 && pstWrkButtonList == &gstButtonList){
-      pstWrkButtonList->pSDL_RECT_Button = pSDL_RECT_Btm;
-    pstWrkButtonList->iAction = eMvAct;
-    pstWrkButtonList->pstNext = NULL;
-    return 0;
-  }
-  if ( (pstWrkButtonList->pstNext = (STRUCT_BUTTON_LIST *) malloc(sizeof(STRUCT_BUTTON_LIST))) == NULL )
-    return -1;
-  
-  memset(pstWrkButtonList->pstNext, 0, sizeof(STRUCT_BUTTON_LIST));
-  pstWrkButtonList = pstWrkButtonList->pstNext;
-  pstWrkButtonList->pSDL_RECT_Button = pSDL_RECT_Btm;
-  pstWrkButtonList->iAction = eMvAct;
-  pstWrkButtonList->pstNext = NULL;
-
-  return 0;
-}
-
-void vFreeButtonList(){
-  STRUCT_BUTTON_LIST *pstWrkButtonList;
-
-  for ( pstWrkButtonList = gstButtonList.pstNext; pstWrkButtonList != NULL;  ){ 
-    STRUCT_BUTTON_LIST *pstLastButton = pstWrkButtonList;
-    pstWrkButtonList = pstWrkButtonList->pstNext;
-    free(pstLastButton);
-  }
-}
-
-void vInitButtonList(){
-  memset(&gstButtonList, 0, sizeof(STRUCT_BUTTON_LIST));
-  gstButtonList.pstNext = NULL;
-}
-
-int iGenerateRandomPath(){
-  int iRow = 0;
-  int iCol = 0;
-  int bFirstSq = TRUE;
-  int iLastRow = 0;
-  int iLastCol = 0;
-  int iDirection;
-  
-  vInitializeBoard();
-
-  while (iRow < BOARD_ROWS && iCol < BOARD_COLS) {
-    giBoard[iRow][iCol] = 1;
-    iLastRow = iRow;
-    iLastCol = iCol;
-    iDirection = rand() % 2; // Generate a random number (0 or 1)
-    if (iDirection == 0) {
-      // Go down
-      iRow++;
-    } else {
-      // Go right
-      iCol++;
-    }
-    if ( bFirstSq ) {
-      gstPlayer.iCurrX = 0;
-      gstPlayer.iCurrY = 0;
-      if ( iDirection == 0 ){
-        gstPlayer.iFacingPos = SOUTH;
-        giDeg = 90;
-      }
-      else{
-        gstPlayer.iFacingPos = EAST;
-      }
-      bFirstSq = FALSE;
-    }
-  }
-
-  giBoard[iLastRow][iLastCol] = 2;
-  
-  vTraceBoard();
-
-  return 0;
 }
 
 SDL_Surface *pSDL_SRFC_LoadImage(char *pszImgPath){
@@ -171,50 +66,13 @@ SDL_Texture *pSDL_TXTR_CreateTextureFromSurface(SDL_Renderer *renderer, SDL_Surf
   return SDL_TXTR_Texture;
 }
 
-int iColorBoard(SDL_Renderer *renderer){
-  int ii;
-  int jj;
-  for (ii = 0; ii < BOARD_ROWS; ii++) {
-    for (jj = 0; jj < BOARD_COLS; jj++) {
-      const int iSquare = giBoard[ii][jj];
-      switch(iSquare){
-        // Cinza claro
-        case WALL_SQUARE:
-          SDL_SetRenderDrawColor(renderer, 190, 190, 190, 255);
-          break;
-        // amarelo claro
-        case PATH_SQUARE:
-          SDL_SetRenderDrawColor(renderer, 255, 255, 224, 255); 
-          break;
-        // vermelhão
-        case END_SQUARE:
-          SDL_SetRenderDrawColor(renderer, 235, 150, 70, 255);
-          break;
-        default:
-          // Se não é nada, branco...
-          SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-          break;
-      }
-
-      SDL_Rect SDLRECT_Square = {jj * giSquareSize, ii * giSquareSize, giSquareSize, giSquareSize};
-      SDL_RenderFillRect(renderer, &SDLRECT_Square);
-      
-      SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-      SDL_Rect SDLRECT_Edges = {jj * giSquareSize, ii * giSquareSize, giSquareSize, giSquareSize};
-      SDL_RenderDrawRect(renderer, &SDLRECT_Edges);
-    }
-  }
-
-  return 0;
-}
-
-void vSetBoardSquareBorder(SDL_Renderer *renderer){
+void vDrawSquareEdges(SDL_Renderer *renderer){
   int ii;
   int jj;
   for (ii = 0; ii < BOARD_ROWS; ii++) {
     for (jj = 0; jj < BOARD_COLS; jj++) {
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-      SDL_Rect SDLRECT_Edges = {ii * giSquareSize, jj * giSquareSize, giSquareSize, giSquareSize};
+      SDL_Rect SDLRECT_Edges = {ii * COL_RATIO, jj * COL_RATIO, COL_RATIO, COL_RATIO};
       SDL_RenderDrawRect(renderer, &SDLRECT_Edges);
     }
   }
@@ -236,14 +94,12 @@ void vDrawButtonHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL
   SDL_RenderDrawRect(renderer, pSDL_RECT_Hud);
 }
 
-SDL_Color *astSDL_COLOR_Colors;
-
 void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButtonType){
-  if ( 1 )
+  if ( iButtonType == BUTTON_DIRECTION )
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
-  else if ( iButtonType == BUTTON_CONFIRM)
+  else if ( iButtonType == BUTTON_CONFIRM )
     SDL_SetRenderDrawColor(renderer, 0, 200, 50, 255);
-  else if ( iButtonType == BUTTON_ERASE)
+  else if ( iButtonType == BUTTON_ERASE )
     SDL_SetRenderDrawColor(renderer, 255, 255, 200, 255);
     
   SDL_RenderFillRect(renderer, pSDL_RECT_Button);
@@ -257,27 +113,23 @@ void vInitializeImagePosition(SDL_Rect *pSDL_Rect_Im){
   vInitRect(pSDL_Rect_Im, iLocation, iLocation, iDimensions, iDimensions);
 }
 
-int iMovementIsOutOfBounds(int iNextX, int iNextY){
-  if ( iNextX < 0 || iNextX >= BOARD_COLS )
-    return TRUE;
-  if ( iNextY < 0 || iNextY >= BOARD_ROWS )
-    return TRUE;
+eSqType iValidateSquare(int iX, int iY){
+  eSqType eSquareType = -1;
 
-  return FALSE;
-}
+  if ( iX < 0 || iX >= BOARD_ROWS )
+    return eSquareType;
 
-int iValidateSquare(int iX, int iY){
    if ( DEBUG_MSGS ) { 
     char szMsg[256];
     sprintf(szMsg,
-  "iValidateSquare giBoard[%d][%d]=%d\n ", 
+  "iValidateSquare giBOARD_Main[%d][%d]=%d\n ", 
       iX,
       iY,
-      giBoard[iX][iY]
+      giBOARD_Main[iX][iY]
     );
     vTraceMsg(szMsg);
   }
-  return (eSqColors = giBoard[iX][iY]); 
+  return eSquareType = giBOARD_Main[iX][iY]; 
 }
 
 int iWalk(){
@@ -322,11 +174,8 @@ int iWalk(){
       break;
   }
   
-  if ( iMovementIsOutOfBounds(iNextX, iNextY) )
+  if ( iBOARD_IsValidSquare(iNextX, iNextY) <= WALL_SQUARE )
     return -1;
-
-  if ( iValidateSquare(iNextX, iNextY) == WALL_SQUARE )
-    return -2;
     
   gstPlayer.iCurrX = iNextX;
   gstPlayer.iCurrY = iNextY;
@@ -342,6 +191,17 @@ int iWalk(){
     vTraceMsg(szMsg);
   }
   return gstPlayer.iFacingPos;
+}
+
+int iTurn(){
+  if ( DEBUG_MSGS ) vTraceMsg("Turn\n");
+  giDeg = (giDeg == 360) ? 90 : giDeg + 90;
+  gstPlayer.iFacingPos = (gstPlayer.iFacingPos == WEST) ? NORTH : gstPlayer.iFacingPos+1;
+  return REDRAW_IMAGE;
+}
+
+int iFireLaser(){
+  return REDRAW_IMAGE;
 }
 
 void vSetButtonDimensions(SDL_Rect *pSDL_RECT_Btn, int iTrslt){
@@ -371,9 +231,9 @@ int iWasClicked(SDL_Event *pSDL_EVENT_Ev){
     int iClickEvX = pSDL_EVENT_Ev->button.x;
     int iClickEvY = pSDL_EVENT_Ev->button.y;
     SDL_Rect *pSDL_RECT_Btn = pstWrkButtonList->pSDL_RECT_Button;
-    if (iClickEvX >= pSDL_RECT_Btn->x 
-      && iClickEvX < pSDL_RECT_Btn->x + pSDL_RECT_Btn->w 
+    if ( iClickEvX >= pSDL_RECT_Btn->x 
       && iClickEvY >= pSDL_RECT_Btn->y 
+      && iClickEvX < pSDL_RECT_Btn->x + pSDL_RECT_Btn->w 
       && iClickEvY < pSDL_RECT_Btn->y + pSDL_RECT_Btn->h) {
       return pstWrkButtonList->iAction;
     }
@@ -391,48 +251,6 @@ SDL_Texture* createSquareTexture(SDL_Renderer* renderer)
   return texture;
 }
 
-int iTurn(){
-  if ( DEBUG_MSGS ) vTraceMsg("Turn\n");
-  giDeg = (giDeg == 360) ? 90 : giDeg + 90;
-  gstPlayer.iFacingPos = (gstPlayer.iFacingPos == WEST) ? NORTH : gstPlayer.iFacingPos+1;
-  return REDRAW_IMAGE;
-}
-
-void vLogActionList(){
-  int ii;
-  
-  if ( DEBUG_MSGS )
-    vTraceMsg("==========Action List========");
-  
-  for ( ii=0; ii<giActionCt; ii++){
-    char szWrk[32];
-    memset(szWrk, 0, sizeof(szWrk));
-    sprintf(szWrk, "[%d] ", giActionList[ii]);
-    if ( (ii % 20) == 0 )
-      vTraceMsg("\n\t");
-
-    vTraceMsg(szWrk);
-  }
-  if ( DEBUG_MSGS )   
-    vTraceMsg("\n========================\n");
-
-}
-
-int iAddCommandToActionList(int iCmd){
-  if ( iCmd == ERASE ){
-    if ( giActionCt <= 0 )
-      return 0;
-
-    giActionList[giActionCt--] = 0;
-    return 0;
-  }
-  if ( giActionCt >= _MAX_MOVEMENT )
-    return -1;
-  
-  giActionList[giActionCt++] = iCmd;
-  return 0;
-}
-
 int iHandleClick(SDL_Event *pSDL_EVENT_Ev){
   int iAction = 0;
   switch((iAction = iWasClicked(pSDL_EVENT_Ev))){
@@ -440,12 +258,12 @@ int iHandleClick(SDL_Event *pSDL_EVENT_Ev){
     case TURN:
     case FIRE_LASER:
     case ERASE:
-      iAddCommandToActionList(iAction);
-      vLogActionList();
+      iACTION_AddStep2List(iAction);
+      if ( DEBUG_MSGS ) vACTION_TraceList();
       break;
     case CONFIRM:
       if ( DEBUG_MSGS ) vTraceMsg("Confirm!\n");
-      gbCheckActions = TRUE;
+      gbACTION_Check = TRUE;
       break;
     default:
       break;
@@ -454,93 +272,32 @@ int iHandleClick(SDL_Event *pSDL_EVENT_Ev){
   return 0;
 }
 
-int iExecuteActionFromList(int iAction){
-  int iRsl = 0;
-  if ( iAction < 0 )
-    return 0;
-
-  if ( iAction >= _MAX_MOVEMENT )
-    return 0;
-
-  switch(giActionList[iAction]){
-  case FORWARD:
-    iRsl = iWalk();
-    break;
-  case TURN:
-    iRsl = iTurn();
-    break;
-  case FIRE_LASER:
-    break;
-  default:
-    break;
-  }
-
-  return iRsl;   
-}
-
-void vInitMenu(SDL_Rect *pSDL_RECT_Mn, int iOptionCt){
-  SDL_Rect *pSDL_RECT_Wrk;
-  int iInitCt = 0;
-  int iMenuOptWidth = iOptionCt*20;
-  int iMenuOptHeight = iMenuOptWidth;
-  for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; 
-        iInitCt < iOptionCt; 
-        pSDL_RECT_Wrk++, iInitCt++ ){
-    pSDL_RECT_Wrk->x= WINDOW_WIDTH  / 2 - iMenuOptWidth;
-    pSDL_RECT_Wrk->y= WINDOW_HEIGHT / 2 - iMenuOptHeight;
-    iMenuOptHeight -=20;
-    pSDL_RECT_Wrk->w = 100;
-    pSDL_RECT_Wrk->h = 25;
-  }
-}
-
-void vDrawMenu(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Mn, int iOptionCt){
-  int iInitCt = 0;
-  SDL_Rect *pSDL_RECT_Wrk;
-  for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; 
-        iInitCt < iOptionCt; 
-        pSDL_RECT_Wrk++, iInitCt++) {
-    if (iInitCt == giSelectedItem) {
-      SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    }
-    else {
-      SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    }
-    SDL_RenderFillRect(renderer, pSDL_RECT_Wrk);
-  }
-}
-
 int iHandleEventKey(SDL_Event *pSDL_EVENT_Ev){
+  vMENU_HandleKey(pSDL_EVENT_Ev->key.keysym.sym);
+
   switch (pSDL_EVENT_Ev->key.keysym.sym) {
     case SDLK_UP:
-      giSelectedItem--;
-      if (giSelectedItem < 0) {
-          giSelectedItem = MAX_MENU_OPTIONS-1;
-      }
       break;
     case SDLK_DOWN:
-      giSelectedItem++;
-      if (giSelectedItem >= MAX_MENU_OPTIONS) {
-          giSelectedItem = 0;
-      }
       break;
-    case SDLK_RETURN:
-      // Handle menu item selection
+    case SDLK_RETURN:  
+      break;
+    default:
       break;
   }
   return 0;
 }
 
-int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_Menu, int iXCursor, int iYCursor){
+int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCursor){
   int iInitCt = 0;
   SDL_Rect *pSDL_RECT_Wrk;
-  for ( pSDL_RECT_Wrk = pSDL_RECT_Menu; 
+  for ( pSDL_RECT_Wrk = pSDL_RECT_MenuData; 
         iInitCt < MAX_MENU_OPTIONS; 
         pSDL_RECT_Wrk++, iInitCt++){
     if ( DEBUG_MORE_MSGS ) {
       char szMsg[256];
       sprintf(szMsg,
-      "SDL_MOUSEMOTION iXCursor[%d]iYCursor[%d] RECTX[%d] RECTY[%d]\n ", 
+      "SDL_MOUSEMOTION Cursor[X,Y]:[%d,%d] Rect[X,Y]:[%d,%d]\n ", 
         iXCursor,
         iYCursor,
         pSDL_RECT_Wrk->x,
@@ -552,8 +309,10 @@ int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_Menu, int iXCursor, int iYCursor){
         && iXCursor <= pSDL_RECT_Wrk->x + pSDL_RECT_Wrk->w 
         && iYCursor >= pSDL_RECT_Wrk->y 
         && iYCursor <= pSDL_RECT_Wrk->y + pSDL_RECT_Wrk->h) {
-      vTraceMsg("Hover\n");
-      giSelectedItem = iInitCt;
+      if ( DEBUG_MORE_MSGS )
+        vTraceMsg("Hovered!\n");
+        
+      giMENU_SelectedItem = iInitCt;
       return REDRAW_IMAGE;
     }
   }
@@ -578,8 +337,8 @@ int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
   int iX, iY;
   SDL_GetMouseState(&iX, &iY);
 
-  if ( iCheckMenuInteraction(pSDL_RECT_Menu, iX, iY) == REDRAW_IMAGE )
-    return REDRAW_IMAGE;
+  // if ( iCheckMenuInteraction(pSDL_RECT_Menu, iX, iY) == REDRAW_IMAGE )
+  //   return REDRAW_IMAGE;
 
   if ( iCheckButtonInteraction(pSDL_EVENT_Ev, iX, iY) == REDRAW_IMAGE )
     return REDRAW_IMAGE;
@@ -611,10 +370,12 @@ int SDL_main(int argc, char *argv[]){
   SDL_Rect SDL_RECT_ButtonFireLaser;
   SDL_Rect SDL_RECT_ButtonUndoLast;
   SDL_Rect SDL_RECT_ButtonConfirmAction;
-  SDL_Rect *pSDL_RECT_Menu;
+  SDL_Rect *pSDL_RECT_Menu = NULL;
   SDL_Window* window;
   SDL_Renderer* renderer;
-  va_list pvlst_ArgList;
+  SDL_Renderer* pSDL_Renderer;
+  // int iVArgsCt;
+  // va_list pvlst_ArgList;
 
   vInitLogs(argv[0]);
   
@@ -645,8 +406,11 @@ int SDL_main(int argc, char *argv[]){
     SDL_WINDOW_SHOWN
   );
 
+  if ( DEBUG_MSGS ) vTraceMsg("SDL_CreateWindow --- Ok\n");
+
   // Create a renderer
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  pSDL_Renderer = renderer;
 
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
@@ -657,14 +421,12 @@ int SDL_main(int argc, char *argv[]){
 
   vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
 
-  // Calculate the size of the squares
-  giSquareSize = COL_RATIO;
-
   // Generate a unique path.
-  iGenerateRandomPath();
+  iBOARD_GenerateRandomPath();
+  
 
   // Clear structure
-  vInitButtonList();
+  // vInitButtonList();
   
   // Set Button Sizes
   // Walk Forward
@@ -682,14 +444,14 @@ int SDL_main(int argc, char *argv[]){
   // Confirm Action
   vSetButtonDimensions(&SDL_RECT_ButtonConfirmAction, iXTranslation);
   // Square Edges
-  vSetBoardSquareBorder(renderer);
+  vDrawSquareEdges(renderer);
   
   // Add them to list
-  iAddButtonToList(&SDL_RECT_ButtonArrowRight   , FORWARD);
-  iAddButtonToList(&SDL_RECT_ButtonTurnArrow    , TURN);
-  iAddButtonToList(&SDL_RECT_ButtonFireLaser    , FIRE_LASER) ;
-  iAddButtonToList(&SDL_RECT_ButtonUndoLast     , ERASE);
-  iAddButtonToList(&SDL_RECT_ButtonConfirmAction, CONFIRM);
+  // iBUTTON_AddToList(&SDL_RECT_ButtonArrowRight   , FORWARD);
+  // iBUTTON_AddToList(&SDL_RECT_ButtonTurnArrow    , TURN);
+  // iBUTTON_AddToList(&SDL_RECT_ButtonFireLaser    , FIRE_LASER) ;
+  // iBUTTON_AddToList(&SDL_RECT_ButtonUndoLast     , ERASE);
+  // iBUTTON_AddToList(&SDL_RECT_ButtonConfirmAction, CONFIRM);
 
   SDL_RenderPresent(renderer);
 
@@ -703,18 +465,18 @@ int SDL_main(int argc, char *argv[]){
 
   vInitializeImagePosition(&SDL_RECT_Player);
 
-  pSDL_RECT_Menu = (SDL_Rect *) malloc(MAX_MENU_OPTIONS*sizeof(SDL_Rect));
+  //pSDL_RECT_Menu = (SDL_Rect *) malloc(MAX_MENU_OPTIONS*sizeof(SDL_Rect));
   
   // vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
 
   gstPlayer.pSDL_RECT_Player = &SDL_RECT_Player;
 
-  vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-  vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-  vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-  vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-  vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);  
-  
+  // vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+  // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+  // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+  // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+  // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);  
+  // 
   iGXRF_Add2RenderList(
                         renderer,
                         TRUE,
@@ -722,24 +484,26 @@ int SDL_main(int argc, char *argv[]){
                         &SDL_RECT_ButtonArrowRight,
                         vDrawButton,
                         3,
-                        &pvlst_ArgList
+                        pSDL_Renderer,
+                        &SDL_RECT_ButtonArrowRight,
+                        BUTTON_DIRECTION
                       );
   // Main loop
   SDL_Event event;
   while (gbRunning) {
 
     // The player has choose its route already?
-    while (gbCheckActions){
+    while (gbACTION_Check){
       // yes ...
-      if (giCheckActions > 0)
+      if (giACTION_AssertedSteps > 0)
         SDL_Delay(1000);
 
-      if ( giCheckActions >= giActionCt ){
-        gbCheckActions = FALSE;
+      if ( giACTION_AssertedSteps >= giACTION_StepCtr ){
+        gbACTION_Check = FALSE;
         break;
       }
 
-      iRedrawAction = iExecuteActionFromList(giCheckActions++);
+      iRedrawAction = iACTION_ExecuteStep(giACTION_AssertedSteps++);
       if  ( iRedrawAction < 0 )
         gbRunning = FALSE;
 
@@ -748,18 +512,18 @@ int SDL_main(int argc, char *argv[]){
         char szMsg[256];
         sprintf(szMsg,
       "iExecuteActionFromList Rsl(Redraw)=%d"
-      " gbRunning=%d giCheckActions=%d giActionCt=%d\n", 
+      " gbRunning=%d giACTION_AssertedSteps=%d giACTION_StepCtr=%d\n", 
           iRedrawAction, 
           gbRunning,
-          giCheckActions,
-          giActionCt
+          giACTION_AssertedSteps,
+          giACTION_StepCtr
         );
         vTraceMsg(szMsg);
       }
       break;
     }
 
-    while(!gbCheckActions && SDL_PollEvent(&event)){
+    while(!gbACTION_Check && SDL_PollEvent(&event)){
       // The player hasn't choose its route yet,
       // so we must watch all interaction events... 
       switch (event.type) {
@@ -797,7 +561,7 @@ int SDL_main(int argc, char *argv[]){
    
     SDL_RenderClear(renderer);
     
-    iColorBoard(renderer); 
+    iBOARD_Colorfy(renderer); 
     
     // vSetHUDRectSize(&SDL_RECT_Hud);
     // vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
@@ -811,12 +575,12 @@ int SDL_main(int argc, char *argv[]){
     
     vGXRF_RenderObject(&SDL_RECT_ButtonArrowRight);
     // vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-    vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-    vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
+    // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+    // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+    // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
 
-    SDL_RenderCopy(renderer, pSDL_TXTR_ImageFoward, NULL, &SDL_RECT_ButtonArrowRight);
+    // SDL_RenderCopy(renderer, pSDL_TXTR_ImageFoward, NULL, &SDL_RECT_ButtonArrowRight);
     // SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
     // SDL_RenderCopy(renderer, pSDL_TXTR_ImageRotate, NULL, &SDL_RECT_ButtonTurnArrow);
 
@@ -824,7 +588,7 @@ int SDL_main(int argc, char *argv[]){
     // Update the screen
     SDL_RenderPresent(renderer);
     
-    // Vamos sincronizar o refreshrate..
+    // Vamos sincronizar o refreshrate..d
     ui64ElapsedTime -= SDL_GetTicks64();
     if (ui64ElapsedTime <= VSYNC_TIME) SDL_Delay(VSYNC_TIME - ui64ElapsedTime);
     
@@ -834,8 +598,8 @@ int SDL_main(int argc, char *argv[]){
   
   // Clean up
   iGXRF_End();
-  vFreeButtonList();
-  free(pSDL_RECT_Menu);
+  vBUTTON_FreeList();
+  // free(pSDL_RECT_Menu);
   // Don't forget to destroy the texture when you're done with it
   SDL_DestroyTexture(pSDL_TXTR_Hud);
   SDL_DestroyTexture(pSDL_TXTR_ButtonHud);
