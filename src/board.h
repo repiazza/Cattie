@@ -31,9 +31,9 @@
         char szWrk[8];
         memset(szWrk, 0, sizeof(szWrk));
         sprintf(szWrk, "[%d] ", giBOARD_Main[ii][jj]);
-        vTraceMsg(szWrk);
+        vTraceMsgNoNL(szWrk);
       }
-      vTraceMsg("\n");
+      vTraceMsgNoNL("\n");
     }
     vTraceMsg("========================\n");
   }

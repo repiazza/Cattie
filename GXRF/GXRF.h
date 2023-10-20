@@ -5,7 +5,6 @@
 * Written by repiazza@gmail.com in January 2023 
 *
 */
-
 #ifndef GXRF_H_INC
   #define GXRF_H_INC
   #include <SDL2/SDL.h>
@@ -25,24 +24,33 @@
     SDL_TTF,
     SDL_TEXTURE,
   } eSDLT_Renderizable;
-
-  typedef int (GXRFTYPES)[GRX_SDL_TYPES];
-  
-  // GXRFTYPES szSDLTypes = {
-  //   sizeof(SDL_Rect),       
-  //   sizeof(SDL_Surface),    
-  //   sizeof(TTF_Font *),      
-  //   sizeof(SDL_Texture *)   
-  // };
-
+// 
+//   typedef int (GXRFTYPES)[GRX_SDL_TYPES];
+//   
+//   GXRFTYPES szSDLTypes = {
+//     sizeof(SDL_Rect),       
+//     sizeof(SDL_Surface),    
+//     sizeof(TTF_Font *),      
+//     sizeof(SDL_Texture *)   
+//   };
   // Creates the generic render callback function
   typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer, ...);
 
-  // Renderizable Object List
+  // // Renderizable Object List
   typedef struct STRUCT_GXRF_RENDER_LIST{
     struct STRUCT_GXRF_RENDER *pstGXRF_FirstRenderizable;
     struct STRUCT_GXRF_RENDER *pstGXRF_LastRenderizable;
   }STRUCT_GXRF_RENDER_LIST, *PSTRUCT_GXRF_RENDER_LIST;
+// 
+  typedef struct STRUCT_GXRF_OBJFNC_ARG_LIST {
+    struct STRUCT_GXRF_OBJFNC_ARG *pstGXRF_FirstObjFncArg;
+    struct STRUCT_GXRF_OBJFNC_ARG *pstGXRF_LastObjFncArg;
+  } STRUCT_GXRF_OBJFNC_ARG_LIST, *PSTRUCT_GXRF_OBJFNC_ARG_LIST;
+
+  typedef struct STRUCT_GXRF_OBJFNC_ARG {
+    void *vArg;
+    struct STRUCT_GXRF_OBJFNC_ARG *pNextArg;
+  } STRUCT_GXRF_OBJFNC_ARG, *PSTRUCT_GXRF_OBJFNC_ARG;
 
   // Renderizable Objects.
   //  bEnabled2Render - 1 Render | 0 Do nothing
@@ -56,6 +64,7 @@
     void *vSDL_ObjToRender;
     GXRFCALLBACK vpfnRenderMethod;
     va_list vlstRenderArgs;
+    STRUCT_GXRF_OBJFNC_ARG *pstArgList;
     struct STRUCT_GXRF_RENDER *pNextObj;
   } STRUCT_GXRF_RENDER, *PSTRUCT_GXRF_RENDER;
 
@@ -78,7 +87,7 @@
     void *vRenderObject, 
     void *vpfnRenderFnc,
     int iVArgsCt,
-       ...);
+  ...);
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
   STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType (STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy);
 

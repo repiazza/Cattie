@@ -4,7 +4,12 @@
 #include <trace.h>
 
 char gszLogTitle[_MAX_PATH];
-
+int giNoNL = FALSE;
+void vTraceMsgNoNL(char *szMsg){
+  giNoNL = TRUE;
+  vTraceMsg(szMsg);
+  giNoNL = FALSE;
+}
 void vTraceMsg(char *szMsg){
   FILE *pfLog;
   char szDateTimeNow_us[128];
@@ -18,10 +23,10 @@ void vTraceMsg(char *szMsg){
 
   memset(szDateTimeNow_us, 0, sizeof(szDateTimeNow_us));
   sprintf(szDateTimeNow_us,
-"[%02d/%02d/%04d %02d:%02d:%02d.%03ld] ",
+"[%02d/%02d/%04d %02d:%02d:%02d.%3.3ld] ",
     (int) st_tm_Now->tm_mday, 
     (int) st_tm_Now->tm_mon+1, 
-    (int) st_tm_Now->tm_mday,
+    (int) st_tm_Now->tm_year+1900,
     (int) st_tm_Now->tm_hour,
     (int) st_tm_Now->tm_min,
     (int) st_tm_Now->tm_sec,
@@ -30,10 +35,14 @@ void vTraceMsg(char *szMsg){
 
   if ( (pfLog=fopen(gszLogTitle, "a+")) == NULL )
     return;
+  if ( giNoNL == TRUE )
+    fprintf(pfLog, "%s", szMsg);
+  else 
+    fprintf(pfLog, "%s%s\n", szDateTimeNow_us, szMsg);
 
-  fprintf(pfLog, "%s", szMsg);
   fclose(pfLog);
 }
+
 void vTracePid(char *szMsg, int iMsgLen){
   char *pszMyMsg;
   int iNewMsgLen = iMsgLen + 16;

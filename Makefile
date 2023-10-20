@@ -7,7 +7,7 @@
 
 CC    = gcc
 
-CCOPT = -Wall
+CCOPT = -Wall -Wextra
 
 INCDIR= -I.
 INCDIR+= -Isrc/
