@@ -4,7 +4,7 @@
  *
  * Written by repiazza@gmail.com in January 2023 
  * 
- * $id  $
+ * $Id$
  */
 
 #ifndef GXRF_H_INC
