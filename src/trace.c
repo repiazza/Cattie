@@ -3,13 +3,30 @@
 #include <stdlib.h>
 #include <trace.h>
 
+#ifndef TRUE
+  #define TRUE 1
+#endif /* TRUE */
+
+#ifndef FALSE
+  #define FALSE 0
+#endif /* FALSE */
+
+#ifdef LINUX
+  #include <sys/time.h>
+  #include <sys/types.h>  
+  #include <unistd.h>  
+#endif /* LINUX */
+
 char gszLogTitle[_MAX_PATH];
+
 int giNoNL = FALSE;
+
 void vTraceMsgNoNL(char *szMsg){
   giNoNL = TRUE;
   vTraceMsg(szMsg);
   giNoNL = FALSE;
 }
+
 void vTraceMsg(char *szMsg){
   FILE *pfLog;
   char szDateTimeNow_us[128];
@@ -71,3 +88,4 @@ void vInitLogs(char *argv0){
   }
   strcat(gszLogTitle, ".log");
 }
+

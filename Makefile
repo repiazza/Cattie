@@ -12,14 +12,16 @@ CCOPT = -Wall -Wextra
 INCDIR= -I.
 INCDIR+= -Isrc/
 
-SDLADDONLIBS = -lSDL2main -lSDL2 -lSDL_ttf -lSDL2_image
+SDLADDONLIBS = -lSDL2main -lSDL2 -lSDL2_image
 
 ifdef _WIN32
+	SDLADDONLIBS += -lSDL_ttf 
 	CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) -mwindows -D_WIN32
 	LIBS  =  -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) -mwindows -D_WIN32
 endif
 
 ifdef LINUX
+	SDLADDONLIBS += -lSDL2_ttf
 	CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) -DLINUX
 	LIBS  =  -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) -DLINUX
 endif

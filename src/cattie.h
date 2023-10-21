@@ -3,6 +3,9 @@
 */
 #ifndef _CATTIE_H_INC
   #define _CATTIE_H_INC
+
+  #include <getopt.h>
+
   #ifndef GXRF_H_INC
     #include "GXRF/GXRF.h"
   #endif
@@ -35,6 +38,13 @@
 
   #define _MAX_IMG_PATH 4
 
+  #define DEVELOPER     "Renato Fermi & Gustavo Bacagine"
+  #define VERSION       "1.0"
+  #define COPYRIGHT     "2023 (C)"
+  #define RFERMI_MAIL   "repiazza@gmail.com"
+  #define BACAGINE_MAIL "gustavo.bacagine@protonmail.com"
+  #define DESCRIPTION   "cattie logic game"
+  
   char *ppszImagePath[] = {
     "img/cat2.png",
     "img/forward.png",
@@ -76,6 +86,59 @@
   int iWalk();
   int iTurn();
   int iFireLaser();  
+
+  /******************************************************************************
+   *                                                                            *
+   *                           Command Line Options                             *
+   *                                                                            *
+   ******************************************************************************/
+
+  /**
+   * Structure that represnts
+   * command line arguments
+   */
+  typedef struct STRUCT_COMMAND_LINE
+  {
+    char szLogFileName  [_MAX_PATH];
+    char szDebugLevel   [256];
+  } STRUCT_COMMAND_LINE;
+
+  /**
+   * Command line structure and strings
+   */
+  static struct option astCmdOpt[] = {
+    { "help"         , no_argument      ,    0, 'h' },
+    { "version"      , no_argument      ,    0, 'v' },
+    { "trace"        , required_argument,    0, 't' },
+    { "debug-level"  , required_argument,    0, 'd' },
+    { NULL           , 0                , NULL,  0  }
+  };
+
+  /**
+   * Arguments of command line options useds 
+   * in usage message of program
+   */
+  static const char *pszCmdArguments[] = {
+    NULL,
+    NULL,
+    "file",
+    "number",
+    NULL,
+    "file",
+    NULL
+  };
+
+  /**
+   * Help messages that showed in usage message
+   * of program
+   */
+  static const char *pszCmdMessages[] = {
+    "Show this message and exit",
+    "Show the version and exit",
+    "<file> is the path of the debug file",
+    "<number> is the level of debug level",
+    NULL
+  };
 
 #endif /* _CATTIE_H_INC */
 

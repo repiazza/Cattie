@@ -16,6 +16,8 @@
   #define _MAX_PATH 256
 #endif
 
+typedef int bool;
+
 /**
  * 
  * Globals
@@ -31,6 +33,12 @@ int giACTION_List[_MAX_MOV_ACTION];
 int giACTION_StepCtr = 0;
 int giACTION_AssertedSteps = 0;
 int giMENU_SelectedItem = 0;
+
+static const char *kszOptStr = "hvt:d:cC:";
+
+/* Receive the name of program */
+static const char *kpszProgramName;
+STRUCT_COMMAND_LINE stCmdLine;
 
 /**
  * 
@@ -79,6 +87,8 @@ void vDrawSquareEdges(SDL_Renderer *renderer){
 }
 
 void vDrawCommandHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL_RECT_Hud){
+  (void) texture;
+
   SDL_SetRenderTarget(renderer, NULL);
   SDL_SetRenderDrawColor(renderer, 17, 84, 143, 96);
   SDL_RenderFillRect(renderer, pSDL_RECT_Hud);
@@ -87,6 +97,8 @@ void vDrawCommandHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSD
 }
 
 void vDrawButtonHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL_RECT_Hud){
+  (void) texture;
+
   SDL_SetRenderTarget(renderer, NULL);
   SDL_SetRenderDrawColor(renderer, 128, 4, 0, 128);
   SDL_RenderFillRect(renderer, pSDL_RECT_Hud);
@@ -324,12 +336,103 @@ int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCurs
 
 int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
   int iX, iY;
+
+  (void) pSDL_RECT_Menu;
+
   SDL_GetMouseState(&iX, &iY);
 
   if ( iBUTTON_CheckInteraction(pSDL_EVENT_Ev, iX, iY) == REDRAW_IMAGE )
     return REDRAW_IMAGE;
 
   return 0;
+}
+
+void vPrintUsage(void)
+{
+  int ii = 0;
+  
+  printf("Usage %s [options] <arguments>\n\n"
+         "%s\n\n"
+         "Options:\n", kpszProgramName, DESCRIPTION);
+  while(astCmdOpt[ii].name)
+  {
+    if(astCmdOpt[ii].has_arg == required_argument)
+    {
+      printf("  --%s=<%s>, -%c <%s>\n"
+             "    %s\n\n", astCmdOpt[ii].name, pszCmdArguments[ii],
+                           astCmdOpt[ii].val, pszCmdArguments[ii],
+                           pszCmdMessages[ii]);
+    }
+    else
+    {
+      printf("  --%s, -%c\n"
+             "    %s\n\n", astCmdOpt[ii].name, astCmdOpt[ii].val,
+                           pszCmdMessages[ii]);
+    }
+
+    ii++;
+  }
+}
+
+void vPrintVersion(void)
+{
+  printf("%s %s\n"
+         "Build in %s %s\n"
+         "%s %s\n"
+         "For reporting bugs, send a email to:\n"
+         "<%s>\n" 
+         "<%s>\n", kpszProgramName, 
+                   VERSION,
+                   __DATE__,
+                   __TIME__,
+                   COPYRIGHT,
+                   DEVELOPER,
+                   RFERMI_MAIL,
+                   BACAGINE_MAIL
+  );
+}
+
+bool bCommandLineIsOK(int argc, char **argv)
+{
+  int iCmdLineOpt = 0;
+  
+  /**
+   * Used to get the final of
+   * conversion of strtol
+   */
+  char *pchEndPtr; 
+
+  while((iCmdLineOpt = getopt_long(argc, argv, kszOptStr, astCmdOpt, NULL )) != -1)
+  {
+    switch(iCmdLineOpt)
+    {
+      case 'h':
+        vPrintUsage();
+        exit(EXIT_SUCCESS);
+      case 'v':
+        vPrintVersion();
+        exit(EXIT_SUCCESS);
+      case 't':
+        sprintf(stCmdLine.szLogFileName, "%s", optarg);
+        break;
+      case 'd':
+        sprintf(stCmdLine.szDebugLevel, "%s", optarg);
+
+        strtol(stCmdLine.szDebugLevel, &pchEndPtr, 10);
+
+        if(*pchEndPtr != '\0')
+        {
+          return FALSE;
+        }
+
+        break;
+      case '?':
+      default:
+        return FALSE;
+    }
+  }
+
+  return TRUE;
 }
 
 /**
@@ -362,9 +465,24 @@ int SDL_main(int argc, char *argv[]){
   SDL_Renderer* pSDL_Renderer;
   // int iVArgsCt;
   // va_list pvlst_ArgList;
+  
+  (void) SDL_RECT_ButtonTurnArrow;
+  (void) pSDL_Renderer;
+  (void) SDL_RECT_ButtonUndoLast;
+  (void) SDL_RECT_ButtonFireLaser;
+  (void) SDL_RECT_ButtonTurnArrow;
+  (void) SDL_RECT_ButtonConfirmAction;
+  
+  kpszProgramName = argv[0];
+
+  if(!bCommandLineIsOK(argc, argv))
+  {
+    vPrintUsage();
+    return -1;
+  }
 
   vInitLogs(argv[0]);
-  
+   
   if ( DEBUG_MSGS ) vTraceMsg("SDL_Main --- Init\n");
 
   SDL_SetMainReady();
@@ -467,17 +585,17 @@ int SDL_main(int argc, char *argv[]){
   // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
   // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);  
   // 
-  iGXRF_Add2RenderList(
+  /*iGXRF_Add2RenderList(
     renderer,
     TRUE,
     SDL_RECT,
     &SDL_RECT_ButtonArrowRight,
-    pszFmt,
+    //pszFmt,
     vDrawButton,
     2,
     &SDL_RECT_ButtonArrowRight,
     BUTTON_DIRECTION
-  );
+  );*/
   // Main loop
   SDL_Event event;
   while (gbRunning) {
@@ -564,7 +682,7 @@ int SDL_main(int argc, char *argv[]){
     // vDrawButtons(renderer);
     
     // vGXRF_RenderAll();
-    vGXRF_RenderObject(&SDL_RECT_ButtonArrowRight);
+    //vGXRF_RenderObject(&SDL_RECT_ButtonArrowRight);
     //  vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
     // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
     // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);

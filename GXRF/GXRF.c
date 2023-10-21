@@ -256,6 +256,11 @@ int iGXRF_Add2RenderList(
   va_list vlstFnArgList;
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   int ii;
+
+  (void) iVArgsCt;
+  (void) vlstFnArgList;
+  (void) ii;
+
   if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) != NULL )
     return RENDERIZABLE_EXISTS; // Already Exists 
 
@@ -336,7 +341,7 @@ void vGXRF_FreeRenderList(){
 }
 
 int iGXRF_End(){
-  vGXRF_FreeRenderList();
+  //vGXRF_FreeRenderList();
   return 0;
 }
 
