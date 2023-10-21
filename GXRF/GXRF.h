@@ -1,11 +1,12 @@
 /*
-*
-* GXRF Framework header file for SDL2
-*
-* Written by repiazza@gmail.com in January 2023 
-*
-* $id $
-*/
+ *
+ * GXRF Framework header file for SDL2
+ *
+ * Written by repiazza@gmail.com in January 2023 
+ * 
+ * $id  $
+ */
+
 #ifndef GXRF_H_INC
   #define GXRF_H_INC
   #include <SDL2/SDL.h>
