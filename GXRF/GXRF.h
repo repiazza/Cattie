@@ -6,7 +6,7 @@
  * 
  * $Id $
  */
-
+ 
 #ifndef GXRF_H_INC
   #define GXRF_H_INC
   #include <SDL2/SDL.h>
