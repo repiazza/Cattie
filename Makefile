@@ -37,7 +37,8 @@ CATTIE_EXEC=cattie
 OBJS += \
 	cattie.o \
 	src/trace.o \
-	GXRF/GXRF.o 
+	GXRF/GXRF.o \
+	src/cmdline.o
 
 all: clean $(CATTIE_EXEC)
 
@@ -49,3 +50,25 @@ cattie: $(OBJS)
 
 %.o: %.c
 	$(CC) -c $(CCOPT) $(INCDIR) $< -o $@
+
+ifdef LINUX
+install:
+	./install_linux.sh
+
+uninstall:
+	./uninstall_linux.sh
+endif
+
+ifdef _WIN32
+install:
+	./install_win32.sh
+
+uninstall:
+	./uninstall_win32.sh
+endif
+
+distclean: clean
+	rm -rvf *.log
+
+.PHONY: all clean install uninstall distclean
+

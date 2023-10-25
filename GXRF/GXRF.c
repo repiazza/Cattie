@@ -8,24 +8,16 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <time.h>
+#include "consts.h"
+
 #ifndef GXRF_H_INC
   #include "GXRF.h"
 #endif
 
 #ifdef _WIN32
   #include <windows.h>
-  #define getpid _getpid 
 #elif LINUX
   #include <unistd.h>
-  #define SDL_main main
-#endif
-
-#ifndef FALSE
-  #define FALSE 0
-#endif
-
-#ifndef TRUE
-  #define TRUE  1
 #endif
 
 // globals
@@ -257,9 +249,9 @@ int iGXRF_Add2RenderList(
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   int ii;
 
-  (void) iVArgsCt;
-  (void) vlstFnArgList;
-  (void) ii;
+  UNUSED(iVArgsCt);
+  UNUSED(vlstFnArgList);
+  UNUSED(ii);
 
   if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vRenderObject)) != NULL )
     return RENDERIZABLE_EXISTS; // Already Exists 
