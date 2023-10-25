@@ -31,6 +31,13 @@ int giACTION_AssertedSteps = 0;
 int giMENU_SelectedItem = 0;
 STRUCT_PLAYER gstPlayer;
 
+char *ppszInstalledImagePath[] = {
+    "/usr/share/cattie/img/cat2.png",
+    "/usr/share/cattie/img/forward.png",
+    "/usr/share/cattie/img/laser.png",
+    "/usr/share/cattie/img/rotate2.png"
+};
+
 char *ppszImagePath[] = {
     "img/cat2.png",
     "img/forward.png",
@@ -48,6 +55,56 @@ STRUCT_COMMAND_LINE stCmdLine;
  * Procedures and functions
  * 
  **/
+
+/**
+ * Open a file
+ *
+ * fppFile: file pointer
+ * kpszFileName: the name of file
+ * kpszMode: mode used in fopen
+ */
+bool bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode)
+{
+  if((*fppFile = fopen(kpszFileName, kpszMode)) == NULL)
+  {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Close file safety
+ */
+bool bCloseFile(FILE **fppFile)
+{
+  if(*fppFile != NULL)
+  {
+    fclose(*fppFile);
+    *fppFile = NULL;
+
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Check if file exists
+ */
+bool bFileExist(const char *kpszFileName)
+{
+  FILE *fpFile;
+  
+  if(!bOpenFile(&fpFile, kpszFileName, "r"))
+  {
+    return FALSE;
+  }
+  
+  bCloseFile(&fpFile);
+
+  return TRUE;
+}
 
 void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
   if(DEBUG_MSGS) vTraceBegin();
@@ -624,11 +681,25 @@ int SDL_main(int argc, char *argv[]){
   // iBUTTON_AddToList(&SDL_RECT_ButtonUndoLast     , ERASE);
   // iBUTTON_AddToList(&SDL_RECT_ButtonConfirmAction, CONFIRM);
   SDL_RenderPresent(renderer);
+  
+  /**
+   * If the game is not installed, get the images of the current directory
+   */
+  if(bFileExist(ppszInstalledImagePath[PLAYER_IMG_PATH_IDX]))
+  {
+    pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[PLAYER_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[FORWARD_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszInstalledImagePath[LASER_IMG_PATH_IDX]);
+    pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[ROTATE_IMG_PATH_IDX]); 
+  }
+  else
+  {
+    pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszImagePath[PLAYER_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszImagePath[FORWARD_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszImagePath[LASER_IMG_PATH_IDX]);
+    pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszImagePath[ROTATE_IMG_PATH_IDX]); 
+  }
 
-  pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszImagePath[PLAYER_IMG_PATH_IDX]); 
-  pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszImagePath[FORWARD_IMG_PATH_IDX]); 
-  pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszImagePath[LASER_IMG_PATH_IDX]);
-  pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszImagePath[ROTATE_IMG_PATH_IDX]); 
   pSDL_TXTR_Hud          = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_Hud.w, SDL_RECT_Hud.h);
   pSDL_TXTR_ButtonHud    = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_ButtonHud.w, SDL_RECT_ButtonHud.h);
   pSDL_TXTR_SquareBorder = createSquareTexture(renderer); 

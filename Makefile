@@ -52,7 +52,7 @@ cattie: $(OBJS)
 	$(CC) -c $(CCOPT) $(INCDIR) $< -o $@
 
 ifdef LINUX
-install:
+install: all
 	./install_linux.sh
 
 uninstall:
@@ -60,7 +60,7 @@ uninstall:
 endif
 
 ifdef _WIN32
-install:
+install: all
 	./install_win32.sh
 
 uninstall:
