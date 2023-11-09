@@ -1,10 +1,9 @@
-/*
-* Window
-*/
+/**
+ * Window
+ */
+
 #ifndef _CATTIE_H_INC
   #define _CATTIE_H_INC
-
-  #include <getopt.h>
 
   #ifndef GXRF_H_INC
     #include "GXRF/GXRF.h"
@@ -16,14 +15,6 @@
 
   #define REDRAW_IMAGE 1
   #define ERROR_WALKING 10
-
-  #ifndef FALSE
-    #define FALSE 0
-  #endif
-
-  #ifndef TRUE
-    #define TRUE  1
-  #endif
 
   #define VSYNC_TIME 16.666666666 //tempo em ms para atualização em 60 FPS
 
@@ -40,17 +31,12 @@
 
   #define DEVELOPER     "Renato Fermi & Gustavo Bacagine"
   #define VERSION       "1.0"
-  #define COPYRIGHT     "2023 (C)"
+  #define COPYRIGHT     "Copyright (C) 2023"
   #define RFERMI_MAIL   "repiazza@gmail.com"
   #define BACAGINE_MAIL "gustavo.bacagine@protonmail.com"
   #define DESCRIPTION   "cattie logic game"
   
-  char *ppszImagePath[] = {
-    "img/cat2.png",
-    "img/forward.png",
-    "img/laser.png",
-    "img/rotate2.png"
-  };
+  extern char *ppszImagePath[];
 
   typedef enum SquareType{
     INVALID_SQUARE = -1,
@@ -81,64 +67,11 @@
     SDL_Rect *pSDL_RECT_Player;
   } STRUCT_PLAYER;
 
-  STRUCT_PLAYER gstPlayer;
+  extern STRUCT_PLAYER gstPlayer;
 
   int iWalk();
   int iTurn();
   int iFireLaser();  
-
-  /******************************************************************************
-   *                                                                            *
-   *                           Command Line Options                             *
-   *                                                                            *
-   ******************************************************************************/
-
-  /**
-   * Structure that represnts
-   * command line arguments
-   */
-  typedef struct STRUCT_COMMAND_LINE
-  {
-    char szLogFileName  [_MAX_PATH];
-    char szDebugLevel   [256];
-  } STRUCT_COMMAND_LINE;
-
-  /**
-   * Command line structure and strings
-   */
-  static struct option astCmdOpt[] = {
-    { "help"         , no_argument      ,    0, 'h' },
-    { "version"      , no_argument      ,    0, 'v' },
-    { "trace"        , required_argument,    0, 't' },
-    { "debug-level"  , required_argument,    0, 'd' },
-    { NULL           , 0                , NULL,  0  }
-  };
-
-  /**
-   * Arguments of command line options useds 
-   * in usage message of program
-   */
-  static const char *pszCmdArguments[] = {
-    NULL,
-    NULL,
-    "file",
-    "number",
-    NULL,
-    "file",
-    NULL
-  };
-
-  /**
-   * Help messages that showed in usage message
-   * of program
-   */
-  static const char *pszCmdMessages[] = {
-    "Show this message and exit",
-    "Show the version and exit",
-    "<file> is the path of the debug file",
-    "<number> is the level of debug level",
-    NULL
-  };
-
+  
 #endif /* _CATTIE_H_INC */
 

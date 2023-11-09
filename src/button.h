@@ -11,7 +11,7 @@ extern STRUCT_BUTTON_LIST gstButtonList;
 int iBUTTON_CheckInteraction(SDL_Event *pSDL_EVENT_Ev, int iXCursor, int iYCursor){
   STRUCT_BUTTON_LIST *pstWrkButtonList;
 
-  (void) pSDL_EVENT_Ev;
+  UNUSED(pSDL_EVENT_Ev);
 
   for ( pstWrkButtonList = &gstButtonList; pstWrkButtonList != NULL; pstWrkButtonList = pstWrkButtonList->pstNext){
     SDL_Rect *pSDL_RECT_Btn = pstWrkButtonList->pSDL_RECT_Button;

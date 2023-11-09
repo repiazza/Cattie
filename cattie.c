@@ -5,18 +5,14 @@
 #include <menu.h>
 #include <action.h>
 #include <button.h>
+#include "consts.h"
+#include "cmdline.h"
 
 #ifdef _WIN32
   #include <windows.h>
-  #define getpid _getpid 
-  #define gettimeofday mingw_gettimeofday
 #elif LINUX
   #include <unistd.h>
-  #define SDL_main main
-  #define _MAX_PATH 256
 #endif
-
-typedef int bool;
 
 /**
  * 
@@ -33,11 +29,25 @@ int giACTION_List[_MAX_MOV_ACTION];
 int giACTION_StepCtr = 0;
 int giACTION_AssertedSteps = 0;
 int giMENU_SelectedItem = 0;
+STRUCT_PLAYER gstPlayer;
 
-static const char *kszOptStr = "hvt:d:cC:";
+char *ppszInstalledImagePath[] = {
+    "/usr/share/cattie/img/cat2.png",
+    "/usr/share/cattie/img/forward.png",
+    "/usr/share/cattie/img/laser.png",
+    "/usr/share/cattie/img/rotate2.png"
+};
+
+char *ppszImagePath[] = {
+    "img/cat2.png",
+    "img/forward.png",
+    "img/laser.png",
+    "img/rotate2.png"
+};
 
 /* Receive the name of program */
-static const char *kpszProgramName;
+const char *gkpszProgramName;
+
 STRUCT_COMMAND_LINE stCmdLine;
 
 /**
@@ -46,30 +56,109 @@ STRUCT_COMMAND_LINE stCmdLine;
  * 
  **/
 
+/**
+ * Open a file
+ *
+ * fppFile: file pointer
+ * kpszFileName: the name of file
+ * kpszMode: mode used in fopen
+ */
+bool bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode)
+{
+  if((*fppFile = fopen(kpszFileName, kpszMode)) == NULL)
+  {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Close file safety
+ */
+bool bCloseFile(FILE **fppFile)
+{
+  if(*fppFile != NULL)
+  {
+    fclose(*fppFile);
+    *fppFile = NULL;
+
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Check if file exists
+ */
+bool bFileExist(const char *kpszFileName)
+{
+  FILE *fpFile;
+  
+  if(!bOpenFile(&fpFile, kpszFileName, "r"))
+  {
+    return FALSE;
+  }
+  
+  bCloseFile(&fpFile);
+
+  return TRUE;
+}
+
 void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
+  if(DEBUG_MSGS) vTraceBegin();
+  
   pSDL_RECT->x = iX;
   pSDL_RECT->y = iY;
   pSDL_RECT->w = iWidth;
   pSDL_RECT->h = iHeight;
+
+  if(DEBUG_MORE_MSGS)
+  {
+    vTraceVarArgs("pSDL_RECT->x = %d\n", pSDL_RECT->x = iX);
+    vTraceVarArgs("pSDL_RECT->y = %d\n",pSDL_RECT->y = iY);
+    vTraceVarArgs("pSDL_RECT->w = %d\n",pSDL_RECT->w = iWidth);
+    vTraceVarArgs("pSDL_RECT->h = %d\n", pSDL_RECT->h = iHeight);
+  }
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 SDL_Surface *pSDL_SRFC_LoadImage(char *pszImgPath){
   // Load the image
   SDL_Surface *SDL_SRFC_Img = IMG_Load(pszImgPath);
+  
+  if(DEBUG_MSGS) vTraceBegin();
+
   if (SDL_SRFC_Img == NULL) {
     printf("Error loading image: %s\n", IMG_GetError());
+
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
+
     return NULL;
   }
+
+  vTraceEnd();
+
   return SDL_SRFC_Img;
 }
 
 SDL_Texture *pSDL_TXTR_CreateTextureFromSurface(SDL_Renderer *renderer, SDL_Surface *pSDL_SRFC_Img){
   // Create the texture from the image
   SDL_Texture *SDL_TXTR_Texture = SDL_CreateTextureFromSurface(renderer, pSDL_SRFC_Img);
+
+  if(DEBUG_MSGS) vTraceBegin();
+
   if (SDL_TXTR_Texture == NULL) {
     printf("Error creating texture: %s\n", SDL_GetError());
+
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
+
     return NULL;
   }
+  
+  if(DEBUG_MSGS) vTraceEnd();
 
   return SDL_TXTR_Texture;
 }
@@ -77,6 +166,9 @@ SDL_Texture *pSDL_TXTR_CreateTextureFromSurface(SDL_Renderer *renderer, SDL_Surf
 void vDrawSquareEdges(SDL_Renderer *renderer){
   int ii;
   int jj;
+
+  if(DEBUG_MSGS) vTraceBegin();
+
   for (ii = 0; ii < BOARD_ROWS; ii++) {
     for (jj = 0; jj < BOARD_COLS; jj++) {
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -84,49 +176,82 @@ void vDrawSquareEdges(SDL_Renderer *renderer){
       SDL_RenderDrawRect(renderer, &SDLRECT_Edges);
     }
   }
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 void vDrawCommandHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL_RECT_Hud){
-  (void) texture;
+  UNUSED(texture);
+
+  if(DEBUG_MSGS) vTraceBegin();
 
   SDL_SetRenderTarget(renderer, NULL);
   SDL_SetRenderDrawColor(renderer, 17, 84, 143, 96);
   SDL_RenderFillRect(renderer, pSDL_RECT_Hud);
   SDL_SetRenderDrawColor(renderer, 17, 84, 143, 255);
   SDL_RenderDrawRect(renderer, pSDL_RECT_Hud);
+  
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 void vDrawButtonHUD(SDL_Renderer *renderer, SDL_Texture* texture, SDL_Rect *pSDL_RECT_Hud){
-  (void) texture;
+  UNUSED(texture);
+
+  if(DEBUG_MSGS) vTraceBegin();
 
   SDL_SetRenderTarget(renderer, NULL);
   SDL_SetRenderDrawColor(renderer, 128, 4, 0, 128);
   SDL_RenderFillRect(renderer, pSDL_RECT_Hud);
   SDL_SetRenderDrawColor(renderer, 128, 0, 0, 255);
   SDL_RenderDrawRect(renderer, pSDL_RECT_Hud);
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButtonType){
+  if(DEBUG_MSGS) vTraceBegin();
+
   if ( iButtonType == BUTTON_DIRECTION )
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
-  else if ( iButtonType == BUTTON_CONFIRM )
-    SDL_SetRenderDrawColor(renderer, 0, 200, 50, 255);
-  else if ( iButtonType == BUTTON_ERASE )
-    SDL_SetRenderDrawColor(renderer, 255, 255, 200, 255);
+  {
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_DIRECTION");
     
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
+  }
+  else if ( iButtonType == BUTTON_CONFIRM )
+  {
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_CONFIRM");
+    
+    SDL_SetRenderDrawColor(renderer, 0, 200, 50, 255);
+  }
+  else if ( iButtonType == BUTTON_ERASE )
+  {
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_ERASE");
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 200, 255);
+  }
+
   SDL_RenderFillRect(renderer, pSDL_RECT_Button);
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderDrawRect(renderer, pSDL_RECT_Button);
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 void vInitializeImagePosition(SDL_Rect *pSDL_Rect_Im){
   int iLocation = -2;
   int iDimensions = COL_RATIO;
+
+  if(DEBUG_MSGS) vTraceBegin();
+
   vInitRect(pSDL_Rect_Im, iLocation, iLocation, iDimensions, iDimensions);
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 eSqType iValidateSquare(int iX, int iY){
   eSqType eSquareType = -1;
+  
+  if(DEBUG_MSGS) vTraceBegin();
 
   if ( iX < 0 || iX >= BOARD_ROWS )
     return eSquareType;
@@ -141,6 +266,9 @@ eSqType iValidateSquare(int iX, int iY){
     );
     vTraceMsg(szMsg);
   }
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return eSquareType = giBOARD_Main[iX][iY]; 
 }
 
@@ -150,6 +278,8 @@ int iWalk(){
   int YOffset = 0;
   int XOffset = 0;
   
+  if(DEBUG_MSGS) vTraceBegin();
+
   if ( DEBUG_MSGS ) { 
     char szMsg[256];
     sprintf(szMsg,
@@ -160,6 +290,7 @@ int iWalk(){
     );
     vTraceMsg(szMsg);
   }
+
   switch ( gstPlayer.iFacingPos ){
     case WEST:
       iNextX += 0;
@@ -187,8 +318,12 @@ int iWalk(){
   }
   
   if ( iBOARD_IsValidSquare(iNextX, iNextY) <= WALL_SQUARE )
+  {
+    if(DEBUG_MSGS) vTraceVarArgs("%s - end return -1");
+
     return -1;
-    
+  }
+
   gstPlayer.iCurrX = iNextX;
   gstPlayer.iCurrY = iNextY;
   gstPlayer.pSDL_RECT_Player->y += XOffset*gstPlayer.pSDL_RECT_Player->h;
@@ -202,47 +337,74 @@ int iWalk(){
     );
     vTraceMsg(szMsg);
   }
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return gstPlayer.iFacingPos;
 }
 
-int iTurn(){
+int iTurn(void){
   if ( DEBUG_MSGS ) vTraceMsg("Turn\n");
+
   giDeg = (giDeg == 360) ? 90 : giDeg + 90;
   gstPlayer.iFacingPos = (gstPlayer.iFacingPos == WEST) ? NORTH : gstPlayer.iFacingPos+1;
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return REDRAW_IMAGE;
 }
 
-int iFireLaser(){
+int iFireLaser(void){
+  if(DEBUG_MSGS) vTraceBegin();
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return REDRAW_IMAGE;
 }
 
 void vSetButtonDimensions(SDL_Rect *pSDL_RECT_Btn, int iTrslt){
+  if(DEBUG_MSGS) vTraceBegin();
+
   pSDL_RECT_Btn->w = 0.06*WINDOW_WIDTH;
   pSDL_RECT_Btn->h = 0.06*WINDOW_HEIGHT;
   pSDL_RECT_Btn->x = pSDL_RECT_Btn->w + iTrslt;
   pSDL_RECT_Btn->y = WINDOW_HEIGHT - pSDL_RECT_Btn->h - 20;
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 void vSetHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
+  if(DEBUG_MSGS) vTraceBegin();
+
   pSDL_RECT_Hud->x = WINDOW_WIDTH/4;
   pSDL_RECT_Hud->y = 0;
   pSDL_RECT_Hud->w = 2*pSDL_RECT_Hud->x;
   pSDL_RECT_Hud->h = COL_RATIO;
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 void vSetButtonHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
+  if(DEBUG_MSGS) vTraceBegin();
+
   pSDL_RECT_Hud->x = 0.06*WINDOW_WIDTH - 10;
   pSDL_RECT_Hud->y = WINDOW_HEIGHT - 0.06*WINDOW_HEIGHT - 30;
   pSDL_RECT_Hud->w = 2*WINDOW_WIDTH/4 - 20;
   pSDL_RECT_Hud->h = COL_RATIO - 10;
+
+  if(DEBUG_MSGS) vTraceEnd();
 }
 
 int iWasClicked(SDL_Event *pSDL_EVENT_Ev){
   STRUCT_BUTTON_LIST *pstWrkButtonList;
+
+  if(DEBUG_MSGS) vTraceBegin(); 
+
   for ( pstWrkButtonList = &gstButtonList; pstWrkButtonList != NULL; pstWrkButtonList = pstWrkButtonList->pstNext){
     int iClickEvX = pSDL_EVENT_Ev->button.x;
     int iClickEvY = pSDL_EVENT_Ev->button.y;
     SDL_Rect *pSDL_RECT_Btn = pstWrkButtonList->pSDL_RECT_Button;
+
     if ( pSDL_RECT_Btn == NULL )
       break;
 
@@ -250,24 +412,38 @@ int iWasClicked(SDL_Event *pSDL_EVENT_Ev){
       && iClickEvY >= pSDL_RECT_Btn->y 
       && iClickEvX < pSDL_RECT_Btn->x + pSDL_RECT_Btn->w 
       && iClickEvY < pSDL_RECT_Btn->y + pSDL_RECT_Btn->h) {
+      
+      if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end pstWrkButtonList->iAction == %d", pstWrkButtonList->iAction);
+      
       return pstWrkButtonList->iAction;
     }
   }
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return FALSE;
 }
 
 SDL_Texture* createSquareTexture(SDL_Renderer* renderer)
 {
+  if(DEBUG_MSGS) vTraceBegin();
+
   SDL_Surface* surface = SDL_CreateRGBSurface(0, 800, 800, 8, 0, 0, 0, 0);
   SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND);
   SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
   SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
   SDL_FreeSurface(surface);
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return texture;
 }
 
 int iHandleClick(SDL_Event *pSDL_EVENT_Ev){
+  if(DEBUG_MSGS) vTraceBegin();
+
   int iAction = 0;
+
   switch((iAction = iWasClicked(pSDL_EVENT_Ev))){
     case FORWARD:
     case TURN:
@@ -284,11 +460,15 @@ int iHandleClick(SDL_Event *pSDL_EVENT_Ev){
       break;
   }
 
+  if(DEBUG_MSGS) vTraceEnd();
+
   return 0;
 }
 
 int iHandleEventKey(SDL_Event *pSDL_EVENT_Ev){
   vMENU_HandleKey(pSDL_EVENT_Ev->key.keysym.sym);
+
+  if(DEBUG_MSGS) vTraceBegin();
 
   switch (pSDL_EVENT_Ev->key.keysym.sym) {
     case SDLK_UP:
@@ -300,12 +480,18 @@ int iHandleEventKey(SDL_Event *pSDL_EVENT_Ev){
     default:
       break;
   }
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return 0;
 }
 
 int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCursor){
   int iInitCt = 0;
   SDL_Rect *pSDL_RECT_Wrk;
+
+  if(DEBUG_MSGS) vTraceBegin();
+
   for ( pSDL_RECT_Wrk = pSDL_RECT_MenuData; 
         iInitCt < MAX_MENU_OPTIONS; 
         pSDL_RECT_Wrk++, iInitCt++){
@@ -328,111 +514,37 @@ int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCurs
         vTraceMsg("Hovered!\n");
         
       giMENU_SelectedItem = iInitCt;
+
+      if(DEBUG_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
+
       return REDRAW_IMAGE;
     }
   }
+
+  if(DEBUG_MSGS) vTraceEnd();
+
   return 0;
 }
 
 int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
   int iX, iY;
 
-  (void) pSDL_RECT_Menu;
+  UNUSED(pSDL_RECT_Menu);
+  
+  if(DEBUG_MSGS) vTraceBegin();
 
   SDL_GetMouseState(&iX, &iY);
 
   if ( iBUTTON_CheckInteraction(pSDL_EVENT_Ev, iX, iY) == REDRAW_IMAGE )
+  {
+    if(DEBUG_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
+
     return REDRAW_IMAGE;
+  }
+  
+  if(DEBUG_MSGS) vTraceEnd();
 
   return 0;
-}
-
-void vPrintUsage(void)
-{
-  int ii = 0;
-  
-  printf("Usage %s [options] <arguments>\n\n"
-         "%s\n\n"
-         "Options:\n", kpszProgramName, DESCRIPTION);
-  while(astCmdOpt[ii].name)
-  {
-    if(astCmdOpt[ii].has_arg == required_argument)
-    {
-      printf("  --%s=<%s>, -%c <%s>\n"
-             "    %s\n\n", astCmdOpt[ii].name, pszCmdArguments[ii],
-                           astCmdOpt[ii].val, pszCmdArguments[ii],
-                           pszCmdMessages[ii]);
-    }
-    else
-    {
-      printf("  --%s, -%c\n"
-             "    %s\n\n", astCmdOpt[ii].name, astCmdOpt[ii].val,
-                           pszCmdMessages[ii]);
-    }
-
-    ii++;
-  }
-}
-
-void vPrintVersion(void)
-{
-  printf("%s %s\n"
-         "Build in %s %s\n"
-         "%s %s\n"
-         "For reporting bugs, send a email to:\n"
-         "<%s>\n" 
-         "<%s>\n", kpszProgramName, 
-                   VERSION,
-                   __DATE__,
-                   __TIME__,
-                   COPYRIGHT,
-                   DEVELOPER,
-                   RFERMI_MAIL,
-                   BACAGINE_MAIL
-  );
-}
-
-bool bCommandLineIsOK(int argc, char **argv)
-{
-  int iCmdLineOpt = 0;
-  
-  /**
-   * Used to get the final of
-   * conversion of strtol
-   */
-  char *pchEndPtr; 
-
-  while((iCmdLineOpt = getopt_long(argc, argv, kszOptStr, astCmdOpt, NULL )) != -1)
-  {
-    switch(iCmdLineOpt)
-    {
-      case 'h':
-        vPrintUsage();
-        exit(EXIT_SUCCESS);
-      case 'v':
-        vPrintVersion();
-        exit(EXIT_SUCCESS);
-      case 't':
-        sprintf(stCmdLine.szLogFileName, "%s", optarg);
-        break;
-      case 'd':
-        sprintf(stCmdLine.szDebugLevel, "%s", optarg);
-
-        strtol(stCmdLine.szDebugLevel, &pchEndPtr, 10);
-
-        if(*pchEndPtr != '\0')
-        {
-          return FALSE;
-        }
-
-        break;
-      case '?':
-      default:
-        return FALSE;
-    }
-  }
-
-  return TRUE;
 }
 
 /**
@@ -463,25 +575,32 @@ int SDL_main(int argc, char *argv[]){
   SDL_Window* window;
   SDL_Renderer* renderer;
   SDL_Renderer* pSDL_Renderer;
-  // int iVArgsCt;
-  // va_list pvlst_ArgList;
+  int iRsl = 0;
+  int iVArgsCt;
+  va_list pvlst_ArgList;
   
-  (void) SDL_RECT_ButtonTurnArrow;
-  (void) pSDL_Renderer;
-  (void) SDL_RECT_ButtonUndoLast;
-  (void) SDL_RECT_ButtonFireLaser;
-  (void) SDL_RECT_ButtonTurnArrow;
-  (void) SDL_RECT_ButtonConfirmAction;
+  UNUSED(SDL_RECT_ButtonTurnArrow);
+  UNUSED(pSDL_Renderer);
+  UNUSED(SDL_RECT_ButtonUndoLast);
+  UNUSED(SDL_RECT_ButtonFireLaser);
+  UNUSED(SDL_RECT_ButtonTurnArrow);
+  UNUSED(SDL_RECT_ButtonConfirmAction);
+  UNUSED(iVArgsCt);
+  UNUSED(pvlst_ArgList);
   
-  kpszProgramName = argv[0];
+  gkpszProgramName = szGetProgramName(argv[0]);
 
+  /**
+   * Check if command line is OK
+   */
   if(!bCommandLineIsOK(argc, argv))
   {
     vPrintUsage();
+
     return -1;
   }
 
-  vInitLogs(argv[0]);
+  vInitLogs();
    
   if ( DEBUG_MSGS ) vTraceMsg("SDL_Main --- Init\n");
 
@@ -562,11 +681,25 @@ int SDL_main(int argc, char *argv[]){
   // iBUTTON_AddToList(&SDL_RECT_ButtonUndoLast     , ERASE);
   // iBUTTON_AddToList(&SDL_RECT_ButtonConfirmAction, CONFIRM);
   SDL_RenderPresent(renderer);
+  
+  /**
+   * If the game is not installed, get the images of the current directory
+   */
+  if(bFileExist(ppszInstalledImagePath[PLAYER_IMG_PATH_IDX]))
+  {
+    pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[PLAYER_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[FORWARD_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszInstalledImagePath[LASER_IMG_PATH_IDX]);
+    pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[ROTATE_IMG_PATH_IDX]); 
+  }
+  else
+  {
+    pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszImagePath[PLAYER_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszImagePath[FORWARD_IMG_PATH_IDX]); 
+    pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszImagePath[LASER_IMG_PATH_IDX]);
+    pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszImagePath[ROTATE_IMG_PATH_IDX]); 
+  }
 
-  pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszImagePath[PLAYER_IMG_PATH_IDX]); 
-  pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszImagePath[FORWARD_IMG_PATH_IDX]); 
-  pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszImagePath[LASER_IMG_PATH_IDX]);
-  pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszImagePath[ROTATE_IMG_PATH_IDX]); 
   pSDL_TXTR_Hud          = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_Hud.w, SDL_RECT_Hud.h);
   pSDL_TXTR_ButtonHud    = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_ButtonHud.w, SDL_RECT_ButtonHud.h);
   pSDL_TXTR_SquareBorder = createSquareTexture(renderer); 
@@ -719,6 +852,9 @@ int SDL_main(int argc, char *argv[]){
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+  
+  vTraceEnd();
 
-  return 0;
+  return iRsl;
 }
+
