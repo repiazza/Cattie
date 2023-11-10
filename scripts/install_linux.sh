@@ -33,13 +33,13 @@ mkdir -pv /usr/share/doc/cattie
 
 # Install the binary of software and yout autocomplete script
 cp -rvf ./cattie /usr/bin
-cp -rvf ./_cattie_complete.sh /usr/share/bash-completion/completions
+cp -rvf ./scripts/_cattie_complete.sh /usr/share/bash-completion/completions
 
 # Installing the configuration file of the software
 #cp -rvf ./cattie.conf /etc
 
 # Create .desktop file
-cp -rvf ./cattie.desktop /usr/share/applications/
+cp -rvf ./scripts/cattie.desktop /usr/share/applications/
 
 # Create the icon
 cp -rvf ./img/cat.png /usr/share/pixmaps
@@ -54,11 +54,11 @@ cp -rv ./img/rotate2.png /usr/share/cattie/img
 # Installing the documentation
 cp -rvf ./man/cattie.1 /usr/share/man/man1
 gzip /usr/share/man/man1/cattie.1
-cp -rvf ./doc/* /usr/share/doc/cattie
-cp -rvf ./LICENSE.gz /usr/share/doc/cattie
-cp -rvf ./AUTHORS.gz /usr/share/doc/cattie
-cp -rvf ./NEWS.gz /usr/share/doc/cattie
-cp -rvf ./README.gz /usr/share/doc/cattie
+#cp -rvf ./doc/* /usr/share/doc/cattie
+#cp -rvf ./LICENSE.gz /usr/share/doc/cattie
+#cp -rvf ./AUTHORS.gz /usr/share/doc/cattie
+#cp -rvf ./NEWS.gz /usr/share/doc/cattie
+#cp -rvf ./README.gz /usr/share/doc/cattie
 
 printf "cattie was installed successfuly!\n"
 

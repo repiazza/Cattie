@@ -13,7 +13,7 @@ CCOPT = -Wall -Wextra
 
 INCDIR= -I.
 INCDIR+= -Isrc/
-INCDIR+= -Isrc/include
+INCDIR+= -Iinclude
 
 SDLADDONLIBS = -lSDL2main -lSDL2 -lSDL2_image
 
@@ -56,18 +56,18 @@ cattie: $(OBJS)
 
 ifdef LINUX
 install: all
-	./install_linux.sh
+	bash ./scripts/install_linux.sh
 
 uninstall:
-	./uninstall_linux.sh
+	bash ./scripts/uninstall_linux.sh
 endif
 
 ifdef _WIN32
 install: all
-	./install_win32.sh
+	./scripts/install_win32.bat
 
 uninstall:
-	./uninstall_win32.sh
+	./scripts/uninstall_win32.bat
 endif
 
 distclean: clean

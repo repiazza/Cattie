@@ -131,22 +131,25 @@ void _vTraceVarArgs(const char *kpszModuleName,
 }
 
 void vInitLogs(void){
-  char *pTok;
-  
+#ifdef _WIN32
+  int ii = 0;
+#endif /* _WIN32 */
+
   memset  (gszTraceFile, 0, sizeof(gszTraceFile));
 
+#ifdef LINUX
   if(!bStrIsEmpty(stCmdLine.szTraceFile))
   {
     snprintf(gszTraceFile, (size_t) sizeof(gszTraceFile)-8, "%s", stCmdLine.szTraceFile);
     return;
   }
-  
-  snprintf(gszTraceFile, (size_t) sizeof(gszTraceFile)-8, "%s", gkpszProgramName);
-
-  if ( (pTok = strstr(gkpszProgramName, ".exe")) != NULL )
+#else
+  while(gkpszProgramName[ii] != '.')
   {
-    *pTok = 0;
+    gszTraceFile[ii] = gkpszProgramName[ii];
+    ii++;
   }
+#endif /* LINUX */
 
   strcat(gszTraceFile, ".log");
 }
