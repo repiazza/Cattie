@@ -7,10 +7,13 @@
 
 CC    = gcc
 
+SRCCWD = src/
+
 CCOPT = -Wall -Wextra
 
 INCDIR= -I.
 INCDIR+= -Isrc/
+INCDIR+= -Isrc/include
 
 SDLADDONLIBS = -lSDL2main -lSDL2 -lSDL2_image
 
@@ -35,7 +38,7 @@ endif
 CATTIE_EXEC=cattie
 
 OBJS += \
-	cattie.o \
+	src/cattie.o \
 	src/trace.o \
 	GXRF/GXRF.o \
 	src/cmdline.o
@@ -46,7 +49,7 @@ clean:
 	rm -f $(OBJS) $(CATTIE_EXEC)
 
 cattie: $(OBJS)
-	$(CC) $(LDOPT) -o $(CATTIE_EXEC) $(OBJS) $(LIBS)
+	$(CC) $(LDOPT) $(INCDIR) -o $(CATTIE_EXEC) $(OBJS) $(LIBS) 
 
 %.o: %.c
 	$(CC) -c $(CCOPT) $(INCDIR) $< -o $@

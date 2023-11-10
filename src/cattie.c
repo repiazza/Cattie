@@ -31,12 +31,21 @@ int giACTION_AssertedSteps = 0;
 int giMENU_SelectedItem = 0;
 STRUCT_PLAYER gstPlayer;
 
-char *ppszInstalledImagePath[] = {
+#ifdef LINUX
+  char *ppszInstalledImagePath[] = {
     "/usr/share/cattie/img/cat2.png",
     "/usr/share/cattie/img/forward.png",
     "/usr/share/cattie/img/laser.png",
     "/usr/share/cattie/img/rotate2.png"
-};
+  };
+#else
+  char *ppszInstalledImagePath[] = {
+    "C:\\Arquivos de Programas\\cattie\\img\\cat2.png",
+    "C:\\Arquivos de Programas\\cattie\\img\\forward.png",
+    "C:\\Arquivos de Programas\\cattie\\img\\laser.png",
+    "C:\\Arquivos de Programas\\cattie\\img\\rotate2.png"
+  };
+#endif
 
 char *ppszImagePath[] = {
     "img/cat2.png",
