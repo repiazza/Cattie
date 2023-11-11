@@ -36,7 +36,7 @@ cp -rvf ./cattie /usr/bin
 cp -rvf ./scripts/_cattie_complete.sh /usr/share/bash-completion/completions
 
 # Installing the configuration file of the software
-#cp -rvf ./cattie.conf /etc
+cp -rvf ./cattie.conf /etc
 
 # Create .desktop file
 cp -rvf ./scripts/cattie.desktop /usr/share/applications/

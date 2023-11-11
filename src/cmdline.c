@@ -10,8 +10,9 @@
 
 #include "cmdline.h"
 #include "trace.h"
+#include "sl.h"
 
-static const char *kszOptStr = "hvt:d:";
+static const char *kszOptStr = "hvt:d:c";
 
 /**
  * Command line structure and strings
@@ -21,6 +22,8 @@ struct option astCmdOpt[] = {
   { "version"      , no_argument      ,    0, 'v' },
   { "trace"        , required_argument,    0, 't' },
   { "debug-level"  , required_argument,    0, 'd' },
+  { "conf-file"    , required_argument,    0, 'C' },
+  { "cat"          , no_argument      ,    0, 'c' },
   { NULL           , 0                , NULL,  0  }
 };
 
@@ -33,8 +36,8 @@ const char *pszCmdArguments[] = {
   NULL,
   "file",
   "number",
-  NULL,
   "file",
+  NULL,
   NULL
 };
 
@@ -47,9 +50,10 @@ const char *pszCmdMessages[] = {
   "Show the version and exit",
   "<file> is the path of the debug file",
   "<number> is the level of debug level",
+  "<file> is the path of the configuration file",
+  "This is top secret ;)",
   NULL
 };
-
 
 void vPrintUsage(void)
 {
@@ -130,6 +134,20 @@ bool bCommandLineIsOK(int argc, char **argv)
         }
 
         break;
+      case 'c':
+#ifdef LINUX
+        vShowTrain();
+#else
+        printf(
+            "          Meow\n"
+            "        _________\n"
+            " /\\___/\\   /\n"
+            "( ^ w ^ ) /\n"
+            "( v   v )\n"
+            "( v   v )_/\n"
+        );
+#endif        
+        exit(EXIT_SUCCESS);
       case '?':
       default:
         return FALSE;
@@ -142,11 +160,17 @@ bool bCommandLineIsOK(int argc, char **argv)
 char *szGetProgramName(const char *szPathName)
 {
   char *pszProgramName = 0;
-
+#ifdef LINUX
   if((pszProgramName = strrchr(szPathName, '/')) != 0)
   {
     ++pszProgramName; /* Skip '/' */
   }
+#else
+  if((pszProgramName = strrchr(szPathName, '\\')) != 0)
+  {
+    ++pszProgramName; /* Skip '\' */
+  }
+#endif /* LINUX */
   else
   {
     pszProgramName = (char *) szPathName; /* Nenhum dir. component */

@@ -1,17 +1,22 @@
-/*
- *
- * GXRF Framework header file for SDL2
+/**
+ * GXRF.h
  *
  * Written by repiazza@gmail.com in January 2023 
- * 
- * 
- *  $Id $
+ *
+ * GXRF Framework header file for SDL2 
  */
  
 #ifndef GXRF_H_INC
   #define GXRF_H_INC
+
+/******************************************************************************
+ *                                                                            *
+ *                                 Includes                                   *
+ *                                                                            *
+ ******************************************************************************/
   #include <SDL2/SDL.h>
   #include <SDL2/SDL_image.h>
+
 #ifdef LINUX
   #include <SDL2/SDL_ttf.h>
 #else
@@ -20,11 +25,23 @@
   // #include <stdarg.h>
   #include <stdarg.h>
   #include <trace.h>
+
+/******************************************************************************
+ *                                                                            *
+ *                             Defines and macros                             *
+ *                                                                            *
+ ******************************************************************************/
+
   #define SDL_NONE 0
   #define GRX_SDL_TYPES 4
 
   #define RENDERIZABLE_EXISTS 1
 
+/******************************************************************************
+ *                                                                            *
+ *                  Typedefs, structures, unions and enums                    *
+ *                                                                            *
+ ******************************************************************************/
   typedef enum SDLTypes{
     SDL_RECT = 1,
     SDL_SURFACE,
@@ -82,9 +99,23 @@
     struct STRUCT_GXRF_FNCLIST *pNextFnc;
   } STRUCT_GXRF_FNCLIST;
   
+/******************************************************************************
+ *                                                                            *
+ *                     Global variables and constants                         *
+ *                                                                            *
+ ******************************************************************************/
+
+  extern va_list gpvlstGXRF_ArgList;
+  extern PSTRUCT_GXRF_RENDER_LIST gpstGXRF_RenderList;
+
+/******************************************************************************
+ *                                                                            *
+ *                                 Prototypes                                 *
+ *                                                                            *
+ ******************************************************************************/
+
   void vGXRF_AttachValues2Fnc(STRUCT_GXRF_FNCLIST *pstFnctList, eSDLT_Renderizable *peSDLTypes, void* vpfnRenderMethod);
   
-  extern va_list gpvlstGXRF_ArgList;
   int iGXRF_Init();
   int iGXRF_End();
   int iGXRF_Add2RenderList(
@@ -101,7 +132,6 @@
   int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
   void vGXRF_RenderObject(void *vGXRF_Renderizable);
   void vGXRF_RenderAll();
-
-  extern PSTRUCT_GXRF_RENDER_LIST gpstGXRF_RenderList;
   
 #endif // ifndef GXRF_h_
+

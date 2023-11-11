@@ -33,8 +33,9 @@
  */
 typedef struct STRUCT_COMMAND_LINE
 {
-  char szTraceFile  [_MAX_PATH];
-  char szDebugLevel [_MAX_PATH];
+  char szTraceFile [_MAX_PATH];
+  char szDebugLevel[_MAX_PATH];
+  char szConfFile  [_MAX_PATH];
 } STRUCT_COMMAND_LINE;
 
 /**

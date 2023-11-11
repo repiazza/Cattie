@@ -37,7 +37,7 @@ if test -f /usr/bin/cattie; then
   rm -rvf /usr/share/applications/cattie.desktop
 
   # Uninstalling the configuration file of the software
-#  rm -rvf /etc/cattie.conf
+  rm -rvf /etc/cattie.conf
 
   # Removing the icon
   rm -rvf /usr/share/pixmaps/cat.png

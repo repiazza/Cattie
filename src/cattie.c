@@ -7,6 +7,7 @@
 #include <button.h>
 #include "consts.h"
 #include "cmdline.h"
+#include "util.h"
 
 #ifdef _WIN32
   #include <windows.h>
@@ -64,56 +65,6 @@ STRUCT_COMMAND_LINE stCmdLine;
  * Procedures and functions
  * 
  **/
-
-/**
- * Open a file
- *
- * fppFile: file pointer
- * kpszFileName: the name of file
- * kpszMode: mode used in fopen
- */
-bool bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode)
-{
-  if((*fppFile = fopen(kpszFileName, kpszMode)) == NULL)
-  {
-    return FALSE;
-  }
-
-  return TRUE;
-}
-
-/**
- * Close file safety
- */
-bool bCloseFile(FILE **fppFile)
-{
-  if(*fppFile != NULL)
-  {
-    fclose(*fppFile);
-    *fppFile = NULL;
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-/**
- * Check if file exists
- */
-bool bFileExist(const char *kpszFileName)
-{
-  FILE *fpFile;
-  
-  if(!bOpenFile(&fpFile, kpszFileName, "r"))
-  {
-    return FALSE;
-  }
-  
-  bCloseFile(&fpFile);
-
-  return TRUE;
-}
 
 void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
   if(DEBUG_MSGS) vTraceBegin();
@@ -540,18 +491,18 @@ int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
 
   UNUSED(pSDL_RECT_Menu);
   
-  if(DEBUG_MSGS) vTraceBegin();
+  if(DEBUG_MORE_MSGS) vTraceBegin();
 
   SDL_GetMouseState(&iX, &iY);
 
   if ( iBUTTON_CheckInteraction(pSDL_EVENT_Ev, iX, iY) == REDRAW_IMAGE )
   {
-    if(DEBUG_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
 
     return REDRAW_IMAGE;
   }
   
-  if(DEBUG_MSGS) vTraceEnd();
+  if(DEBUG_MORE_MSGS) vTraceEnd();
 
   return 0;
 }
@@ -862,7 +813,7 @@ int SDL_main(int argc, char *argv[]){
   SDL_DestroyWindow(window);
   SDL_Quit();
   
-  vTraceEnd();
+  if( DEBUG_MSGS ) vTraceEnd();
 
   return iRsl;
 }

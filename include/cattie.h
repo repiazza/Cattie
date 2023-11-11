@@ -1,13 +1,29 @@
 /**
+ * cattie.h
+ *
+ * Written by Renato Fermi <repizza@gmail.com>
+ *
  * Window
  */
 
 #ifndef _CATTIE_H_INC
   #define _CATTIE_H_INC
 
+/******************************************************************************
+ *                                                                            *
+ *                                 Includes                                   *
+ *                                                                            *
+ ******************************************************************************/
   #ifndef GXRF_H_INC
     #include "GXRF/GXRF.h"
-  #endif
+  #endif /* GXRF_H_INC */
+
+/******************************************************************************
+ *                                                                            *
+ *                             Defines and macros                             *
+ *                                                                            *
+ ******************************************************************************/
+
   #define WINDOW_TITLE "Cattie"
   #define WINDOW_WIDTH  800
   #define WINDOW_HEIGHT 800
@@ -36,7 +52,19 @@
   #define BACAGINE_MAIL "gustavo.bacagine@protonmail.com"
   #define DESCRIPTION   "cattie logic game"
   
-  extern char *ppszImagePath[];
+/******************************************************************************
+ *                                                                            *
+ *                  Typedefs, structures, unions and enums                    *
+ *                                                                            *
+ ******************************************************************************/
+
+  typedef struct STRUCT_PLAYER {
+    int iCurrX;
+    int iCurrY;
+    int iFacingPos;
+    SDL_Rect *pSDL_RECT_Player;
+  } STRUCT_PLAYER;
+
 
   typedef enum SquareType{
     INVALID_SQUARE = -1,
@@ -60,14 +88,20 @@
     WEST
   } eWndRose;
 
-  typedef struct STRUCT_PLAYER {
-    int iCurrX;
-    int iCurrY;
-    int iFacingPos;
-    SDL_Rect *pSDL_RECT_Player;
-  } STRUCT_PLAYER;
+/******************************************************************************
+ *                                                                            *
+ *                     Global variables and constants                         *
+ *                                                                            *
+ ******************************************************************************/
 
+  extern char *ppszImagePath[];
   extern STRUCT_PLAYER gstPlayer;
+
+/******************************************************************************
+ *                                                                            *
+ *                                 Prototypes                                 *
+ *                                                                            *
+ ******************************************************************************/ 
 
   int iWalk();
   int iTurn();

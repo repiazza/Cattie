@@ -15,7 +15,11 @@ INCDIR= -I.
 INCDIR+= -Isrc/
 INCDIR+= -Iinclude
 
-SDLADDONLIBS = -lSDL2main -lSDL2 -lSDL2_image
+SDLADDONLIBS     = -lSDL2main -lSDL2 -lSDL2_image
+
+ifdef LINUX
+NCURSESADDONLIBS = -lncurses
+endif
 
 ifdef _WIN32
 	SDLADDONLIBS += -lSDL_ttf 
@@ -25,8 +29,8 @@ endif
 
 ifdef LINUX
 	SDLADDONLIBS += -lSDL2_ttf
-	CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) -DLINUX
-	LIBS  =  -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) -DLINUX
+	CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) $(NCURSESADDONLIBS) -DLINUX
+	LIBS  =  -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) $(NCURSESADDONLIBS) -DLINUX
 endif
 
 ifdef DEBUG
@@ -41,7 +45,9 @@ OBJS += \
 	src/cattie.o \
 	src/trace.o \
 	GXRF/GXRF.o \
-	src/cmdline.o
+	src/cmdline.o \
+	src/util.o \
+	src/sl.o
 
 all: clean $(CATTIE_EXEC)
 
