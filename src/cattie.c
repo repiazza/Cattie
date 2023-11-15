@@ -534,19 +534,17 @@ int SDL_main(int argc, char *argv[]){
   SDL_Rect *pSDL_RECT_Menu = NULL;
   SDL_Window* window;
   SDL_Renderer* renderer;
-  SDL_Renderer* pSDL_Renderer;
-  int iRsl = 0;
-  int iVArgsCt;
-  va_list pvlst_ArgList;
+  // int iRsl = 0;
+  
+
+  if (DEBUG_MSGS) vTraceBegin();
   
   UNUSED(SDL_RECT_ButtonTurnArrow);
-  UNUSED(pSDL_Renderer);
   UNUSED(SDL_RECT_ButtonUndoLast);
   UNUSED(SDL_RECT_ButtonFireLaser);
   UNUSED(SDL_RECT_ButtonTurnArrow);
   UNUSED(SDL_RECT_ButtonConfirmAction);
-  UNUSED(iVArgsCt);
-  UNUSED(pvlst_ArgList);
+  
   
   gkpszProgramName = szGetProgramName(argv[0]);
 
@@ -593,7 +591,6 @@ int SDL_main(int argc, char *argv[]){
 
   // Create a renderer
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-  pSDL_Renderer = renderer;
 
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
@@ -815,6 +812,7 @@ int SDL_main(int argc, char *argv[]){
   
   if( DEBUG_MSGS ) vTraceEnd();
 
-  return iRsl;
+  // return iRsl;
+  return 0;
 }
 
