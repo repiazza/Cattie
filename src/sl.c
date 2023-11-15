@@ -39,8 +39,11 @@
 /*                                              by Toyoda Masashi 1992/12/14 */
 /* sl version 1.00 : SL runs vomiting out smoke.                             */
 /*                                              by Toyoda Masashi 1992/12/11 */
-
-#include <curses.h>
+#ifdef _WIN32
+    #include <ncurses/curses.h>
+#else
+    #include <curses.h>
+#endif
 #include <signal.h>
 #include <unistd.h>
 #include "../include/sl.h"

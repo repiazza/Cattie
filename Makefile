@@ -16,15 +16,13 @@ INCDIR+= -Isrc/
 INCDIR+= -Iinclude
 
 SDLADDONLIBS     = -lSDL2main -lSDL2 -lSDL2_image
-
-ifdef LINUX
 NCURSESADDONLIBS = -lncurses
-endif
 
 ifdef _WIN32
+	NCURSESADDONLIBS += -DNCURSES_STATIC
 	SDLADDONLIBS += -lSDL_ttf 
-	CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) -mwindows -D_WIN32
-	LIBS  =  -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) -mwindows -D_WIN32
+	CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
+	LIBS  =  -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
 endif
 
 ifdef LINUX
