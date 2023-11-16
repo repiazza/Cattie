@@ -24,6 +24,8 @@ struct option astCmdOpt[] = {
   { "debug-level"  , required_argument,    0, 'd' },
   { "conf-file"    , required_argument,    0, 'C' },
   { "cat"          , no_argument      ,    0, 'c' },
+  { "win-heigth"   , required_argument,    0, 'H' },
+  { "win-width"    , required_argument,    0, 'W' },
   { NULL           , 0                , NULL,  0  }
 };
 
@@ -38,6 +40,8 @@ const char *pszCmdArguments[] = {
   "number",
   "file",
   NULL,
+  "number",
+  "number",
   NULL
 };
 
@@ -52,6 +56,8 @@ const char *pszCmdMessages[] = {
   "<number> is the level of debug level",
   "<file> is the path of the configuration file",
   "This is top secret ;)",
+  "Window Height",
+  "Window Width",
   NULL
 };
 

@@ -44,15 +44,16 @@ void vTraceMsg(char *szMsg){
   gettimeofday(&tv, NULL);
 
   memset(szDateTimeNow_us, 0, sizeof(szDateTimeNow_us));
-  sprintf(szDateTimeNow_us,
-"[%02d/%02d/%04d %02d:%02d:%02d.%3.3ld] ",
+
+  snprintf(szDateTimeNow_us, sizeof(szDateTimeNow_us),
+"[%02d/%02d/%04d %02d:%02d:%02d.%03ld] ",
     (int) st_tm_Now->tm_mday, 
     (int) st_tm_Now->tm_mon+1, 
     (int) st_tm_Now->tm_year+1900,
     (int) st_tm_Now->tm_hour,
     (int) st_tm_Now->tm_min,
     (int) st_tm_Now->tm_sec,
-    (long)tv.tv_sec
+    (long)tv.tv_usec / 1000
   );  
 
   if ( (pfLog=fopen(stCmdLine.szTraceFile, "a+")) == NULL )
@@ -109,15 +110,15 @@ void _vTraceVarArgs(const char *kpszModuleName,
   
   va_start(args, kpszFmt);
 
-  sprintf(szDbg, "[%02d/%02d/%04d %02d:%02d:%02d.%3.3ld] %s:%d ", (int) st_tm_Now->tm_mday, 
-                                                                  (int) st_tm_Now->tm_mon+1, 
-                                                                  (int) st_tm_Now->tm_year+1900,
-                                                                  (int) st_tm_Now->tm_hour,
-                                                                  (int) st_tm_Now->tm_min,
-                                                                  (int) st_tm_Now->tm_sec,
-                                                                  (long)tv.tv_sec,
-                                                                  kpszModuleName,
-                                                                  kiLine
+  snprintf(szDbg, sizeof(szDbg), "[%02d/%02d/%04d %02d:%02d:%02d.%03ld] %s:%d ", (int) st_tm_Now->tm_mday, 
+                                                                                 (int) st_tm_Now->tm_mon+1, 
+                                                                                 (int) st_tm_Now->tm_year+1900,
+                                                                                 (int) st_tm_Now->tm_hour,
+                                                                                 (int) st_tm_Now->tm_min,
+                                                                                 (int) st_tm_Now->tm_sec,
+                                                                                 (long)tv.tv_usec / 1000,
+                                                                                 kpszModuleName,
+                                                                                 kiLine
   );
 
   strcat(szDbg, kpszFmt);

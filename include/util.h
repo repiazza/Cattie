@@ -18,13 +18,16 @@
  ******************************************************************************/
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "consts.h"
+#include "cmdline.h"
 
 /******************************************************************************
  *                                                                            *
  *                             Defines and macros                             *
  *                                                                            *
  ******************************************************************************/
+#define TOKEN_MISMATCH -1
 
 /******************************************************************************
  *                                                                            *
@@ -32,12 +35,30 @@
  *                                                                            *
  ******************************************************************************/
 
+/**
+ * Used in cattie.conf file parse
+ */
+typedef enum ENUM_CATTIE_PRM
+{
+  TRACE_FILE = 0,
+  DEBUG_LEVEL,
+  WINDOW_HEIGHT,
+  WINDOW_WIDTH,
+  END_PRM
+} ENUM_CATTIE_PRM, *PENUM_CATTIE_PRM;
 
 /******************************************************************************
  *                                                                            *
  *                     Global variables and constants                         *
  *                                                                            *
  ******************************************************************************/
+char *szTokenName[]{
+  "TRACE_FILE",
+  "DEBUG_LEVEL",
+  "WINDOW_HEIGHT",
+  "WINDOW_WIDTH",
+  NULL
+}
 
 /******************************************************************************
  *                                                                            *
@@ -80,6 +101,27 @@ bool bFileExist(const char *kpszFileName);
  * Check if string is empty
  */
 bool bStrIsEmpty(const char *kpszStr);
+
+/******************************************************************************
+ *                                                                            *
+ *                              CATTIE FUNCTIONS                              *
+ *                                                                            *
+ ******************************************************************************/
+
+/**
+ * 
+ */
+int iValidToken(char *pTokSearch);
+
+/**
+ * Parse the cattie.conf file
+ */
+int iParseCfgFile(char *pszFileContents);
+
+/**
+ * Load the cattie's parameters file.
+ */
+bool bLoadCfgFile(const char *kpszFileName);
 
 #endif /* _UTIL_H_ */
 

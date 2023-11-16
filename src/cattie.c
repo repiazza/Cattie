@@ -535,19 +535,19 @@ int SDL_main(int argc, char *argv[]){
   SDL_Window* window;
   SDL_Renderer* renderer;
   // int iRsl = 0;
-  
 
-  if (DEBUG_MSGS) vTraceBegin();
-  
   UNUSED(SDL_RECT_ButtonTurnArrow);
   UNUSED(SDL_RECT_ButtonUndoLast);
   UNUSED(SDL_RECT_ButtonFireLaser);
   UNUSED(SDL_RECT_ButtonTurnArrow);
   UNUSED(SDL_RECT_ButtonConfirmAction);
   
-  
   gkpszProgramName = szGetProgramName(argv[0]);
+  
+  vInitLogs();
 
+  if (DEBUG_MSGS) vTraceBegin();
+   
   /**
    * Check if command line is OK
    */
@@ -557,10 +557,6 @@ int SDL_main(int argc, char *argv[]){
 
     return -1;
   }
-
-  vInitLogs();
-   
-  if ( DEBUG_MSGS ) vTraceMsg("SDL_Main --- Init\n");
 
   SDL_SetMainReady();
   
