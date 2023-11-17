@@ -12,7 +12,7 @@
 #include "trace.h"
 #include "sl.h"
 
-static const char *kszOptStr = "hvt:d:c";
+static const char *kszOptStr = "hvt:d:CcHW";
 
 /**
  * Command line structure and strings
