@@ -114,6 +114,11 @@ int iValidToken(char *pTokSearch);
 int iParseCfgFile(char *pszFileContents);
 
 /**
+ *
+ */
+int iCheckCfgPrm(void);
+
+/**
  * Load the cattie's parameters file.
  */
 bool bLoadCfgFile(const char *kpszFileName);
