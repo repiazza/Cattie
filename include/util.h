@@ -52,13 +52,8 @@ typedef enum ENUM_CATTIE_PRM
  *                     Global variables and constants                         *
  *                                                                            *
  ******************************************************************************/
-char *szTokenName[]{
-  "TRACE_FILE",
-  "DEBUG_LEVEL",
-  "WINDOW_HEIGHT",
-  "WINDOW_WIDTH",
-  NULL
-}
+
+extern char *szTokenName[];
 
 /******************************************************************************
  *                                                                            *

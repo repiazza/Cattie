@@ -66,7 +66,7 @@ extern const char *pszCmdMessages[];
 /**
  * Command line arguments
  */
-extern STRUCT_COMMAND_LINE stCmdLine;
+extern STRUCT_COMMAND_LINE gstCmdLine;
 
 /******************************************************************************
  *                                                                            *

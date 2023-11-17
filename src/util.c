@@ -10,6 +10,14 @@
 
 #include "util.h"
 
+char *szTokenName[] = {
+  "TRACE_FILE",
+  "DEBUG_LEVEL",
+  "WINDOW_HEIGHT",
+  "WINDOW_WIDTH",
+  NULL
+};
+
 /******************************************************************************
  *                                                                            *
  *                               FILE FUNCTIONS                               *
@@ -76,7 +84,7 @@ bool bStrIsEmpty(const char *kpszStr)
 
 int iValidToken(char *pTokSearch)
 {
-  ENUM_CATTIE_PRM eCattiePrm;
+  ENUM_CATTIE_PRM eCattiePrm = 0;
   
   while(eCattiePrm != END_PRM)
   {
@@ -120,20 +128,48 @@ int iParseCfgFile(char *pszFileContents)
 
       continue;
     }
-    
+     
     switch(iValidToken(pToken))
     {
-      case TRACE_FILE   : pDestVar = stCmdLine.szTrace     ; break;
-      case DEBUG_LEVEL  : pDestVar = stCmdLine.szDebugLevel; break;
-      case WINDOW_HEIGTH: pDestVar = stCmdLine.szWinHeigth ; break;
-      case WINDOW_WIDTH : pDestVar = stCmdLine.szWinWidth  ; break;
+      case TRACE_FILE   : pDestVar = gstCmdLine.szTraceFile ; break;
+      case DEBUG_LEVEL  : pDestVar = gstCmdLine.szDebugLevel; break;
+      case WINDOW_HEIGHT: pDestVar = gstCmdLine.szWinHeight ; break;
+      case WINDOW_WIDTH : pDestVar = gstCmdLine.szWinWidth  ; break;
       default           : break;
     }
+    
+    puts(pToken);
 
     snprintf(&(*pDestVar), _MAX_PATH, "%s", strtok(NULL, "\n"));
+    printf("%s\n", pDestVar);
 
     pTok = strtok(NULL, "\n");
   } /* while pTok != NULL */
+
+  return 0;
+}
+
+int iCheckCfgPrm(void)
+{
+  if(bStrIsEmpty(gstCmdLine.szTraceFile))
+  {
+    
+  }
+
+  if(bStrIsEmpty(gstCmdLine.szDebugLevel))
+  {
+    strcpy(gstCmdLine.szDebugLevel, "0");
+  }
+
+  if(bStrIsEmpty(gstCmdLine.szWinHeight))
+  {
+    strcpy(gstCmdLine.szWinHeight, "800");
+  }
+
+  if(bStrIsEmpty(gstCmdLine.szWinWidth))
+  {
+    strcpy(gstCmdLine.szWinWidth, "800");
+  }
 
   return 0;
 }
@@ -152,11 +188,11 @@ bool bLoadCfgFile(const char *kpszFileName)
     return FALSE;
   }
 
-  fseek(pfFIle, 0, SEEK_END);
+  fseek(fpFile, 0, SEEK_END);
 
-  lSize = ftell(pfFile);
+  lSize = ftell(fpFile);
 
-  rewind(pfFile);
+  rewind(fpFile);
 
   if ( (pszFileContents = (char *) malloc(lSize + 8)) == NULL )
   {
@@ -167,12 +203,19 @@ bool bLoadCfgFile(const char *kpszFileName)
 
   if(iParseCfgFile(pszFileContents) == -1)
   {
-    fprintf(stderr, "Deu pau :(");
+    fprintf(stderr, "E: impossible parse .conf file\n");
 
     exit(EXIT_FAILURE);
   }
 
-  if(!bCloseFile(fpFileName))
+  if(iCheckCfgPrm() == -1)
+  {
+    fprintf(stderr, "E: Impossible check .conf parameters!\n");
+
+    exit(EXIT_FAILURE);
+  }
+
+  if(!bCloseFile(&fpFile))
   {
     return FALSE;
   }

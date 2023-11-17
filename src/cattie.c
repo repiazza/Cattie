@@ -58,7 +58,7 @@ char *ppszImagePath[] = {
 /* Receive the name of program */
 const char *gkpszProgramName;
 
-STRUCT_COMMAND_LINE stCmdLine;
+STRUCT_COMMAND_LINE gstCmdLine;
 
 /**
  * 
@@ -542,8 +542,17 @@ int SDL_main(int argc, char *argv[]){
   UNUSED(SDL_RECT_ButtonTurnArrow);
   UNUSED(SDL_RECT_ButtonConfirmAction);
   
+  memset(&gstCmdLine, 0, sizeof(gstCmdLine));
+
   gkpszProgramName = szGetProgramName(argv[0]);
-  
+  /* 
+  if(!bLoadCfgFile("cattie.conf"))
+  {
+    fprintf(stderr, "E: impossible load .conf file\n");
+
+    exit(EXIT_FAILURE);
+  }
+  */
   vInitLogs();
 
   if (DEBUG_MSGS) vTraceBegin();
@@ -557,6 +566,9 @@ int SDL_main(int argc, char *argv[]){
 
     return -1;
   }
+  
+  strcpy(gstCmdLine.szWinHeight, "800");
+  strcpy(gstCmdLine.szWinWidth, "800");
 
   SDL_SetMainReady();
   

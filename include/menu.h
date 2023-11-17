@@ -1,6 +1,10 @@
+#include <stdlib.h>
+
 #ifndef _CATTIE_H_INC
   #include <cattie.h>
 #endif
+
+#include "cmdline.h"
 
 #define MAX_MENU_OPTIONS 6
 
@@ -14,8 +18,8 @@ void vInitMenu(SDL_Rect *pSDL_RECT_Mn, int iOptionCt){
   for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; 
         iInitCt < iOptionCt; 
         pSDL_RECT_Wrk++, iInitCt++ ){
-    pSDL_RECT_Wrk->x= WINDOW_WIDTH  / 2 - iMenuOptWidth;
-    pSDL_RECT_Wrk->y= WINDOW_HEIGHT / 2 - iMenuOptHeight;
+    pSDL_RECT_Wrk->x= atoi(gstCmdLine.szWinWidth)  / 2 - iMenuOptWidth;
+    pSDL_RECT_Wrk->y= atoi(gstCmdLine.szWinHeight) / 2 - iMenuOptHeight;
     iMenuOptHeight -=20;
     pSDL_RECT_Wrk->w = 100;
     pSDL_RECT_Wrk->h = 25;

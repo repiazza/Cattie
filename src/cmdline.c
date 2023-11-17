@@ -127,12 +127,12 @@ bool bCommandLineIsOK(int argc, char **argv)
         vPrintVersion();
         exit(EXIT_SUCCESS);
       case 't':
-        sprintf(stCmdLine.szTraceFile, "%s", optarg);
+        sprintf(gstCmdLine.szTraceFile, "%s", optarg);
         break;
       case 'd':
-        sprintf(stCmdLine.szDebugLevel, "%s", optarg);
+        sprintf(gstCmdLine.szDebugLevel, "%s", optarg);
 
-        strtol(stCmdLine.szDebugLevel, &pchEndPtr, 10);
+        strtol(gstCmdLine.szDebugLevel, &pchEndPtr, 10);
 
         if(*pchEndPtr != '\0')
         {
@@ -141,9 +141,9 @@ bool bCommandLineIsOK(int argc, char **argv)
 
         break;
       case 'c':
-#ifdef LINUX
+//#ifdef LINUX
         vShowTrain();
-#else
+/*#else
         printf(
             "          Meow\n"
             "        _________\n"
@@ -152,8 +152,15 @@ bool bCommandLineIsOK(int argc, char **argv)
             "( v   v )\n"
             "( v   v )_/\n"
         );
-#endif        
+#endif
+*/
         exit(EXIT_SUCCESS);
+      case 'H':
+        sprintf(gstCmdLine.szWinHeight, "%s", optarg);
+        break;
+      case 'W':
+        sprintf(gstCmdLine.szWinWidth, "%s", optarg);
+        break;
       case '?':
       default:
         return FALSE;

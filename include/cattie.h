@@ -25,8 +25,8 @@
  ******************************************************************************/
 
   #define WINDOW_TITLE "Cattie"
-  #define WINDOW_WIDTH  800
-  #define WINDOW_HEIGHT 800
+//  #define WINDOW_WIDTH  800
+//  #define WINDOW_HEIGHT 800
   #define WINDOW_RATIO  WINDOW_WIDTH/WINDOW_HEIGHT
 
   #define REDRAW_IMAGE 1
