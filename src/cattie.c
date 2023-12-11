@@ -326,9 +326,9 @@ void vSetButtonDimensions(SDL_Rect *pSDL_RECT_Btn, int iTrslt){
   if(DEBUG_MSGS) vTraceBegin();
 
   pSDL_RECT_Btn->w = 0.06*gstCmdLine.szWinWidth;
-  pSDL_RECT_Btn->h = 0.06*gstCmdLine.szWinHeigth;
+  pSDL_RECT_Btn->h = 0.06*gstCmdLine.szWinHeight;
   pSDL_RECT_Btn->x = pSDL_RECT_Btn->w + iTrslt;
-  pSDL_RECT_Btn->y = gstCmdLine.szWinHeigth - pSDL_RECT_Btn->h - 20;
+  pSDL_RECT_Btn->y = gstCmdLine.szWinHeight - pSDL_RECT_Btn->h - 20;
 
   if(DEBUG_MSGS) vTraceEnd();
 }
@@ -348,7 +348,7 @@ void vSetButtonHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
   if(DEBUG_MSGS) vTraceBegin();
 
   pSDL_RECT_Hud->x = 0.06*gstCmdLine.szWinWidth - 10;
-  pSDL_RECT_Hud->y = gstCmdLine.szWinHeigth - 0.06*gstCmdLine.szWinHeigth - 30;
+  pSDL_RECT_Hud->y = gstCmdLine.szWinHeight - 0.06*gstCmdLine.szWinHeight - 30;
   pSDL_RECT_Hud->w = 2*gstCmdLine.szWinWidth/4 - 20;
   pSDL_RECT_Hud->h = COL_RATIO - 10;
 
@@ -591,7 +591,7 @@ int SDL_main(int argc, char *argv[]){
     SDL_WINDOWPOS_UNDEFINED,
     SDL_WINDOWPOS_UNDEFINED, 
     gstCmdLine.szWinWidth, 
-    gstCmdLine.szWinHeigth, 
+    gstCmdLine.szWinHeight, 
     SDL_WINDOW_SHOWN
   );
 
