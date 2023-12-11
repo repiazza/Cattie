@@ -5,9 +5,9 @@
 #include <menu.h>
 #include <action.h>
 #include <button.h>
-#include "consts.h"
-#include "cmdline.h"
-#include "util.h"
+#include <consts.h>
+#include <cmdline.h>
+#include <util.h>
 
 #ifdef _WIN32
   #include <windows.h>

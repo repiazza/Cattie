@@ -10,9 +10,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <trace.h>
-#include "consts.h"
-#include "cmdline.h"
-#include "util.h"
+#include <consts.h>
+#include <cmdline.h>
+#include <util.h>
 
 #ifdef LINUX
   #include <sys/time.h>

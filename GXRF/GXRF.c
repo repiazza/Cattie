@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <time.h>
-#include "consts.h"
+#include <consts.h>
 
 #ifndef GXRF_H_INC
   #include "GXRF.h"

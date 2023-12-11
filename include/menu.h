@@ -4,7 +4,7 @@
   #include <cattie.h>
 #endif
 
-#include "cmdline.h"
+#include <cmdline.h>
 
 #define MAX_MENU_OPTIONS 6
 

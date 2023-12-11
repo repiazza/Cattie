@@ -27,7 +27,7 @@
   #endif
   
   #ifndef _CONSTS_H_
-    #include "consts.h"
+    #include <consts.h>
   #endif
   
 /******************************************************************************

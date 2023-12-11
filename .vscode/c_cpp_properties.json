@@ -5,7 +5,8 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/GXRF"
+                "${workspaceFolder}/GXRF",
+                "${workspaceFolder}/include"
             ],
             "defines": [
                 "_DEBUG",
