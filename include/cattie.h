@@ -6,7 +6,7 @@
  * Window
  */
 
-#ifndef _CATTIE_H_INC
+#ifndef _CATTIE_H_ZINC
   #define _CATTIE_H_INC
 
 /******************************************************************************
@@ -25,9 +25,9 @@
  ******************************************************************************/
 
   #define WINDOW_TITLE "Cattie"
-//  #define WINDOW_WIDTH  800
-//  #define WINDOW_HEIGHT 800
-  #define WINDOW_RATIO  WINDOW_WIDTH/WINDOW_HEIGHT
+//  #define gstCmdLine.szWinWidth  800
+//  #define gstCmdLine.szWinHeight 800
+  #define WINDOW_RATIO  gstCmdLine.szWinWidth/gstCmdLine.szWinHeight
 
   #define REDRAW_IMAGE 1
   #define ERROR_WALKING 10
