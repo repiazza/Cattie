@@ -6,7 +6,7 @@
  * Window
  */
 
-#ifndef _CATTIE_H_ZINC
+#ifndef _CATTIE_H_INC
   #define _CATTIE_H_INC
 
 /******************************************************************************

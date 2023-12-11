@@ -3,7 +3,7 @@
  */
 
 #include <stdlib.h>
-#include "cmdline.h"
+#include <cmdline.h>
 
 #ifndef _BOARD_H_INC
   #define _BOARD_H_INC
