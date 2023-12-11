@@ -325,10 +325,10 @@ int iFireLaser(void){
 void vSetButtonDimensions(SDL_Rect *pSDL_RECT_Btn, int iTrslt){
   if(DEBUG_MSGS) vTraceBegin();
 
-  pSDL_RECT_Btn->w = 0.06*WINDOW_WIDTH;
-  pSDL_RECT_Btn->h = 0.06*WINDOW_HEIGHT;
+  pSDL_RECT_Btn->w = 0.06*gstCmdLine.szWinWidth;
+  pSDL_RECT_Btn->h = 0.06*gstCmdLine.szWinHeigth;
   pSDL_RECT_Btn->x = pSDL_RECT_Btn->w + iTrslt;
-  pSDL_RECT_Btn->y = WINDOW_HEIGHT - pSDL_RECT_Btn->h - 20;
+  pSDL_RECT_Btn->y = gstCmdLine.szWinHeigth - pSDL_RECT_Btn->h - 20;
 
   if(DEBUG_MSGS) vTraceEnd();
 }
@@ -336,7 +336,7 @@ void vSetButtonDimensions(SDL_Rect *pSDL_RECT_Btn, int iTrslt){
 void vSetHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
   if(DEBUG_MSGS) vTraceBegin();
 
-  pSDL_RECT_Hud->x = WINDOW_WIDTH/4;
+  pSDL_RECT_Hud->x = gstCmdLine.szWinWidth/4;
   pSDL_RECT_Hud->y = 0;
   pSDL_RECT_Hud->w = 2*pSDL_RECT_Hud->x;
   pSDL_RECT_Hud->h = COL_RATIO;
@@ -347,9 +347,9 @@ void vSetHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
 void vSetButtonHUDRectSize(SDL_Rect *pSDL_RECT_Hud){
   if(DEBUG_MSGS) vTraceBegin();
 
-  pSDL_RECT_Hud->x = 0.06*WINDOW_WIDTH - 10;
-  pSDL_RECT_Hud->y = WINDOW_HEIGHT - 0.06*WINDOW_HEIGHT - 30;
-  pSDL_RECT_Hud->w = 2*WINDOW_WIDTH/4 - 20;
+  pSDL_RECT_Hud->x = 0.06*gstCmdLine.szWinWidth - 10;
+  pSDL_RECT_Hud->y = gstCmdLine.szWinHeigth - 0.06*gstCmdLine.szWinHeigth - 30;
+  pSDL_RECT_Hud->w = 2*gstCmdLine.szWinWidth/4 - 20;
   pSDL_RECT_Hud->h = COL_RATIO - 10;
 
   if(DEBUG_MSGS) vTraceEnd();
@@ -590,8 +590,8 @@ int SDL_main(int argc, char *argv[]){
     WINDOW_TITLE,
     SDL_WINDOWPOS_UNDEFINED,
     SDL_WINDOWPOS_UNDEFINED, 
-    WINDOW_WIDTH, 
-    WINDOW_HEIGHT, 
+    gstCmdLine.szWinWidth, 
+    gstCmdLine.szWinHeigth, 
     SDL_WINDOW_SHOWN
   );
 

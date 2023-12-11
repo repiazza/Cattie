@@ -113,6 +113,8 @@
     int iLastCol = 0;
     int iDirection;
     
+    if(DEBUG_MSGS) vTraceBegin();
+
     vBOARD_Init();
 
     while (iRow < BOARD_ROWS && iCol < BOARD_COLS) {
@@ -132,7 +134,6 @@
         gstPlayer.iCurrY = 0;
         if ( iDirection == 0 ){
           gstPlayer.iFacingPos = SOUTH;
-          // giDeg = 90;
         }
         else{
           gstPlayer.iFacingPos = EAST;
@@ -144,7 +145,9 @@
     giBOARD_Main[iLastRow][iLastCol] = END_SQUARE;
     
     if ( DEBUG_MSGS ) vBOARD_Trace();
-
+    
+    if(DEBUG_MSGS) vTraceEnd();
+    
     return 0;
   }
 
