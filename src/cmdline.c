@@ -9,8 +9,8 @@
  */
 
 #include <cmdline.h>
-#include "trace.h"
-#include "sl.h"
+#include <trace.h>
+#include <sl.h>
 
 static const char *kszOptStr = "hvt:d:CcHW";
 

@@ -46,7 +46,7 @@
 #endif
 #include <signal.h>
 #include <unistd.h>
-#include "../include/sl.h"
+#include <sl.h>
 
 int ACCIDENT  = 0;
 int LOGO      = 0;
