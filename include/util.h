@@ -19,8 +19,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "consts.h"
-#include "cmdline.h"
+#include <consts.h>
+#include <cmdline.h>
 
 /******************************************************************************
  *                                                                            *

@@ -8,9 +8,9 @@
  * Date: 21/10/2023
  */
 
-#include "cmdline.h"
-#include "trace.h"
-#include "sl.h"
+#include <cmdline.h>
+#include <trace.h>
+#include <sl.h>
 
 static const char *kszOptStr = "hvt:d:c";
 
