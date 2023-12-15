@@ -65,7 +65,7 @@
 
   typedef struct STRUCT_GXRF_OBJFNC_ARG {
     void *vArg;
-    void *vArgType
+    void *vArgType;
     struct STRUCT_GXRF_OBJFNC_ARG *pNextArg;
   } STRUCT_GXRF_OBJFNC_ARG, *PSTRUCT_GXRF_OBJFNC_ARG;
 

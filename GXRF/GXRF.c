@@ -64,7 +64,7 @@ STRUCT_GXRF_RENDER *pstGXRF_FindLastRenderizable(){
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   
   if ( gpstGXRF_RenderList->pstGXRF_FirstRenderizable == NULL )
-    return NULL
+    return NULL;
 
   for ( 
        pstGXRF_WrkRender = gpstGXRF_RenderList->pstGXRF_FirstRenderizable;// Init.
@@ -140,14 +140,6 @@ int iGXRF_AllocList(STRUCT_GXRF_RENDER_LIST **ppstGXRF_RenderizableList){
 // 0: OK
 //-1: Out of memory :( 
 //
-int iGXRF_AllocFncTypeList(STRUCT_GXRF_FNCLIST **ppstGXRF_FnctTypeList){
-  *ppstGXRF_FnctTypeList = (STRUCT_GXRF_FNCLIST *) malloc(sizeof(STRUCT_GXRF_FNCLIST));
-  if ( *ppstGXRF_FnctTypeList == NULL ) // gg :(
-    return -1;
-  
-  return 0;
-}
-
 int iGXRF_AllocFncArgList(STRUCT_GXRF_OBJFNC_ARG **ppstGXRF_FncArgList){
   *ppstGXRF_FncArgList = (STRUCT_GXRF_OBJFNC_ARG *) malloc(sizeof(STRUCT_GXRF_OBJFNC_ARG));
   if ( *ppstGXRF_FncArgList == NULL ) // gg :(
@@ -178,8 +170,6 @@ int iGXRF_Init(){
   
   return 0;
 }
-
-
 
 int iGXRF_Add2RenderList(
   SDL_Renderer *renderer,
@@ -235,10 +225,10 @@ void vGXRF_RenderObject(void *vGXRF_Renderizable){
   
   // memcpy(vlstRndrArgs, pstGXRF_WrkRender->vlstRenderArgs, lDist) ;
   // va_start(vlstRenderArgs, pstGXRF_WrkRender->pSDL_Renderer);
-  pstGXRF_WrkRender->vpfnRenderMethod(
-    pstGXRF_WrkRender->pSDL_Renderer,
-    &pstGXRF_WrkRender->vlstRenderArgs
-  );
+  // pstGXRF_WrkRender->vpfnRenderMethod(
+  //   pstGXRF_WrkRender->pSDL_Renderer,
+  //   &pstGXRF_WrkRender->vlstRenderArgs
+  // );
   // va_end(vlstRenderArgs);
 }
 
@@ -261,7 +251,6 @@ void vGXRF_FreeRenderList(){
         ){
 
         pstGXRF_WrkRender = pstGXRF_WrkRender->pNextObj;
-        va_end(gpstGXRF_RenderList->pstGXRF_FirstRenderizable->vlstRenderArgs);
         free(gpstGXRF_RenderList->pstGXRF_FirstRenderizable);
         gpstGXRF_RenderList->pstGXRF_FirstRenderizable = pstGXRF_WrkRender;
   }
