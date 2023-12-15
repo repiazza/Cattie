@@ -48,17 +48,9 @@
     SDL_TTF,
     SDL_TEXTURE,
   } eSDLT_Renderizable;
-// 
-//   typedef int (GXRFTYPES)[GRX_SDL_TYPES];
-//   
-//   GXRFTYPES szSDLTypes = {
-//     sizeof(SDL_Rect),       
-//     sizeof(SDL_Surface),    
-//     sizeof(TTF_Font *),      
-//     sizeof(SDL_Texture *)   
-//   };
+
   // Creates the generic render callback function
-  typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer, ...);
+  typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer);
 
   // // Renderizable Object List
   typedef struct STRUCT_GXRF_RENDER_LIST{
@@ -73,6 +65,7 @@
 
   typedef struct STRUCT_GXRF_OBJFNC_ARG {
     void *vArg;
+    void *vArgType
     struct STRUCT_GXRF_OBJFNC_ARG *pNextArg;
   } STRUCT_GXRF_OBJFNC_ARG, *PSTRUCT_GXRF_OBJFNC_ARG;
 
@@ -87,17 +80,16 @@
     SDL_Renderer *pSDL_Renderer;
     void *vSDL_ObjToRender;
     GXRFCALLBACK vpfnRenderMethod;
-    va_list vlstRenderArgs;
-    STRUCT_GXRF_OBJFNC_ARG *pstArgList;
+    STRUCT_GXRF_OBJFNC_ARG_LIST *pstArgList;
     struct STRUCT_GXRF_RENDER *pNextObj;
   } STRUCT_GXRF_RENDER, *PSTRUCT_GXRF_RENDER;
 
-  // Tipos de dados dos prms, para construcao do va_list
-  typedef struct STRUCT_GXRF_FNCLIST{
-    GXRFCALLBACK vpfnRenderMethod;
-    eSDLT_Renderizable *peSDLTypes;
-    struct STRUCT_GXRF_FNCLIST *pNextFnc;
-  } STRUCT_GXRF_FNCLIST;
+  // // Tipos de dados dos prms, para construcao do va_list
+  // typedef struct STRUCT_GXRF_FNCLIST{
+  //   GXRFCALLBACK vpfnRenderMethod;
+  //   eSDLT_Renderizable *peSDLTypes;
+  //   struct STRUCT_GXRF_FNCLIST *pNextFnc;
+  // } STRUCT_GXRF_FNCLIST;
   
 /******************************************************************************
  *                                                                            *
@@ -105,7 +97,6 @@
  *                                                                            *
  ******************************************************************************/
 
-  extern va_list gpvlstGXRF_ArgList;
   extern PSTRUCT_GXRF_RENDER_LIST gpstGXRF_RenderList;
 
 /******************************************************************************
@@ -114,8 +105,6 @@
  *                                                                            *
  ******************************************************************************/
 
-  void vGXRF_AttachValues2Fnc(STRUCT_GXRF_FNCLIST *pstFnctList, eSDLT_Renderizable *peSDLTypes, void* vpfnRenderMethod);
-  
   int iGXRF_Init();
   int iGXRF_End();
   int iGXRF_Add2RenderList(
@@ -124,8 +113,8 @@
     eSDLT_Renderizable eSDLTy,
     void *vRenderObject, 
     void *vpfnRenderFnc,
-    int iVArgsCt,
-  ...);
+    STRUCT_GXRF_OBJFNC_ARG_LIST *pstArgList
+  );
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
   STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType (STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy);
 

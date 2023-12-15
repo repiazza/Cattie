@@ -146,7 +146,7 @@
     
     if ( DEBUG_MSGS ) vBOARD_Trace();
     
-    if(DEBUG_MSGS) vTraceEnd();
+    if ( DEBUG_MSGS ) vTraceEnd();
     
     return 0;
   }

@@ -76,10 +76,12 @@ void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
 
   if(DEBUG_MORE_MSGS)
   {
-    vTraceVarArgs("pSDL_RECT->x = %d\n", pSDL_RECT->x = iX);
-    vTraceVarArgs("pSDL_RECT->y = %d\n",pSDL_RECT->y = iY);
-    vTraceVarArgs("pSDL_RECT->w = %d\n",pSDL_RECT->w = iWidth);
-    vTraceVarArgs("pSDL_RECT->h = %d\n", pSDL_RECT->h = iHeight);
+    vTraceVarArgs(
+  "pSDL_RECT->x = %d | pSDL_RECT->y = %d\n\t\t"
+  "pSDL_RECT->w = %d | pSDL_RECT->h = %d\n",
+        (pSDL_RECT->x), (pSDL_RECT->y),
+        (pSDL_RECT->w), (pSDL_RECT->h)
+    );
   }
 
   if(DEBUG_MSGS) vTraceEnd();
