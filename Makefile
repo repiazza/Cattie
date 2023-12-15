@@ -13,6 +13,7 @@ CCOPT = -Wall -Wextra
 
 INCDIR= -I.
 INCDIR+= -Isrc/
+INCDIR+= -IGXRF/
 INCDIR+= -Iinclude
 
 SDLADDONLIBS     = -lSDL2main -lSDL2 -lSDL2_image

@@ -1,15 +1,19 @@
 /*
-* Board
-*/
+ * Board
+ */
+
+#include <stdlib.h>
+#include <cmdline.h>
+
 #ifndef _BOARD_H_INC
   #define _BOARD_H_INC
   #define BOARD_ROWS 10
   #define BOARD_COLS 10
 
   #define BOARD_SIZE BOARD_ROWS * BOARD_COLS
-
-  #define ROW_RATIO  WINDOW_HEIGHT / BOARD_ROWS
-  #define COL_RATIO  WINDOW_WIDTH  / BOARD_COLS
+  
+  #define ROW_RATIO  atoi(gstCmdLine.szWinHeight) / BOARD_ROWS
+  #define COL_RATIO  atoi(gstCmdLine.szWinWidth) / BOARD_COLS
 
   extern int giBOARD_Main[BOARD_ROWS][BOARD_COLS];
 
@@ -41,6 +45,10 @@
   int iBOARD_Colorfy(SDL_Renderer *renderer){
     int ii;
     int jj;
+
+    // printf("ROW_RATIO: %d\n", ROW_RATIO);
+    // printf("COL_RATIO : %d\n", COL_RATIO);
+
     for (ii = 0; ii < BOARD_ROWS; ii++) {
       for (jj = 0; jj < BOARD_COLS; jj++) {
         const int iSquare = giBOARD_Main[ii][jj];
@@ -105,6 +113,8 @@
     int iLastCol = 0;
     int iDirection;
     
+    if(DEBUG_MSGS) vTraceBegin();
+
     vBOARD_Init();
 
     while (iRow < BOARD_ROWS && iCol < BOARD_COLS) {
@@ -124,7 +134,6 @@
         gstPlayer.iCurrY = 0;
         if ( iDirection == 0 ){
           gstPlayer.iFacingPos = SOUTH;
-          // giDeg = 90;
         }
         else{
           gstPlayer.iFacingPos = EAST;
@@ -136,7 +145,9 @@
     giBOARD_Main[iLastRow][iLastCol] = END_SQUARE;
     
     if ( DEBUG_MSGS ) vBOARD_Trace();
-
+    
+    if ( DEBUG_MSGS ) vTraceEnd();
+    
     return 0;
   }
 

@@ -56,7 +56,7 @@ void vTraceMsg(char *szMsg){
     (long)tv.tv_usec / 1000
   );  
 
-  if ( (pfLog=fopen(stCmdLine.szTraceFile, "a+")) == NULL )
+  if ( (pfLog=fopen(gstCmdLine.szTraceFile, "a+")) == NULL )
     return;
   if ( giNoNL == TRUE )
     fprintf(pfLog, "%s", szMsg);
@@ -252,9 +252,9 @@ void vSetConfFile(void)
    * bacagine - 2023-11-10 - Setting the name of the configuration file
    */
 
-  if(!bStrIsEmpty(stCmdLine.szConfFile))
+  if(!bStrIsEmpty(gstCmdLine.szConfFile))
   {
-    snprintf(gszConfFile, sizeof(gszConfFile), "%s", stCmdLine.szConfFile);
+    snprintf(gszConfFile, sizeof(gszConfFile), "%s", gstCmdLine.szConfFile);
     return;
   }
 #ifdef LINUX
@@ -297,9 +297,9 @@ void vSetLogFile(void)
    * bacagine - 2023-11-10 - Setting the name of the log file
    */
 
-  if(!bStrIsEmpty(stCmdLine.szTraceFile))
+  if(!bStrIsEmpty(gstCmdLine.szTraceFile))
   {
-    snprintf(gszTraceFile, (size_t) sizeof(gszTraceFile)-8, "%s", stCmdLine.szTraceFile);
+    snprintf(gszTraceFile, (size_t) sizeof(gszTraceFile)-8, "%s", gstCmdLine.szTraceFile);
     return;
   }
 #ifdef LINUX
@@ -326,9 +326,9 @@ void vSetDebugLevel(void)
   /**
    * bacagine - 2023-11-10 - Getting the debug level
    */
-  if(!bStrIsEmpty(stCmdLine.szDebugLevel))
+  if(!bStrIsEmpty(gstCmdLine.szDebugLevel))
   {
-    giDebugLevel = atoi(stCmdLine.szDebugLevel);
+    giDebugLevel = atoi(gstCmdLine.szDebugLevel);
   }
   else
   {

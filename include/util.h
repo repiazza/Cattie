@@ -52,13 +52,8 @@ typedef enum ENUM_CATTIE_PRM
  *                     Global variables and constants                         *
  *                                                                            *
  ******************************************************************************/
-char *szTokenName[]{
-  "TRACE_FILE",
-  "DEBUG_LEVEL",
-  "WINDOW_HEIGHT",
-  "WINDOW_WIDTH",
-  NULL
-}
+
+extern char *szTokenName[];
 
 /******************************************************************************
  *                                                                            *
@@ -117,6 +112,11 @@ int iValidToken(char *pTokSearch);
  * Parse the cattie.conf file
  */
 int iParseCfgFile(char *pszFileContents);
+
+/**
+ *
+ */
+int iCheckCfgPrm(void);
 
 /**
  * Load the cattie's parameters file.
