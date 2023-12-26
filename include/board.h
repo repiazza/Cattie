@@ -46,9 +46,6 @@
     int ii;
     int jj;
 
-    // printf("ROW_RATIO: %d\n", ROW_RATIO);
-    // printf("COL_RATIO : %d\n", COL_RATIO);
-
     for (ii = 0; ii < BOARD_ROWS; ii++) {
       for (jj = 0; jj < BOARD_COLS; jj++) {
         const int iSquare = giBOARD_Main[ii][jj];

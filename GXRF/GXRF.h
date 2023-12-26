@@ -50,7 +50,7 @@
   } eSDLT_Renderizable;
 
   // Creates the generic render callback function
-  typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer);
+  typedef void (*GXRFCALLBACK)(SDL_Renderer *renderer, ...);
 
   // // Renderizable Object List
   typedef struct STRUCT_GXRF_RENDER_LIST{
@@ -105,12 +105,12 @@
     int bIs2Render,
     eSDLT_Renderizable eSDLTy,
     void *vRenderObject, 
-    void *vpfnRenderFnc,
-    STRUCT_GXRF_OBJFNC_ARG_LIST *pstArgList
+    void *vpfnRenderFnc
   );
   STRUCT_GXRF_RENDER *pstGXRF_FindFirstRenderizableByType(eSDLT_Renderizable eSDLTy);
   STRUCT_GXRF_RENDER *pstGXRF_FindNextRenderizableByType (STRUCT_GXRF_RENDER *pstGXRF_CurrRenderObj, eSDLT_Renderizable eSDLTy);
 
+  int iGXRF_ADD2ArgList(void *vGXRF_Renderizable, void *vArgType, void *vArg);
   int bGXRF_EnableRenderizable(void *vGXRF_Renderizable);
   void vGXRF_RenderObject(void *vGXRF_Renderizable);
   void vGXRF_RenderAll();

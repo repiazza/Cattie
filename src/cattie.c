@@ -534,6 +534,7 @@ int SDL_main(int argc, char *argv[]){
   SDL_Rect SDL_RECT_ButtonUndoLast;
   SDL_Rect SDL_RECT_ButtonConfirmAction;
   SDL_Rect *pSDL_RECT_Menu = NULL;
+  eSDLT_Renderizable eSDLTypes;
   SDL_Window* window;
   SDL_Renderer* renderer;
   // int iRsl = 0;
@@ -684,18 +685,18 @@ int SDL_main(int argc, char *argv[]){
   // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
   // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
   // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);  
-  // 
-  /*iGXRF_Add2RenderList(
+
+  iGXRF_Add2RenderList(
     renderer,
     TRUE,
     SDL_RECT,
     &SDL_RECT_ButtonArrowRight,
-    //pszFmt,
-    vDrawButton,
-    2,
-    &SDL_RECT_ButtonArrowRight,
-    BUTTON_DIRECTION
-  );*/
+    vDrawButton
+  );
+
+  iGXRF_ADD2ArgList(&SDL_RECT_ButtonArrowRight, (void *)(eSDLTypes=SDL_RECT), &SDL_RECT_ButtonArrowRight);
+  iGXRF_ADD2ArgList(&SDL_RECT_ButtonArrowRight, (void *)"int", (void *)BUTTON_DIRECTION);
+
   // Main loop
   SDL_Event event;
   while (gbRunning) {
@@ -782,8 +783,8 @@ int SDL_main(int argc, char *argv[]){
     // vDrawButtons(renderer);
     
     // vGXRF_RenderAll();
-    //vGXRF_RenderObject(&SDL_RECT_ButtonArrowRight);
-    //  vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+    // vGXRF_RenderObject(&SDL_RECT_ButtonArrowRight);
+ //   vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
     // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
     // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
     // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
