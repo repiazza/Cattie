@@ -83,13 +83,6 @@
     STRUCT_GXRF_OBJFNC_ARG_LIST *pstArgList;
     struct STRUCT_GXRF_RENDER *pNextObj;
   } STRUCT_GXRF_RENDER, *PSTRUCT_GXRF_RENDER;
-
-  // // Tipos de dados dos prms, para construcao do va_list
-  // typedef struct STRUCT_GXRF_FNCLIST{
-  //   GXRFCALLBACK vpfnRenderMethod;
-  //   eSDLT_Renderizable *peSDLTypes;
-  //   struct STRUCT_GXRF_FNCLIST *pNextFnc;
-  // } STRUCT_GXRF_FNCLIST;
   
 /******************************************************************************
  *                                                                            *

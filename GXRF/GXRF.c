@@ -21,25 +21,7 @@
 #endif
 
 // globals
-// STRUCT_GXRF_FNCLIST  *gpstGXRF_FnctTypeList;      // pointer to draw function typpage list
-// STRUCT_GXRF_FNCLIST  *gpstGXRF_FirstFnct;         // pointer to the first draw function typpage 
 PSTRUCT_GXRF_RENDER_LIST gpstGXRF_RenderList;
-// 
-// STRUCT_GXRF_FNCLIST *pstGXRF_FindFirstFuncObj(void *vpfnGXRF_Method){
-//   STRUCT_GXRF_FNCLIST *pstGXRF_WrkFunc;
-//   // Looking for the Object
-//   // Running All of'em, until we get vGXRF_Renderizable
-//   for ( 
-//        pstGXRF_WrkFunc = gpstGXRF_FirstFnct;                    // Init.
-//        ( 
-//         pstGXRF_WrkFunc != NULL                                 //
-//         && pstGXRF_WrkFunc->vpfnRenderMethod != vpfnGXRF_Method // Cond.
-//        );                                                        
-//        pstGXRF_WrkFunc = pstGXRF_WrkFunc->pNextFnc              // Incr.
-//   );
-// 
-//   return pstGXRF_WrkFunc;
-// }
 
 //
 // Finds some specific object
@@ -148,18 +130,6 @@ int iGXRF_AllocFncArgList(STRUCT_GXRF_OBJFNC_ARG **ppstGXRF_FncArgList){
   return 0;
 }
 
-// STRUCT_GXRF_RENDER *pstWrkRenderizable;
-//   if ( gpstGXRF_RenderList->pstGXRF_FirstRenderizable == NULL ){
-//     if ( iGXRF_CreateRenderizableNode(&gpstGXRF_RenderList) < 0 ) 
-//       return -1;
-//   }
-// 
-//   pstWrkRenderizable = gpstGXRF_RenderList->pstGXRF_FirstRenderizable;
-//   memset(pstWrkRenderizable, 0, sizeof(STRUCT_GXRF_RENDER));
-//   pstWrkRenderizable->pNextObj = NULL;
-//   pstWrkRenderizable->vSDL_ObjToRender = NULL;
-//   
-
 int iGXRF_Init(){
   if ( DEBUG_MSGS ) vTraceMsg("iGXRF_Init --- Ok\n");
 
@@ -206,8 +176,6 @@ int iGXRF_Add2RenderList(
 
 void vGXRF_RenderObject(void *vGXRF_Renderizable){
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
-  // va_list vlstRndrArgs;
-  // long lDist;
 
   if ( (pstGXRF_WrkRender = pstGXRF_FindRenderizable(vGXRF_Renderizable)) == NULL )
     return; // Not Found
@@ -215,21 +183,11 @@ void vGXRF_RenderObject(void *vGXRF_Renderizable){
   if (pstGXRF_WrkRender->bEnabled2Render == FALSE )
     return;
   
-  // va_copy(vlstRenderArgs, pstGXRF_WrkRender->vlstRenderArgs);
-  // lDist = (int *)pstGXRF_WrkRender->vlstRenderArgs - (int *)pstGXRF_WrkRender->pSDL_Renderer;
-
-  // vTraceMsg("===============================");
-  // vTraceMsg(pstGXRF_WrkRender->vlstRenderArgs);
-  // vTraceMsg("===============================");
-  //  
   
-  // memcpy(vlstRndrArgs, pstGXRF_WrkRender->vlstRenderArgs, lDist) ;
-  // va_start(vlstRenderArgs, pstGXRF_WrkRender->pSDL_Renderer);
   // pstGXRF_WrkRender->vpfnRenderMethod(
   //   pstGXRF_WrkRender->pSDL_Renderer,
   //   &pstGXRF_WrkRender->vlstRenderArgs
   // );
-  // va_end(vlstRenderArgs);
 }
 
 void vGXRF_RenderAll(){
