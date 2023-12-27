@@ -13,6 +13,7 @@
 char *szTokenName[] = {
   "TRACE_FILE",
   "DEBUG_LEVEL",
+  "WINDOW_RESOLUTION",
   "WINDOW_HEIGHT",
   "WINDOW_WIDTH",
   NULL
@@ -85,66 +86,82 @@ bool bStrIsEmpty(const char *kpszStr)
 int iValidToken(char *pTokSearch)
 {
   ENUM_CATTIE_PRM eCattiePrm = 0;
-  
+
   while(eCattiePrm != END_PRM)
   {
-    if(strcasecmp(pTokSearch, szTokenName[eCattiePrm]))
+    if(memcmp(pTokSearch, szTokenName[eCattiePrm], strlen(szTokenName[eCattiePrm])) == 0)
     {
       return eCattiePrm;
     }
     
     eCattiePrm++;
   }
-
+  
   return TOKEN_MISMATCH;
 }
 
-int iParseCfgFile(char *pszFileContents)
+int iParseCfgLine(char *pszLineContents)
 {
-  char *pTok = NULL;
+  char *pTok     = NULL;
+  char *pCh      = NULL;
+  char *pToken   = NULL;
+  char *pDestVar = NULL;
+  int iTokenRsl  =    0;
 
-  pTok = strtok(pszFileContents, "\n");
-
+  if((pTok = strtok(pszLineContents, "\n")) == NULL) return 0;
+  
+  pCh = pTok;
+  
   /**
    * bacagine - 2023-11-10 - Reading the .conf file
    */
-  while(pTok != NULL)
+
+  /**
+   * Ignore commented lines
+   */ 
+  if(*pCh == '#') return 0;
+  
+  /**
+   * Ignore spaces
+   */
+  while(isspace(*pCh))
   {
-    char *pCh = pTok;
-    char *pToken = NULL;
-    char *pDestVar = NULL;
+    if(*pCh == EOF) return 0;
 
-    /**
-     * Ignore spaces
-     */
-    while(isspace(*pCh));
-    
-    /**
-     * Ignore commented lines
-     */
-    if(*pCh == '#' || (pToken = strtok(pCh, "=")) == NULL)
-    {
-      pTok = strtok(NULL, "\n");
+    pCh++;
+  }
 
-      continue;
-    }
-     
-    switch(iValidToken(pToken))
-    {
-      case TRACE_FILE   : pDestVar = gstCmdLine.szTraceFile ; break;
-      case DEBUG_LEVEL  : pDestVar = gstCmdLine.szDebugLevel; break;
-      case WINDOW_HEIGHT: pDestVar = gstCmdLine.szWinHeight ; break;
-      case WINDOW_WIDTH : pDestVar = gstCmdLine.szWinWidth  ; break;
-      default           : break;
-    }
-    
-    puts(pToken);
+  if(bStrIsEmpty(pCh)) return 0;
+  
+  switch((iTokenRsl = iValidToken(pCh)))
+  {
+    case TRACE_FILE       : pDestVar = gstCmdLine.szTraceFile ; break;
+    case DEBUG_LEVEL      : pDestVar = gstCmdLine.szDebugLevel; break;
+    case WINDOW_RESOLUTION: 
+    case WINDOW_HEIGHT    : 
+    case WINDOW_WIDTH     : break;
+    default               : return 0;
+  }
+  
+  pToken = strchr(pCh, '=');
+  pToken++;
+  
+  /**
+   * Ignore spaces
+   */
+  while(isspace(*pToken)) pToken++;
 
-    snprintf(&(*pDestVar), _MAX_PATH, "%s", strtok(NULL, "\n"));
-    printf("%s\n", pDestVar);
-
-    pTok = strtok(NULL, "\n");
-  } /* while pTok != NULL */
+  if(bStrIsEmpty(pToken)) return 0;
+  
+  if(iTokenRsl == WINDOW_RESOLUTION)
+  {
+    strcpy(gstCmdLine.szWinWidth, strtok(pToken, "x"));
+    strcpy(gstCmdLine.szWinHeight, strtok(NULL, "\n"));
+  }
+  else
+  {
+    snprintf(&(*pDestVar), strlen(pToken)+1, "%s", pToken);
+  }
 
   return 0;
 }
@@ -180,32 +197,25 @@ int iCheckCfgPrm(void)
 bool bLoadCfgFile(const char *kpszFileName)
 {
   FILE *fpFile = NULL;
-  long lSize = 0L;
-  char *pszFileContents = NULL;
+  char szLine[2048];
+
+  memset(szLine, 0, sizeof(szLine));
 
   if(!bOpenFile(&fpFile, kpszFileName, "r"))
   {
     return FALSE;
   }
-
-  fseek(fpFile, 0, SEEK_END);
-
-  lSize = ftell(fpFile);
-
-  rewind(fpFile);
-
-  if ( (pszFileContents = (char *) malloc(lSize + 8)) == NULL )
+  
+  while(fgets(szLine, sizeof(szLine), fpFile))
   {
-    fprintf(stderr, "E: (%s) %s", kpszFileName, strerror(errno));
+    if(iParseCfgLine(szLine) == -1)
+    {
+      fprintf(stderr, "E: impossible parse .conf file\n");
 
-    exit(EXIT_FAILURE);
-  }
+      exit(EXIT_FAILURE);
+    }
 
-  if(iParseCfgFile(pszFileContents) == -1)
-  {
-    fprintf(stderr, "E: impossible parse .conf file\n");
-
-    exit(EXIT_FAILURE);
+    memset(szLine, 0, sizeof(szLine));
   }
 
   if(iCheckCfgPrm() == -1)

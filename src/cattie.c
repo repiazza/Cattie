@@ -513,7 +513,7 @@ int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
  *
  * main
  *  
- **/
+ */
 int SDL_main(int argc, char *argv[]){
   int iXTranslation = 0;
   int iRedrawAction = -1;
@@ -548,14 +548,14 @@ int SDL_main(int argc, char *argv[]){
   memset(&gstCmdLine, 0, sizeof(gstCmdLine));
 
   gkpszProgramName = szGetProgramName(argv[0]);
-  /* 
+   
   if(!bLoadCfgFile("cattie.conf"))
   {
     fprintf(stderr, "E: impossible load .conf file\n");
 
     exit(EXIT_FAILURE);
   }
-  */
+  
   vInitLogs();
 
   if (DEBUG_MSGS) vTraceBegin();
@@ -570,9 +570,6 @@ int SDL_main(int argc, char *argv[]){
     return -1;
   }
   
-  strcpy(gstCmdLine.szWinHeight, "800");
-  strcpy(gstCmdLine.szWinWidth, "800");
-
   SDL_SetMainReady();
   
   // Initialize SDL
@@ -685,7 +682,7 @@ int SDL_main(int argc, char *argv[]){
   // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
   // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
   // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);  
-
+/*
   iGXRF_Add2RenderList(
     renderer,
     TRUE,
@@ -696,7 +693,7 @@ int SDL_main(int argc, char *argv[]){
 
   iGXRF_ADD2ArgList(&SDL_RECT_ButtonArrowRight, (void *)(eSDLTypes=SDL_RECT), &SDL_RECT_ButtonArrowRight);
   iGXRF_ADD2ArgList(&SDL_RECT_ButtonArrowRight, (void *)"int", (void *)BUTTON_DIRECTION);
-
+*/
   // Main loop
   SDL_Event event;
   while (gbRunning) {
