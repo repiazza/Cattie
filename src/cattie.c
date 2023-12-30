@@ -76,12 +76,12 @@ void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
 
   if(DEBUG_MORE_MSGS)
   {
-    vTraceVarArgs(
-  "pSDL_RECT->x = %d | pSDL_RECT->y = %d\n\t\t"
-  "pSDL_RECT->w = %d | pSDL_RECT->h = %d\n",
-        (pSDL_RECT->x), (pSDL_RECT->y),
-        (pSDL_RECT->w), (pSDL_RECT->h)
-    );
+  //   vTraceVarArgs(
+  // "pSDL_RECT->x = %d | pSDL_RECT->y = %d\n\t\t"
+  // "pSDL_RECT->w = %d | pSDL_RECT->h = %d\n",
+  //       (pSDL_RECT->x), (pSDL_RECT->y),
+  //       (pSDL_RECT->w), (pSDL_RECT->h)
+  //   );
   }
 
   if(DEBUG_MSGS) vTraceEnd();
@@ -96,7 +96,7 @@ SDL_Surface *pSDL_SRFC_LoadImage(char *pszImgPath){
   if (SDL_SRFC_Img == NULL) {
     printf("Error loading image: %s\n", IMG_GetError());
 
-    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
+    // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
 
     return NULL;
   }
@@ -115,7 +115,7 @@ SDL_Texture *pSDL_TXTR_CreateTextureFromSurface(SDL_Renderer *renderer, SDL_Surf
   if (SDL_TXTR_Texture == NULL) {
     printf("Error creating texture: %s\n", SDL_GetError());
 
-    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
+    // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
 
     return NULL;
   }
@@ -175,19 +175,19 @@ void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButton
 
   if ( iButtonType == BUTTON_DIRECTION )
   {
-    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_DIRECTION");
+    // if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_DIRECTION");
     
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
   }
   else if ( iButtonType == BUTTON_CONFIRM )
   {
-    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_CONFIRM");
+    // if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_CONFIRM");
     
     SDL_SetRenderDrawColor(renderer, 0, 200, 50, 255);
   }
   else if ( iButtonType == BUTTON_ERASE )
   {
-    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_ERASE");
+    // if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_ERASE");
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 200, 255);
   }
@@ -281,7 +281,7 @@ int iWalk(){
   
   if ( iBOARD_IsValidSquare(iNextX, iNextY) <= WALL_SQUARE )
   {
-    if(DEBUG_MSGS) vTraceVarArgs("%s - end return -1");
+    // if(DEBUG_MSGS) vTraceVarArgs("%s - end return -1");
 
     return -1;
   }
@@ -300,7 +300,7 @@ int iWalk(){
     vTraceMsg(szMsg);
   }
 
-  if(DEBUG_MSGS) vTraceEnd();
+  if( DEBUG_MSGS ) vTraceEnd();
 
   return gstPlayer.iFacingPos;
 }
@@ -375,7 +375,7 @@ int iWasClicked(SDL_Event *pSDL_EVENT_Ev){
       && iClickEvX < pSDL_RECT_Btn->x + pSDL_RECT_Btn->w 
       && iClickEvY < pSDL_RECT_Btn->y + pSDL_RECT_Btn->h) {
       
-      if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end pstWrkButtonList->iAction == %d", pstWrkButtonList->iAction);
+      // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end pstWrkButtonList->iAction == %d", pstWrkButtonList->iAction);
       
       return pstWrkButtonList->iAction;
     }
@@ -477,7 +477,7 @@ int iCheckMenuInteraction(SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCurs
         
       giMENU_SelectedItem = iInitCt;
 
-      if(DEBUG_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
+      // if(DEBUG_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
 
       return REDRAW_IMAGE;
     }
@@ -499,7 +499,7 @@ int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
 
   if ( iBUTTON_CheckInteraction(pSDL_EVENT_Ev, iX, iY) == REDRAW_IMAGE )
   {
-    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
+    // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
 
     return REDRAW_IMAGE;
   }
@@ -602,7 +602,7 @@ int SDL_main(int argc, char *argv[]){
 
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-  iGXRF_Init();
+  // iGXRF_Init();
 
   // Set Hud Rect Dimensions
   vSetHUDRectSize(&SDL_RECT_Hud);
@@ -618,33 +618,33 @@ int SDL_main(int argc, char *argv[]){
   // Set Button Sizes
   // Walk Forward
   vSetButtonDimensions(&SDL_RECT_ButtonArrowRight, iXTranslation);
-  // {
-  //   char szMsg[256];
-  //   sprintf(szMsg,"%d-%d-%d-%d", SDL_RECT_ButtonArrowRight.h, SDL_RECT_ButtonArrowRight.w,  SDL_RECT_ButtonArrowRight.x,  SDL_RECT_ButtonArrowRight.y);
-  //   vTraceMsg(szMsg);
-  // }
-  // iXTranslation += SDL_RECT_ButtonArrowRight.w + 10;
-  // // Turn Arrow
-  // vSetButtonDimensions(&SDL_RECT_ButtonTurnArrow, iXTranslation);
-  // iXTranslation += SDL_RECT_ButtonTurnArrow.w + 10;
-  // // Fire Laser
-  // vSetButtonDimensions(&SDL_RECT_ButtonFireLaser, iXTranslation);
-  // iXTranslation += SDL_RECT_ButtonFireLaser.w + 50;
-  // // Undo Last
-  // vSetButtonDimensions(&SDL_RECT_ButtonUndoLast, iXTranslation);
-  // iXTranslation += SDL_RECT_ButtonUndoLast.w + 50;
-  // // Confirm Action
-  // vSetButtonDimensions(&SDL_RECT_ButtonConfirmAction, iXTranslation);
+  {
+    char szMsg[256];
+    sprintf(szMsg,"%d-%d-%d-%d", SDL_RECT_ButtonArrowRight.h, SDL_RECT_ButtonArrowRight.w,  SDL_RECT_ButtonArrowRight.x,  SDL_RECT_ButtonArrowRight.y);
+    vTraceMsg(szMsg);
+  }
+  iXTranslation += SDL_RECT_ButtonArrowRight.w + 10;
+  // Turn Arrow
+  vSetButtonDimensions(&SDL_RECT_ButtonTurnArrow, iXTranslation);
+  iXTranslation += SDL_RECT_ButtonTurnArrow.w + 10;
+  // Fire Laser
+  vSetButtonDimensions(&SDL_RECT_ButtonFireLaser, iXTranslation);
+  iXTranslation += SDL_RECT_ButtonFireLaser.w + 50;
+  // Undo Last
+  vSetButtonDimensions(&SDL_RECT_ButtonUndoLast, iXTranslation);
+  iXTranslation += SDL_RECT_ButtonUndoLast.w + 50;
+  // Confirm Action
+  vSetButtonDimensions(&SDL_RECT_ButtonConfirmAction, iXTranslation);
   
   // Square Edges
   vDrawSquareEdges(renderer);
   
   // Add them to list
-  // iBUTTON_AddToList(&SDL_RECT_ButtonArrowRight   , FORWARD);
-  // iBUTTON_AddToList(&SDL_RECT_ButtonTurnArrow    , TURN);
-  // iBUTTON_AddToList(&SDL_RECT_ButtonFireLaser    , FIRE_LASER) ;
-  // iBUTTON_AddToList(&SDL_RECT_ButtonUndoLast     , ERASE);
-  // iBUTTON_AddToList(&SDL_RECT_ButtonConfirmAction, CONFIRM);
+  iBUTTON_AddToList(&SDL_RECT_ButtonArrowRight   , FORWARD);
+  iBUTTON_AddToList(&SDL_RECT_ButtonTurnArrow    , TURN);
+  iBUTTON_AddToList(&SDL_RECT_ButtonFireLaser    , FIRE_LASER) ;
+  iBUTTON_AddToList(&SDL_RECT_ButtonUndoLast     , ERASE);
+  iBUTTON_AddToList(&SDL_RECT_ButtonConfirmAction, CONFIRM);
   SDL_RenderPresent(renderer);
   
   /**
@@ -677,11 +677,11 @@ int SDL_main(int argc, char *argv[]){
 
   gstPlayer.pSDL_RECT_Player = &SDL_RECT_Player;
 
-  // vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-  // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-  // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-  // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-  // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);  
+  vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+  vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+  vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+  vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+  vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);  
 /*
   iGXRF_Add2RenderList(
     renderer,
@@ -769,8 +769,8 @@ int SDL_main(int argc, char *argv[]){
     
     iBOARD_Colorfy(renderer); 
     
-    // vSetHUDRectSize(&SDL_RECT_Hud);
-    // vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
+    vSetHUDRectSize(&SDL_RECT_Hud);
+    vSetButtonHUDRectSize(&SDL_RECT_ButtonHud);
 
     SDL_RenderCopyEx(renderer, pSDL_TXTR_ImagePlayer, NULL, &SDL_RECT_Player, giDeg, NULL, SDL_FLIP_HORIZONTAL);
 
@@ -781,15 +781,15 @@ int SDL_main(int argc, char *argv[]){
     
     // vGXRF_RenderAll();
     // vGXRF_RenderObject(&SDL_RECT_ButtonArrowRight);
- //   vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
-    // vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
-    // vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
-    // vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
-    // vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
+    vDrawButton(renderer, &SDL_RECT_ButtonArrowRight, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonTurnArrow, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonFireLaser, BUTTON_DIRECTION);
+    vDrawButton(renderer, &SDL_RECT_ButtonUndoLast, BUTTON_ERASE);
+    vDrawButton(renderer, &SDL_RECT_ButtonConfirmAction, BUTTON_CONFIRM);
 
-    // SDL_RenderCopy(renderer, pSDL_TXTR_ImageFoward, NULL, &SDL_RECT_ButtonArrowRight);
-    // SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
-    // SDL_RenderCopy(renderer, pSDL_TXTR_ImageRotate, NULL, &SDL_RECT_ButtonTurnArrow);
+    SDL_RenderCopy(renderer, pSDL_TXTR_ImageFoward, NULL, &SDL_RECT_ButtonArrowRight);
+    SDL_RenderCopy(renderer, pSDL_TXTR_ImageLaser , NULL, &SDL_RECT_ButtonFireLaser);
+    SDL_RenderCopy(renderer, pSDL_TXTR_ImageRotate, NULL, &SDL_RECT_ButtonTurnArrow);
 
     // vDrawMenu(renderer, pSDL_RECT_Menu, MAX_MENU_OPTIONS);
     // Update the screen
@@ -804,7 +804,7 @@ int SDL_main(int argc, char *argv[]){
   }
   
   // Clean up
-  iGXRF_End();
+  // iGXRF_End();
   vBUTTON_FreeList();
   // Don't forget to destroy the texture when you're done with it
   SDL_DestroyTexture(pSDL_TXTR_Hud);

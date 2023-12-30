@@ -83,12 +83,12 @@
 
   int iBOARD_IsSquareInBounds(int iNextX, int iNextY){
     if ( iNextX < 0 || iNextY < 0  )
-      return TRUE;
+      return FALSE;
 
     if ( iNextX >= BOARD_COLS || iNextY >= BOARD_ROWS )
-      return TRUE;
+      return FALSE;
 
-    return FALSE;
+    return TRUE;
   }
 
   int iBOARD_IsValidSquare(int iNextX, int iNextY){
@@ -99,7 +99,7 @@
     
     eSquareType = giBOARD_Main[iNextX][iNextY];
 
-    return eSquareType == WALL_SQUARE;
+    return (eSquareType > WALL_SQUARE);
   }
 
   int iBOARD_GenerateRandomPath(){
