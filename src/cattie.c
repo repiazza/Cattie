@@ -76,12 +76,12 @@ void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
 
   if(DEBUG_MORE_MSGS)
   {
-  //   vTraceVarArgs(
-  // "pSDL_RECT->x = %d | pSDL_RECT->y = %d\n\t\t"
-  // "pSDL_RECT->w = %d | pSDL_RECT->h = %d\n",
-  //       (pSDL_RECT->x), (pSDL_RECT->y),
-  //       (pSDL_RECT->w), (pSDL_RECT->h)
-  //   );
+    vTraceVarArgs(
+  "pSDL_RECT->x = %d | pSDL_RECT->y = %d\n\t\t"
+  "pSDL_RECT->w = %d | pSDL_RECT->h = %d\n",
+        (pSDL_RECT->x), (pSDL_RECT->y),
+        (pSDL_RECT->w), (pSDL_RECT->h)
+    );
   }
 
   if(DEBUG_MSGS) vTraceEnd();
@@ -96,7 +96,7 @@ SDL_Surface *pSDL_SRFC_LoadImage(char *pszImgPath){
   if (SDL_SRFC_Img == NULL) {
     printf("Error loading image: %s\n", IMG_GetError());
 
-    // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
 
     return NULL;
   }
@@ -115,7 +115,7 @@ SDL_Texture *pSDL_TXTR_CreateTextureFromSurface(SDL_Renderer *renderer, SDL_Surf
   if (SDL_TXTR_Texture == NULL) {
     printf("Error creating texture: %s\n", SDL_GetError());
 
-    // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("%s - end return NULL", __func__);
 
     return NULL;
   }
@@ -175,19 +175,19 @@ void vDrawButton(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButton
 
   if ( iButtonType == BUTTON_DIRECTION )
   {
-    // if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_DIRECTION");
+     if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_DIRECTION");
     
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
   }
   else if ( iButtonType == BUTTON_CONFIRM )
   {
-    // if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_CONFIRM");
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_CONFIRM");
     
     SDL_SetRenderDrawColor(renderer, 0, 200, 50, 255);
   }
   else if ( iButtonType == BUTTON_ERASE )
   {
-    // if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_ERASE");
+    if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_ERASE");
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 200, 255);
   }
@@ -206,6 +206,8 @@ void vInitializeImagePosition(SDL_Rect *pSDL_Rect_Im){
   if(DEBUG_MSGS) vTraceBegin();
 
   vInitRect(pSDL_Rect_Im, iLocation, iLocation, iDimensions, iDimensions);
+  
+  if( gstPlayer.iFacingPos == SOUTH ) giDeg +=90;
 
   if(DEBUG_MSGS) vTraceEnd();
 }
@@ -281,7 +283,7 @@ int iWalk(){
   
   if ( iBOARD_IsValidSquare(iNextX, iNextY) <= WALL_SQUARE )
   {
-    // if(DEBUG_MSGS) vTraceVarArgs("%s - end return -1");
+    if(DEBUG_MSGS) vTraceVarArgs("%s - end return -1");
 
     return -1;
   }
@@ -372,8 +374,8 @@ int iWasClicked(SDL_Event *pSDL_EVENT_Ev){
 
     if ( iClickEvX >= pSDL_RECT_Btn->x 
       && iClickEvY >= pSDL_RECT_Btn->y 
-      && iClickEvX < pSDL_RECT_Btn->x + pSDL_RECT_Btn->w 
-      && iClickEvY < pSDL_RECT_Btn->y + pSDL_RECT_Btn->h) {
+      && iClickEvX <= pSDL_RECT_Btn->x + pSDL_RECT_Btn->w 
+      && iClickEvY <= pSDL_RECT_Btn->y + pSDL_RECT_Btn->h) {
       
       // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end pstWrkButtonList->iAction == %d", pstWrkButtonList->iAction);
       
@@ -670,6 +672,8 @@ int SDL_main(int argc, char *argv[]){
   pSDL_TXTR_SquareBorder = createSquareTexture(renderer); 
 
   vInitializeImagePosition(&SDL_RECT_Player);
+  
+  //  SDL_RenderCopyEx(renderer, pSDL_TXTR_ImagePlayer, NULL, &SDL_RECT_Player, giDeg, NULL, SDL_FLIP_HORIZONTAL);
 
   //pSDL_RECT_Menu = (SDL_Rect *) malloc(MAX_MENU_OPTIONS*sizeof(SDL_Rect));
   
