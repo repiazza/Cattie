@@ -109,11 +109,15 @@
     int iLastRow = 0;
     int iLastCol = 0;
     int iDirection;
-    
+    time_t lTime;
+
     if(DEBUG_MSGS) vTraceBegin();
-
+    
     vBOARD_Init();
-
+    
+    time(&lTime);
+    srand(lTime);
+    
     while (iRow < BOARD_ROWS && iCol < BOARD_COLS) {
       giBOARD_Main[iRow][iCol] = PATH_SQUARE;
       iLastRow = iRow;

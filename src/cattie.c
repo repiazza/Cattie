@@ -534,7 +534,7 @@ int SDL_main(int argc, char *argv[]){
   SDL_Rect SDL_RECT_ButtonUndoLast;
   SDL_Rect SDL_RECT_ButtonConfirmAction;
   SDL_Rect *pSDL_RECT_Menu = NULL;
-  eSDLT_Renderizable eSDLTypes;
+  // eSDLT_Renderizable eSDLTypes;
   SDL_Window* window;
   SDL_Renderer* renderer;
   // int iRsl = 0;
