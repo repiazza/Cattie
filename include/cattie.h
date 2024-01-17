@@ -29,6 +29,7 @@
 //  #define gstCmdLine.szWinHeight 800
   #define WINDOW_RATIO  gstCmdLine.szWinWidth/gstCmdLine.szWinHeight
 
+  #define REDRAW_NONE  0
   #define REDRAW_IMAGE 1
   #define ERROR_WALKING 10
 
@@ -37,13 +38,15 @@
   #define BUTTON_DIRECTION 1
   #define BUTTON_CONFIRM   2
   #define BUTTON_ERASE     3
+  #define BUTTON_CONFIGURE 4
 
   #define PLAYER_IMG_PATH_IDX  0
   #define FORWARD_IMG_PATH_IDX 1
   #define LASER_IMG_PATH_IDX   2
   #define ROTATE_IMG_PATH_IDX  3
+  #define GEAR_IMG_PATH_IDX    4
 
-  #define _MAX_IMG_PATH 4
+  // #define _MAX_IMG_PATH 4
 
   #define DEVELOPER     "Renato Fermi & Gustavo Bacagine"
   #define VERSION       "1.0"
@@ -73,13 +76,14 @@
     END_SQUARE
   } eSqType;
 
-  typedef enum MovementAction{
+  typedef enum ButtonAction{
     FORWARD = 1,
     TURN,
     FIRE_LASER,
     ERASE,
-    CONFIRM
-  } eMovAction;
+    CONFIRM,
+    CONFIGURE
+  } eBtnAction;
 
   typedef enum WindRose{
     NORTH = 1,

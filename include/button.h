@@ -31,13 +31,13 @@ int iBUTTON_CheckInteraction(SDL_Event *pSDL_EVENT_Ev, int iXCursor, int iYCurso
 int iBUTTON_AddToList(SDL_Rect *pSDL_RECT_Btm, int iAction){
   STRUCT_BUTTON_LIST *pstWrkButtonList;
 
-  eMovAction eMvAct = (eMovAction)iAction;
+  eBtnAction eBtnAct = (eBtnAction)iAction;
 
   for ( pstWrkButtonList = &gstButtonList; pstWrkButtonList->pstNext != NULL; pstWrkButtonList = pstWrkButtonList->pstNext );
   
   if ( pstWrkButtonList->iAction == 0 && pstWrkButtonList == &gstButtonList){
     pstWrkButtonList->pSDL_RECT_Button = pSDL_RECT_Btm;
-    pstWrkButtonList->iAction = eMvAct;
+    pstWrkButtonList->iAction = eBtnAct;
     pstWrkButtonList->pstNext = NULL;
     return 0;
   }
@@ -47,7 +47,7 @@ int iBUTTON_AddToList(SDL_Rect *pSDL_RECT_Btm, int iAction){
   memset(pstWrkButtonList->pstNext, 0, sizeof(STRUCT_BUTTON_LIST));
   pstWrkButtonList = pstWrkButtonList->pstNext;
   pstWrkButtonList->pSDL_RECT_Button = pSDL_RECT_Btm;
-  pstWrkButtonList->iAction = eMvAct;
+  pstWrkButtonList->iAction = eBtnAct;
   pstWrkButtonList->pstNext = NULL;
 
   return 0;

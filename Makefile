@@ -21,9 +21,11 @@ NCURSESADDONLIBS = -lncurses
 
 ifdef _WIN32
 	NCURSESADDONLIBS += -DNCURSES_STATIC
-	SDLADDONLIBS += -lSDL_ttf 
-	CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
-	LIBS  =  -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
+	SDLADDONLIBS += -lSDL2_ttf 
+	# CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
+	# LIBS  =  -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
+	CCOPT += -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
+	LIBS  =  -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
 endif
 
 ifdef LINUX
