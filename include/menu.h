@@ -19,7 +19,7 @@ enum eMenuOption{
 } eMenuOption;
 
 extern int giMENU_SelectedItem;
-int gbDrawMenu = TRUE;
+int gbDrawMenu = FALSE;
 
 void vInitMenu(SDL_Rect *pSDL_RECT_Mn, int iOptionCt) {
     SDL_Rect *pSDL_RECT_Wrk;

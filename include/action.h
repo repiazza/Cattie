@@ -1,9 +1,6 @@
-#ifndef _CATTIE_H_INC
-  #include <cattie.h>
-#endif
-#ifndef _BOARD_H_INC
-  #include <board.h>
-#endif
+#include <cattie.h>
+#include <board.h>
+#include <button.h>
 
 #define _MAX_MOV_ACTION BOARD_COLS*BOARD_ROWS*10
 

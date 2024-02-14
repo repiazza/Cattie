@@ -29,12 +29,14 @@
 //  #define gstCmdLine.szWinHeight 800
   #define WINDOW_RATIO  gstCmdLine.szWinWidth/gstCmdLine.szWinHeight
 
+  #define REDRAW_MENU_CLKD -10
   #define REDRAW_NONE  0
   #define REDRAW_IMAGE 1
   #define ERROR_WALKING 10
 
   #define VSYNC_TIME 16.666666666 //tempo em ms para atualização em 60 FPS
 
+  #define BUTTON_UNKNOWN   0
   #define BUTTON_DIRECTION 1
   #define BUTTON_CONFIRM   2
   #define BUTTON_ERASE     3
@@ -75,16 +77,7 @@
     PATH_SQUARE,
     END_SQUARE
   } eSqType;
-
-  typedef enum ButtonAction{
-    FORWARD = 1,
-    TURN,
-    FIRE_LASER,
-    ERASE,
-    CONFIRM,
-    CONFIGURE
-  } eBtnAction;
-
+  
   typedef enum WindRose{
     NORTH = 1,
     EAST,
@@ -110,6 +103,6 @@
   int iWalk();
   int iTurn();
   int iFireLaser();  
-  
+  // void vUpdateCmdTmpList(int iAct, SDL_Texture *pSDL_TXTR_CmdListHud);
 #endif /* _CATTIE_H_INC */
 
