@@ -53,22 +53,34 @@ void vACTION_TraceList(){
 
 }
 
+void vACTION_InitList(){
+  memset(giACTION_List, 0, sizeof(int)*_MAX_MOV_ACTION);
+  giACTION_StepCtr = 0;
+}
+
 int iACTION_AddStep2List(int iCmd){
+  vTraceBegin();
   if ( iCmd == ERASE ){
-    if ( giACTION_StepCtr <= 0 )
+    if ( giACTION_StepCtr <= 0 ){
+      vACTION_InitList();
+      vTraceEnd();
       return 0;
+    }
 
     giACTION_List[giACTION_StepCtr--] = 0;
+    vTraceEnd();
     return 0;
   }
   if ( iCmd == CONFIRM ){
     giACTION_List[giACTION_StepCtr] = -1;
   }
   
-  if ( giACTION_StepCtr >= _MAX_MOV_ACTION - 1 )
+  if ( giACTION_StepCtr >= _MAX_MOV_ACTION - 1 ){
+    vTraceEnd();
     return -1;
-
+  }
   giACTION_List[giACTION_StepCtr++] = iCmd;
-
+  
+  vTraceEnd();
   return 0;
 }

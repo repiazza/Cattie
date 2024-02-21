@@ -4,9 +4,11 @@
 
 #include <stdlib.h>
 #include <cmdline.h>
+#include <cattie.h>
 
 #ifndef _BOARD_H_INC
   #define _BOARD_H_INC
+    
   #define BOARD_ROWS 10
   #define BOARD_COLS 10
 
@@ -20,9 +22,12 @@
   void vBOARD_Init(){
     int iX;
     int iY;
+    vTraceBegin();
     for (iX = 0; iX < BOARD_ROWS; iX++)
       for (iY = 0; iY < BOARD_COLS; iY++)
         giBOARD_Main[iX][iY] = WALL_SQUARE;
+
+    vTraceEnd();
   }
 
   void vBOARD_Trace(){
@@ -37,7 +42,7 @@
         sprintf(szWrk, "[%d] ", giBOARD_Main[ii][jj]);
         vTraceMsgNoNL(szWrk);
       }
-      vTraceMsgNoNL("\n");
+      vTraceMsg("\n");
     }
     vTraceMsg("========================\n");
   }
@@ -123,22 +128,23 @@
       iLastRow = iRow;
       iLastCol = iCol;
       iDirection = rand() % 2; // Generate a random number (0 or 1)
-      if (iDirection == 0) {
-        // Go down
+      if (iDirection == EVEN) {
+        // EVEN, Go down
         iRow++;
       } else {
-        // Go right
+        // ODD, Go right
         iCol++;
       }
       if ( bFirstSq ) {
-        gstPlayer.iCurrX = 0;
-        gstPlayer.iCurrY = 0;
-        if ( iDirection == 0 ){
-          gstPlayer.iFacingPos = SOUTH;
-        }
-        else{
-          gstPlayer.iFacingPos = EAST;
-        }
+        vInitPlayerAttr(iDirection);
+        // gstPlayer.iCurrX = 0;
+        // gstPlayer.iCurrY = 0;
+        // if ( iDirection == 0 ){
+        //   gstPlayer.iFacingPos = SOUTH;
+        // }
+        // else{
+        //   gstPlayer.iFacingPos = EAST;
+        // }
         bFirstSq = FALSE;
       }
     }

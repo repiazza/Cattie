@@ -17,7 +17,7 @@
   #ifndef GXRF_H_INC
     #include <GXRF.h>
   #endif /* GXRF_H_INC */
-
+  
 /******************************************************************************
  *                                                                            *
  *                             Defines and macros                             *
@@ -56,6 +56,9 @@
   #define RFERMI_MAIL   "repiazza@gmail.com"
   #define BACAGINE_MAIL "gustavo.bacagine@protonmail.com"
   #define DESCRIPTION   "cattie logic game"
+
+  #define EVEN 0
+  #define ODD  1  
   
 /******************************************************************************
  *                                                                            *
@@ -103,6 +106,15 @@
   int iWalk();
   int iTurn();
   int iFireLaser();  
-  // void vUpdateCmdTmpList(int iAct, SDL_Texture *pSDL_TXTR_CmdListHud);
+  void vInitPlayerAttr(int iDirection){
+    gstPlayer.iCurrX = 0;
+    gstPlayer.iCurrY = 0;
+    if ( iDirection == EVEN ){
+      gstPlayer.iFacingPos = SOUTH;
+    }
+    else{
+      gstPlayer.iFacingPos = EAST;
+    }
+  }
 #endif /* _CATTIE_H_INC */
 

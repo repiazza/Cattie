@@ -6,6 +6,7 @@
 #include <action.h>
 #include <button.h>
 #include <consts.h>
+#include <texture.h>
 #include <cmdline.h>
 #include <util.h>
 
@@ -22,6 +23,7 @@
  **/
 
 STRUCT_BUTTON_LIST gstButtonList;
+STRUCT_TEXTURE_LIST gstTextureList;
 int giBOARD_Main[BOARD_ROWS][BOARD_COLS];
 int giDeg = 0;
 int gbRunning = TRUE;
@@ -529,11 +531,11 @@ int SDL_main(int argc, char *argv[]){
   int iXTranslation = 0;
   int iRedrawAction = -1;
   uint64_t ui64ElapsedTime;
-  SDL_Texture *pSDL_TXTR_ImagePlayer;
-  SDL_Texture *pSDL_TXTR_ImageFoward;
-  SDL_Texture *pSDL_TXTR_ImageRotate;
-  SDL_Texture *pSDL_TXTR_ImageLaser;
-  SDL_Texture *pSDL_TXTR_ImageConfig;
+  SDL_Texture *pSDL_TXTR_ImagePlayer = NULL;
+  SDL_Texture *pSDL_TXTR_ImageFoward = NULL;
+  SDL_Texture *pSDL_TXTR_ImageRotate = NULL;
+  SDL_Texture *pSDL_TXTR_ImageLaser = NULL;
+  SDL_Texture *pSDL_TXTR_ImageConfig = NULL;
   SDL_Texture *pSDL_TXTR_Hud;
   SDL_Texture *pSDL_TXTR_ButtonHud;
   SDL_Texture *pSDL_TXTR_SquareBorder;
@@ -641,6 +643,7 @@ int SDL_main(int argc, char *argv[]){
   
   // Clear structure
   vBUTTON_InitList();
+  vTXTR_InitList();
   
   // Set Button Sizes
   // Walk Forward
@@ -671,27 +674,36 @@ int SDL_main(int argc, char *argv[]){
   iBUTTON_AddToList(&SDL_RECT_ButtonUndoLast     , ERASE);
   iBUTTON_AddToList(&SDL_RECT_ButtonConfirm      , CONFIRM);
   iBUTTON_AddToList(&SDL_RECT_ButtonConfigure    , CONFIGURE);
+
+  
+
   SDL_RenderPresent(renderer);
   
-  /**
-   * If the game is not installed, get the images of the current directory
-   */
-  if(bFileExist(ppszInstalledImagePath[PLAYER_IMG_PATH_IDX]))
-  {
-    pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[PLAYER_IMG_PATH_IDX]); 
-    pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[FORWARD_IMG_PATH_IDX]); 
-    pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszInstalledImagePath[LASER_IMG_PATH_IDX]);
-    pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[ROTATE_IMG_PATH_IDX]);
-    pSDL_TXTR_ImageConfig  = IMG_LoadTexture(renderer  , ppszInstalledImagePath[GEAR_IMG_PATH_IDX]); 
-  }
-  else
-  {
-    pSDL_TXTR_ImagePlayer  = IMG_LoadTexture(renderer  , ppszImagePath[PLAYER_IMG_PATH_IDX]); 
-    pSDL_TXTR_ImageFoward  = IMG_LoadTexture(renderer  , ppszImagePath[FORWARD_IMG_PATH_IDX]); 
-    pSDL_TXTR_ImageLaser   = IMG_LoadTexture(renderer  , ppszImagePath[LASER_IMG_PATH_IDX]);
-    pSDL_TXTR_ImageRotate  = IMG_LoadTexture(renderer  , ppszImagePath[ROTATE_IMG_PATH_IDX]); 
-    pSDL_TXTR_ImageConfig  = IMG_LoadTexture(renderer  , ppszImagePath[GEAR_IMG_PATH_IDX]);
-  }
+  pSDL_TXTR_ImagePlayer = pSDL_TXTR_AddToList(renderer, 
+    bFileExist(ppszInstalledImagePath[PLAYER_IMG_PATH_IDX])
+    ? ppszInstalledImagePath[PLAYER_IMG_PATH_IDX]
+    : ppszImagePath[PLAYER_IMG_PATH_IDX]
+  );
+  pSDL_TXTR_ImageFoward = pSDL_TXTR_AddToList(renderer,  
+    bFileExist(ppszInstalledImagePath[FORWARD_IMG_PATH_IDX])
+    ? ppszInstalledImagePath[FORWARD_IMG_PATH_IDX]
+    : ppszImagePath[FORWARD_IMG_PATH_IDX]
+  );
+  pSDL_TXTR_ImageLaser = pSDL_TXTR_AddToList(renderer, 
+    bFileExist(ppszInstalledImagePath[LASER_IMG_PATH_IDX])
+    ? ppszInstalledImagePath[LASER_IMG_PATH_IDX]
+    : ppszImagePath[LASER_IMG_PATH_IDX]
+  );
+  pSDL_TXTR_ImageRotate = pSDL_TXTR_AddToList(renderer, 
+    bFileExist(ppszInstalledImagePath[ROTATE_IMG_PATH_IDX])
+    ? ppszInstalledImagePath[ROTATE_IMG_PATH_IDX]
+    : ppszImagePath[ROTATE_IMG_PATH_IDX]
+  );
+  pSDL_TXTR_ImageConfig = pSDL_TXTR_AddToList(renderer,
+    bFileExist(ppszInstalledImagePath[GEAR_IMG_PATH_IDX]) ?
+      ppszInstalledImagePath[GEAR_IMG_PATH_IDX]
+    : ppszImagePath[GEAR_IMG_PATH_IDX]
+  );
   
   pSDL_TXTR_Hud          = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_Hud.w, SDL_RECT_Hud.h);
   pSDL_TXTR_ButtonHud    = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SDL_RECT_ButtonHud.w, SDL_RECT_ButtonHud.h);
@@ -700,10 +712,10 @@ int SDL_main(int argc, char *argv[]){
   vInitializeImagePosition(&SDL_RECT_Player);
     
   pSDL_RECT_Menu = (SDL_Rect *) malloc(MAX_MENU_OPTIONS*sizeof(SDL_Rect));
-  
   vInitMenu(pSDL_RECT_Menu, MAX_MENU_OPTIONS);
 
   gstPlayer.pSDL_RECT_Player = &SDL_RECT_Player;
+
   vBUTTON_DrawList(renderer);
 /*
   iGXRF_Add2RenderList(
@@ -826,7 +838,6 @@ int SDL_main(int argc, char *argv[]){
   
   // Clean up
   TTF_CloseFont(pttf_Font);
-  vBUTTON_FreeList();
   // Don't forget to destroy the texture when you're done with it
   SDL_DestroyTexture(pSDL_TXTR_Hud);
   SDL_DestroyTexture(pSDL_TXTR_ButtonHud);
@@ -836,6 +847,8 @@ int SDL_main(int argc, char *argv[]){
   SDL_DestroyTexture(pSDL_TXTR_ImageRotate);
   SDL_DestroyTexture(pSDL_TXTR_ImageConfig);
   SDL_DestroyTexture(pSDL_TXTR_SquareBorder);
+  vBUTTON_FreeList();
+  vTXTR_FreeList();
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
