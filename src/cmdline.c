@@ -12,163 +12,59 @@
 #include <trace.h>
 #include <sl.h>
 
-static const char *kszOptStr = "hvt:d:CcHW";
-
 /**
- * Command line structure and strings
+ * Long            Short                 Required                   DataType                         Argument
+ *  Set             Default               Data                       DataLength
+ * Help
  */
-struct option astCmdOpt[] = {
-  { "help"         , no_argument      ,    0, 'h' },
-  { "version"      , no_argument      ,    0, 'v' },
-  { "trace"        , required_argument,    0, 't' },
-  { "debug-level"  , required_argument,    0, 'd' },
-  { "conf-file"    , required_argument,    0, 'C' },
-  { "cat"          , no_argument      ,    0, 'c' },
-  { "win-heigth"   , required_argument,    0, 'H' },
-  { "win-width"    , required_argument,    0, 'W' },
-  { NULL           , 0                , NULL,  0  }
-};
 
-/**
- * Arguments of command line options useds 
- * in usage message of program
- */
-const char *pszCmdArguments[] = {
-  NULL,
-  NULL,
-  "file",
-  "number",
-  "file",
-  NULL,
-  "number",
-  "number",
-  NULL
-};
-
-/**
- * Help messages that showed in usage message
- * of program
- */
-const char *pszCmdMessages[] = {
-  "Show this message and exit",
-  "Show the version and exit",
-  "<file> is the path of the debug file",
-  "<number> is the level of debug level",
-  "<file> is the path of the configuration file",
-  "This is top secret ;)",
-  "Window Height",
-  "Window Width",
-  NULL
-};
-
-void vPrintUsage(void)
-{
-  int ii = 0;
-  
-  printf("Usage %s [options] <arguments>\n\n"
-         "%s\n\n"
-         "Options:\n", gkpszProgramName, DESCRIPTION);
-  while(astCmdOpt[ii].name)
-  {
-    if(astCmdOpt[ii].has_arg == required_argument)
-    {
-      printf("  --%s=<%s>, -%c <%s>\n"
-             "    %s\n\n", astCmdOpt[ii].name, pszCmdArguments[ii],
-                           astCmdOpt[ii].val, pszCmdArguments[ii],
-                           pszCmdMessages[ii]);
-    }
-    else
-    {
-      printf("  --%s, -%c\n"
-             "    %s\n\n", astCmdOpt[ii].name, astCmdOpt[ii].val,
-                           pszCmdMessages[ii]);
-    }
-
-    ii++;
+STRUCT_CMDLINE astCmdOpt[] = {
+/* 00 */
+  { "help",        "h",                  CMDDATA_NODATA,            CMDTYPE_NULL,                    "",
+     FALSE,         "",                   NULL,                      0,
+    "Show this message and exit"
+  },
+/* 01 */
+  { "version",     "v",                  CMDDATA_NODATA,            CMDTYPE_NULL,                    "",
+     FALSE,         "",                   NULL,                      0,
+    "Show the version and exit."
+  },
+/* 02 */
+  { "trace",       "t",                  CMDDATA_REQUIRED,          CMDTYPE_STR,                     "<file>",
+     FALSE,         "cattie.log",       gstCmdLine.szTraceFile,    sizeof(gstCmdLine.szTraceFile),
+    "<file> is the path of the debug file"
+  },
+/* 03 */
+  { "debug-level", "d",                  CMDDATA_REQUIRED,          CMDTYPE_INT,                     "<number>",
+     FALSE,         "0",                  gstCmdLine.szDebugLevel,   sizeof(gstCmdLine.szDebugLevel),
+    "<number> is the level of debug level"
+  },
+/* 04 */
+  { "conf-file",   "C",                  CMDDATA_REQUIRED,          CMDTYPE_INT,                     "<number>",
+     FALSE,         "0",                  gstCmdLine.szConfFile,     sizeof(gstCmdLine.szConfFile),
+    "<file> is the path of the configuration file"
+  },
+/* 05 */
+  { "cat",         "c",                  CMDDATA_NODATA,            CMDTYPE_NULL,                    "",
+     FALSE,         "0",                  NULL,                      0,
+    "This is top secret ;)"
+  },
+/* 06 */
+  { "win-heigth",  "H",                  CMDDATA_REQUIRED,          CMDTYPE_INT,                     "<number>",
+     FALSE,         "0",                  gstCmdLine.szWinHeight,    sizeof(gstCmdLine.szWinHeight),
+    "<number> is the Window Height"
+  },
+/* 07 */
+  { "win-width",   "W",                  CMDDATA_REQUIRED,          CMDTYPE_INT,                     "<number>",
+     FALSE,         "0",                  gstCmdLine.szWinWidth,     sizeof(gstCmdLine.szWinWidth),
+    "<number> is the Window Width"
+  },
+  /* NOTE: NULL indicates the end of the array, NEVER REMOVE IT! */
+  { NULL,         NULL,                   CMDDATA_NULL,             CMDTYPE_NULL,                    "",
+     FALSE,        "",                     NULL,                     0,
+    NULL
   }
-}
-
-void vPrintVersion(void)
-{
-  printf("%s %s\n"
-         "Build in %s %s\n"
-         "%s %s\n"
-         "For reporting bugs, send a email to:\n"
-         "<%s>\n" 
-         "<%s>\n", gkpszProgramName, 
-                   VERSION,
-                   __DATE__,
-                   __TIME__,
-                   COPYRIGHT,
-                   DEVELOPER,
-                   RFERMI_MAIL,
-                   BACAGINE_MAIL
-  );
-}
-
-bool bCommandLineIsOK(int argc, char **argv)
-{
-  int iCmdLineOpt = 0;
-  
-  /**
-   * Used to get the final of
-   * conversion of strtol
-   */
-  char *pchEndPtr; 
-
-  while((iCmdLineOpt = getopt_long(argc, argv, kszOptStr, astCmdOpt, NULL )) != -1)
-  {
-    switch(iCmdLineOpt)
-    {
-      case 'h':
-        vPrintUsage();
-        exit(EXIT_SUCCESS);
-      case 'v':
-        vPrintVersion();
-        exit(EXIT_SUCCESS);
-      case 't':
-        sprintf(gstCmdLine.szTraceFile, "%s", optarg);
-        break;
-      case 'd':
-        sprintf(gstCmdLine.szDebugLevel, "%s", optarg);
-
-        strtol(gstCmdLine.szDebugLevel, &pchEndPtr, 10);
-
-        if(*pchEndPtr != '\0')
-        {
-          return FALSE;
-        }
-
-        break;
-      case 'c':
-//#ifdef LINUX
-        vShowTrain();
-/*#else
-        printf(
-            "          Meow\n"
-            "        _________\n"
-            " /\\___/\\   /\n"
-            "( ^ w ^ ) /\n"
-            "( v   v )\n"
-            "( v   v )_/\n"
-        );
-#endif
-*/
-        exit(EXIT_SUCCESS);
-      case 'H':
-        sprintf(gstCmdLine.szWinHeight, "%s", optarg);
-        break;
-      case 'W':
-        sprintf(gstCmdLine.szWinWidth, "%s", optarg);
-        break;
-      case '?':
-      default:
-        return FALSE;
-    }
-  }
-
-  return TRUE;
-}
+};
 
 char *szGetProgramName(const char *szPathName)
 {
@@ -192,3 +88,195 @@ char *szGetProgramName(const char *szPathName)
   return pszProgramName;
 }
 
+void vShowOptions(PSTRUCT_CMDLINE astCmdOpt)
+{
+  int ii = 0;
+
+  for(ii = 0; astCmdOpt[ii].iRequired != CMDDATA_NULL; ii++)
+  {
+    if(astCmdOpt[ii].iRequired == CMDDATA_NODATA)
+    {
+      if(astCmdOpt[ii].pszShort == NULL || !strcmp(astCmdOpt[ii].pszShort, ""))
+      {
+        printf("  --%s\n", astCmdOpt[ii].pszLong);
+      }
+      else if(astCmdOpt[ii].pszLong == NULL || !strcmp(astCmdOpt[ii].pszLong, ""))
+      {
+        printf("  -%s\n", astCmdOpt[ii].pszShort);
+      }
+      else
+      {
+        printf("  --%s, -%s\n", astCmdOpt[ii].pszLong, astCmdOpt[ii].pszShort);
+      }
+    }
+    else
+    {
+      if(astCmdOpt[ii].pszShort == NULL || !strcmp(astCmdOpt[ii].pszShort, ""))
+      {
+        printf("  --%s=%s\n", astCmdOpt[ii].pszLong, astCmdOpt[ii].pszArgument);
+      }
+      else if(astCmdOpt[ii].pszLong == NULL || !strcmp(astCmdOpt[ii].pszLong, ""))
+      {
+        printf("  -%s%s\n", astCmdOpt[ii].pszShort, astCmdOpt[ii].pszArgument);
+      }
+      else
+      {
+        printf("  --%s=%s, -%s%s\n", astCmdOpt[ii].pszLong, astCmdOpt[ii].pszArgument,
+                                     astCmdOpt[ii].pszShort, astCmdOpt[ii].pszArgument);
+      }
+    }
+    printf("    %s\n\n", astCmdOpt[ii].pszHelp);
+  }
+}
+
+void vShowSyntax(const char *pszMsg, PSTRUCT_CMDLINE astCmdOpt)
+{
+  printf("%s\n", pszMsg);
+  vShowOptions(astCmdOpt);
+}
+
+bool bCommandLineIsOK(int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt)
+{
+  int ii = 0;
+  int jj = 0;
+  char *pszArgument = NULL;
+  char *pszParameter = NULL;
+  bool bLongCmd = false;
+  bool bShortCmd = false;
+
+  for(ii = 1; ii < argc; ii++)
+  {
+    int iReallocBuffer = snprintf(NULL, 0, "%s", argv[ii]);
+    char *pszArgv = (char *) malloc(sizeof(char) * (iReallocBuffer+1));
+
+    snprintf(pszArgv, iReallocBuffer+1, "%s", argv[ii]);
+
+    pszArgument = strtok(pszArgv, "=");
+
+    if(argv[ii][0] == '-' && argv[ii][1] == '-')
+    {
+      bLongCmd = true;
+
+      pszParameter = strtok(NULL, "=");
+
+      strcpy(pszArgument, &pszArgument[2]);
+    }
+    else if(argv[ii][0] == '-')
+    {
+      bShortCmd = true;
+      pszParameter = (char *) malloc(sizeof(char) * strlen(pszArgument)-1);
+      strcpy(pszParameter, &pszArgument[2]);
+
+      snprintf(pszArgument, strlen(pszArgument), "%c", pszArgument[1]);
+    }
+    else
+    {
+      free(pszArgv);
+      pszArgv = NULL;
+
+      return false;
+    }
+
+    for(jj = 0; astCmdOpt[jj].iRequired != CMDDATA_NULL; jj++)
+    {
+      if(bLongCmd)
+      {
+        if(!strcmp(pszArgument, astCmdOpt[jj].pszLong))
+        {
+          astCmdOpt[jj].bSet = true;
+
+          if(astCmdOpt[jj].iRequired == CMDDATA_REQUIRED)
+          {
+            if(pszParameter == NULL) return false;
+            snprintf(astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter);
+          }
+
+          if(astCmdOpt[jj].iRequired == CMDDATA_OPTIONAL)
+          {
+            if(pszParameter == NULL)
+            {
+              bLongCmd = false;
+
+              continue;
+            }
+            snprintf(astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter);
+          }
+        }
+      } // bLongCmd
+      else if(bShortCmd)
+      {
+        if(!strcmp(pszArgument, astCmdOpt[jj].pszShort))
+        {
+          astCmdOpt[jj].bSet = true;
+
+          if(astCmdOpt[jj].iRequired == CMDDATA_NODATA)
+          {
+            bShortCmd = false;
+
+            free(pszParameter);
+            pszParameter = NULL;
+
+            continue;
+          }
+          if(astCmdOpt[jj].iRequired == CMDDATA_REQUIRED)
+          {
+            if(pszParameter[0] == 0)
+            {
+              bShortCmd = false;
+
+              free(pszParameter);
+              pszParameter = NULL;
+
+              free(pszArgv);
+              pszArgv = NULL;
+
+              return false;
+            }
+            snprintf(astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter);
+          }
+
+          if(astCmdOpt[jj].iRequired == CMDDATA_OPTIONAL)
+          {
+            if(pszParameter[0] == 0)
+            {
+              bShortCmd = false;
+
+              free(pszParameter);
+              pszParameter = NULL;
+
+              continue;
+            }
+
+            snprintf(astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter);
+          }
+        }
+      } // bShortCmd
+      else
+      {
+        bLongCmd = false;
+        bShortCmd = false;
+
+        free(pszArgv);
+        pszArgv = NULL;
+      }
+    } // for
+
+    if(bShortCmd)
+    {
+      free(pszParameter);
+      pszParameter = NULL;
+
+      bShortCmd = false;
+    }
+
+    if(bLongCmd)
+    {
+      bLongCmd = false;
+    }
+
+    free(pszArgv);
+    pszArgv = NULL;
+  } // for
+
+  return true;
+}

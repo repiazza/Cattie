@@ -233,3 +233,57 @@ bool bLoadCfgFile(const char *kpszFileName)
   return TRUE;
 }
 
+bool bTerminalSupportColors(void)
+{
+  char *szTerm = getenv("TERM");
+
+  if(bStrIsEmpty(szTerm) || !strcmp(szTerm, "dumb"))
+  {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+void vPrintWarningMessage(const char* kpszFmt, ...)
+{
+  va_list args;
+  char *pszMsg = NULL;
+  int iReallocBuffer = 0;
+
+  va_start(args, kpszFmt);
+
+  /**
+   * Check if the terminal suport colors
+   */
+  if(bTerminalSupportColors() == FALSE)
+  {
+    iReallocBuffer = snprintf(NULL, 0, "W: %s\n", kpszFmt);
+
+    pszMsg = (char *) malloc(sizeof(char) * (iReallocBuffer+1));
+
+    snprintf(pszMsg, iReallocBuffer+1, "W: %s\n", kpszFmt);
+
+    vfprintf(stderr, pszMsg, args);
+
+    free(pszMsg);
+    pszMsg = NULL;
+
+    va_end(args);
+
+    return;
+  }
+
+  iReallocBuffer = snprintf(NULL, 0, "\033[1;35mW:\033[m %s\n", kpszFmt);
+
+  pszMsg = (char *) malloc(sizeof(char) * (iReallocBuffer+1));
+
+  snprintf(pszMsg, iReallocBuffer+1, "\033[1;35mW:\033[m %s\n", kpszFmt);
+
+  vfprintf(stderr, pszMsg, args);
+
+  free(pszMsg);
+  pszMsg = NULL;
+
+  va_end(args);
+}

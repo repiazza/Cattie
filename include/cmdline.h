@@ -2,7 +2,7 @@
  * cmdline.h
  *
  * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com>
- *  
+ *
  * My cmdline file
  *
  * Date: 21/10/2023
@@ -17,15 +17,39 @@
  *                                                                            *
  ******************************************************************************/
 #include <stdio.h>
-#include <getopt.h>
 #include <cattie.h>
 #include <trace.h>
 
-/******************************************************************************
- *                                                                            *
- *                           Command Line Options                             *
- *                                                                            *
- ******************************************************************************/
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define CMDTYPE_INT    0
+#define CMDTYPE_STR    1
+#define CMDTYPE_NULL   3
+
+#define CMDDATA_NODATA   0
+#define CMDDATA_REQUIRED 1
+#define CMDDATA_OPTIONAL 2
+#define CMDDATA_NULL     3
+
+/**
+ * This structure that represents a command line
+ * command
+ */
+typedef struct STRUCT_CMDLINE
+{
+  char *pszLong;       /* --help                                           */
+  char *pszShort;      /* -h                                               */
+  int iRequired;       /* If command require arguments                     */
+  int iDataType;       /* integer, string                                  */
+  char *pszArgument;   /* file, number, etc                                */
+  bool bSet;           /* if the command is setted                         */
+  char *pszDefault;    /* Default value of the command                     */
+  char *pszData;       /* The variable with receive the argument           */
+  long lDataLength;    /* The length of variable with receive the argument */
+  char *pszHelp;       /* Help message                                     */
+} STRUCT_CMDLINE, *PSTRUCT_CMDLINE;
 
 /**
  * Structure that represnts
@@ -33,35 +57,23 @@
  */
 typedef struct STRUCT_COMMAND_LINE
 {
-  char szTraceFile [_MAX_PATH];
-  char szDebugLevel[_MAX_PATH];
-  char szConfFile  [_MAX_PATH];
-  char szWinHeight [_MAX_PATH];
-  char szWinWidth  [_MAX_PATH];
+  char szTraceFile [256];
+  char szDebugLevel[256];
+  char szConfFile  [256];
+  char szWinHeight [256];
+  char szWinWidth  [256];
 } STRUCT_COMMAND_LINE;
 
-/**
- * Command line structure and strings
- */
-extern struct option astCmdOpt[];
-
-/**
- * Arguments of command line options useds 
- * in usage message of program
- */
-extern const char *pszCmdArguments[];
-
-/**
- * Help messages that showed in usage message
- * of program
- */
-extern const char *pszCmdMessages[];
 
 /******************************************************************************
  *                                                                            *
  *                     Global variables and constants                         *
  *                                                                            *
  ******************************************************************************/
+/**
+ * Command line structure and strings
+ */
+extern STRUCT_CMDLINE astCmdOpt[];
 
 /**
  * Command line arguments
@@ -75,26 +87,6 @@ extern STRUCT_COMMAND_LINE gstCmdLine;
  ******************************************************************************/
 
 /**
- * Print the help message for the user
- */
-void vPrintUsage(void);
-
-/**
- * Print the version of the software
- */
-void vPrintVersion(void);
-
-/**
- * Print a formatted error message
- */
-void vPrintErrorMessage(const char *kpszFmt, ...);
-
-/**
- * Check if what wass passed on the command line is valid
- */
-bool bCommandLineIsOK(int argc, char **argv);
-
-/**
  * This function is based in the examples of the book 
  * "Aprenda em 24 horas Programacao para Linux"
  *
@@ -103,6 +95,17 @@ bool bCommandLineIsOK(int argc, char **argv);
  * only the string "program".
  */
 char *szGetProgramName(const char *szPathName);
+/**
+ * Print the help message for the user
+ */
+void vShowOptions(PSTRUCT_CMDLINE astCmdOpt);
+void vShowSyntax(const char *pszMsg, PSTRUCT_CMDLINE astCmdOpt);
+
+/**
+ * Check if what wass passed on the command line is valid
+ */
+bool bCommandLineIsOK(int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt);
 
 #endif /* _CMDLINE_H_ */
+
 

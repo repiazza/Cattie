@@ -9,6 +9,7 @@
 #include <texture.h>
 #include <cmdline.h>
 #include <util.h>
+#include <sl.h>
 
 #ifdef _WIN32
   #include <windows.h>
@@ -39,7 +40,9 @@ STRUCT_PLAYER gstPlayer;
     "/usr/share/cattie/img/cat2.png",
     "/usr/share/cattie/img/forward.png",
     "/usr/share/cattie/img/laser.png",
-    "/usr/share/cattie/img/rotate2.png"
+    "/usr/share/cattie/img/rotate2.png",
+    "/usr/share/cattie/img/gear.png",
+    NULL
   };
 #else
   char *ppszInstalledImagePath[] = {
@@ -47,7 +50,8 @@ STRUCT_PLAYER gstPlayer;
     "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\forward.png",
     "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\laser.png",
     "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\rotate2.png",
-    "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\gear.png"
+    "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\gear.png",
+    NULL
   };
 #endif
 
@@ -57,7 +61,8 @@ char *ppszMenuOpt[MAX_MENU_OPTIONS] = {
     "option 3",
     "option 4",
     "option 5",
-    "Sair"
+    "Sair",
+    NULL
 };
 
 char *ppszImagePath[] = {
@@ -65,7 +70,8 @@ char *ppszImagePath[] = {
     "img/forward.png",
     "img/laser.png",
     "img/rotate2.png",
-    "img/gear.png"
+    "img/gear.png",
+    NULL
 };
 
 /* Receive the name of program */
@@ -522,6 +528,74 @@ int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
   return 0;
 }
 
+void vInitPlayerAttr(int iDirection)
+{
+    gstPlayer.iCurrX = 0;
+    gstPlayer.iCurrY = 0;
+    if ( iDirection == EVEN ){
+      gstPlayer.iFacingPos = SOUTH;
+    }
+    else{
+      gstPlayer.iFacingPos = EAST;
+    }
+  }
+
+/**
+ * Print the version of the software
+ */
+static void vPrintVersion(void)
+{
+  printf("%s %s\n"
+         "Build in %s %s\n"
+         "%s %s\n"
+         "For reporting bugs, send a email to:\n"
+         "<%s>\n"
+         "<%s>\n", gkpszProgramName,
+                   VERSION,
+                   __DATE__,
+                   __TIME__,
+                   COPYRIGHT,
+                   DEVELOPER,
+                   RFERMI_MAIL,
+                   BACAGINE_MAIL
+  );
+}
+
+/**
+ * Print the help message for the user
+ */
+static void vPrintUsage(void)
+{
+  int iReallocBuffer = 0;
+  char *pszMsg = NULL;
+
+  iReallocBuffer = snprintf(
+    NULL,
+    0,
+    "Usage %s [options]<arguments>\n\n"
+    "%s\n\n"
+    "Options:\n", gkpszProgramName,
+                  DESCRIPTION
+  );
+
+  pszMsg = (char *) malloc(sizeof(char) * (iReallocBuffer+1));
+  snprintf(
+    pszMsg,
+    iReallocBuffer+1,
+    "Usage %s [options]<arguments>\n\n"
+    "%s\n\n"
+    "Options:\n", gkpszProgramName,
+                  DESCRIPTION
+  );
+
+  vShowSyntax(pszMsg, astCmdOpt);
+
+  free(pszMsg);
+  pszMsg = NULL;
+
+  exit(EXIT_FAILURE);
+}
+
 /**
  *
  * main
@@ -573,29 +647,49 @@ int SDL_main(int argc, char *argv[]){
 
     exit(EXIT_FAILURE);
   }
-  
-  vInitLogs();
 
-  if (DEBUG_MSGS) vTraceBegin();
-   
   /**
    * Check if command line is OK
    */
-  if(!bCommandLineIsOK(argc, argv))
+  if(!bCommandLineIsOK(argc, argv, astCmdOpt))
   {
     vPrintUsage();
 
     return -1;
   }
-  
+
+  if(astCmdOpt[0].bSet)
+  {
+    vPrintUsage();
+
+    return 0;
+  }
+
+  if(astCmdOpt[1].bSet)
+  {
+    vPrintVersion();
+
+    return 0;
+  }
+
+  if(astCmdOpt[5].bSet)
+  {
+    vShowTrain();
+    exit(EXIT_SUCCESS);
+  }
+
+  vInitLogs();
+
+  if (DEBUG_MSGS) vTraceBegin();
+
   SDL_SetMainReady();
-  
+
   // Initialize SDL
   if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
-    if ( DEBUG_MSGS ) { 
+    if ( DEBUG_MSGS ) {
       char szMsg[256];
       sprintf(szMsg,
-    "Couldn't initialize SDL: %s\n", 
+    "Couldn't initialize SDL: %s\n",
          SDL_GetError()
       );
       vTraceMsg(szMsg);

@@ -106,15 +106,6 @@
   int iWalk();
   int iTurn();
   int iFireLaser();  
-  void vInitPlayerAttr(int iDirection){
-    gstPlayer.iCurrX = 0;
-    gstPlayer.iCurrY = 0;
-    if ( iDirection == EVEN ){
-      gstPlayer.iFacingPos = SOUTH;
-    }
-    else{
-      gstPlayer.iFacingPos = EAST;
-    }
-  }
+  void vInitPlayerAttr(int iDirection);
 #endif /* _CATTIE_H_INC */
 

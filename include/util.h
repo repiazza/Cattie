@@ -124,5 +124,15 @@ int iCheckCfgPrm(void);
  */
 bool bLoadCfgFile(const char *kpszFileName);
 
+/**
+ * Check if your terminal have support a colored text
+ */
+bool bTerminalSupportColors(void);
+
+/**
+ * Print a formatted error message
+ */
+void vPrintErrorMessage(const char *kpszFmt, ...);
+
 #endif /* _UTIL_H_ */
 

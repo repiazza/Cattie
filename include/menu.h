@@ -7,7 +7,7 @@
 
 #include <cmdline.h>
 
-#define MAX_MENU_OPTIONS 6
+#define MAX_MENU_OPTIONS 7
 
 enum eMenuOption{
   MENU_OPT_1 = 0,
