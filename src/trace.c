@@ -99,7 +99,7 @@ void _vTraceVarArgs(const char *kpszModuleName,
   st_tm_Now = localtime(&lTime);
   gettimeofday(&tv, NULL);
 
-  memset(szDbg , 0, sizeof(szDbg));
+  memset(szDbg, 0, sizeof(szDbg));
 
   if((pfLog = fopen(gszTraceFile, "a")) == NULL)
   {
@@ -110,15 +110,17 @@ void _vTraceVarArgs(const char *kpszModuleName,
   
   va_start(args, kpszFmt);
 
-  snprintf(szDbg, sizeof(szDbg), "[%02d/%02d/%04d %02d:%02d:%02d.%03ld] %s:%d ", (int) st_tm_Now->tm_mday, 
-                                                                                 (int) st_tm_Now->tm_mon+1, 
-                                                                                 (int) st_tm_Now->tm_year+1900,
-                                                                                 (int) st_tm_Now->tm_hour,
-                                                                                 (int) st_tm_Now->tm_min,
-                                                                                 (int) st_tm_Now->tm_sec,
-                                                                                 (long)tv.tv_usec / 1000,
-                                                                                 kpszModuleName,
-                                                                                 kiLine
+  snprintf(szDbg, sizeof(szDbg), 
+"[%02d/%02d/%04d %02d:%02d:%02d.%03ld] %s:%d ", 
+    (int) st_tm_Now->tm_mday, 
+    (int) st_tm_Now->tm_mon+1, 
+    (int) st_tm_Now->tm_year+1900,
+    (int) st_tm_Now->tm_hour,
+    (int) st_tm_Now->tm_min,
+    (int) st_tm_Now->tm_sec,
+    (long)tv.tv_usec / 1000,
+    kpszModuleName,
+    kiLine
   );
 
   strcat(szDbg, kpszFmt);

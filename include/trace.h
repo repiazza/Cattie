@@ -17,17 +17,14 @@
   #include <time.h>
   #include <errno.h>
   #include <stdarg.h>
-
+  #include <consts.h>
+  
   #ifdef _WIN32
     #include <windows.h>
     #include <process.h>
   #elif LINUX
     #include <unistd.h>
     #include <sys/time.h>
-  #endif
-  
-  #ifndef _CONSTS_H_
-    #include <consts.h>
   #endif
   
 /******************************************************************************
@@ -104,5 +101,5 @@
    */
   void vTraceEnvp(char **envp);
   
-#endif /* TRACE_h_*/
+#endif /* TRACE_H */
 

@@ -1,8 +1,7 @@
 #include <cattie.h>
 
-
-#ifndef _BUTTON_H_INC
-  #define _BUTTON_H_INC
+#ifndef _BUTTON_H
+  #define _BUTTON_H
   typedef enum ButtonAction{
     FORWARD = 1,
     TURN,
@@ -143,4 +142,4 @@
       vBUTTON_Draw(renderer, pstWrkButton->pSDL_RECT_Button, pstWrkButton->iButtonType);
     }
   }
-#endif
+#endif /* _BUTTON_H */

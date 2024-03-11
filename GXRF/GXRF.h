@@ -1,9 +1,10 @@
 /**
  * GXRF.h
  *
- * Written by repiazza@gmail.com in January 2023 
+ * Written by Renato Fermi <repiazza@gmail.com> in January 2023 
  *
  * GXRF Framework header file for SDL2 
+ * 
  */
  
 #ifndef GXRF_H_INC
@@ -17,14 +18,13 @@
   #include <SDL2/SDL.h>
   #include <SDL2/SDL_image.h>
 
-#ifdef LINUX
-  #include <SDL2/SDL_ttf.h>
-#else
-  #include <SDL2/SDL_TTF.h>
-#endif /* LINUX */
-  // #include <stdarg.h>
-  #include <stdarg.h>
-  #include <trace.h>
+  #ifdef LINUX
+    #include <SDL2/SDL_ttf.h>
+  #else
+    #include <SDL2/SDL_TTF.h>
+  #endif /* LINUX */
+    #include <stdarg.h>
+    #include <trace.h>
 
 /******************************************************************************
  *                                                                            *
@@ -57,7 +57,7 @@
     struct STRUCT_GXRF_RENDER *pstGXRF_FirstRenderizable;
     struct STRUCT_GXRF_RENDER *pstGXRF_LastRenderizable;
   }STRUCT_GXRF_RENDER_LIST, *PSTRUCT_GXRF_RENDER_LIST;
-// 
+ 
   typedef struct STRUCT_GXRF_OBJFNC_ARG_LIST {
     struct STRUCT_GXRF_OBJFNC_ARG *pstGXRF_FirstObjFncArg;
     struct STRUCT_GXRF_OBJFNC_ARG *pstGXRF_LastObjFncArg;
@@ -115,5 +115,5 @@
   void vGXRF_RenderObject(void *vGXRF_Renderizable);
   void vGXRF_RenderAll();
   
-#endif // ifndef GXRF_h_
+#endif // GXRF_H_
 

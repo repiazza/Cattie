@@ -211,7 +211,7 @@ bool bLoadCfgFile(const char *kpszFileName)
     if(iParseCfgLine(szLine) == -1)
     {
       fprintf(stderr, "E: impossible parse .conf file\n");
-
+      
       exit(EXIT_FAILURE);
     }
 

@@ -6,8 +6,8 @@
 #include <cmdline.h>
 #include <cattie.h>
 
-#ifndef _BOARD_H_INC
-  #define _BOARD_H_INC
+#ifndef _BOARD_H
+  #define _BOARD_H
     
   #define BOARD_ROWS 10
   #define BOARD_COLS 10
@@ -107,6 +107,17 @@
     return (eSquareType > WALL_SQUARE);
   }
 
+  void vInitPlayerAttr(int iDirection){
+    gstPlayer.iCurrX = 0;
+    gstPlayer.iCurrY = 0;
+    if ( iDirection == EVEN ){
+      gstPlayer.iFacingPos = SOUTH;
+    }
+    else{
+      gstPlayer.iFacingPos = EAST;
+    }
+  }
+  
   int iBOARD_GenerateRandomPath(){
     int iRow = 0;
     int iCol = 0;
@@ -158,4 +169,4 @@
     return 0;
   }
 
-#endif
+#endif /* _BOARD_H */

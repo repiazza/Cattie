@@ -8,49 +8,49 @@
  * Date: 21/10/2023
  */
 
-#ifndef _CONSTS_H_
-#define _CONSTS_H_
+#ifndef _CONSTS_H
+  #define _CONSTS_H
 
-#ifdef _WIN32
-  #include <windows.h>
-  #define getpid _getpid 
-  #define gettimeofday mingw_gettimeofday
-#elif LINUX
-  #include <unistd.h>
-  #define SDL_main main
-  #define _MAX_PATH 256
-#endif
+  #ifdef _WIN32
+    #include <windows.h>
+    #define getpid _getpid 
+    #define gettimeofday mingw_gettimeofday
+  #elif LINUX
+    #include <unistd.h>
+    #define SDL_main main
+    #define _MAX_PATH 256
+  #endif
 
-#ifndef FALSE
-  #define FALSE 0
-#endif /* FALSE */
+  #ifndef FALSE
+    #define FALSE 0
+  #endif /* FALSE */
 
-#ifndef TRUE
-  #define TRUE  1
-#endif /* TRUE */
+  #ifndef TRUE
+    #define TRUE  1
+  #endif /* TRUE */
 
-/**
- * This macro is used to remove
- * unused warnings during the
- * compilation.
- */
-#define UNUSED(X) (void) X
+  /**
+   * This macro is used to remove
+   * unused warnings during the
+   * compilation.
+   */
+  #define UNUSED(X) (void) X
 
-/******************************************************************************
- *                                                                            *
- *                  Typedefs, structures, unions and enums                    *
- *                                                                            *
- ******************************************************************************/
-typedef int bool;
+  /******************************************************************************
+   *                                                                            *
+   *                  Typedefs, structures, unions and enums                    *
+   *                                                                            *
+   ******************************************************************************/
+  typedef int bool;
 
-/******************************************************************************
- *                                                                            *
- *                     Global variables and constants                         *
- *                                                                            *
- ******************************************************************************/
+  /******************************************************************************
+   *                                                                            *
+   *                     Global variables and constants                         *
+   *                                                                            *
+   ******************************************************************************/
 
-/* Receive the name of program */
-extern const char *gkpszProgramName;
+  /* Receive the name of program */
+  extern const char *gkpszProgramName;
 
-#endif /* _CONSTS_H_ */
+#endif /* _CONSTS_H */
 
