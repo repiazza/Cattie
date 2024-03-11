@@ -5,50 +5,55 @@
 #
 #
 
+UNAME_S := $(shell uname -s)
+
+ifneq ($(findstring _NT-, $(UNAME_S)),)
+	_WIN32 = 1
+endif
+
 CC    = gcc
 
-SRCCWD = src/
-
+SRC_PATH = src
+GXRF_PATH = GXRF
+SCRIPTS_PATH = scripts
+INCLUDE_PATH = include
 CCOPT = -Wall -Wextra
 
-INCDIR= -I.
-INCDIR+= -Isrc/
-INCDIR+= -IGXRF/
-INCDIR+= -Iinclude
+INCDIR=  -I.
+INCDIR+= -I$(SRC_PATH)/
+INCDIR+= -I$(GXRF_PATH)/
+INCDIR+= -I$(INCLUDE_PATH)/
 
-SDLADDONLIBS     = -lSDL2main -lSDL2 -lSDL2_image
-NCURSESADDONLIBS = -lncurses
+SDL_ADD_LIBS     = -lSDL2main -lSDL2 -lSDL2_image
+NCURSES_ADD_LIBS = -lncurses
 
 ifdef _WIN32
-	NCURSESADDONLIBS += -DNCURSES_STATIC
-	SDLADDONLIBS += -lSDL2_ttf 
-	# CCOPT += -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
-	# LIBS  =  -LC:/msys64/mingw64/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
-	CCOPT += -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
-	LIBS  =  -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDLADDONLIBS) $(NCURSESADDONLIBS) -mwindows -D_WIN32 
+	NCURSES_ADD_LIBS += -DNCURSES_STATIC
+	SDL_ADD_LIBS += -lSDL2_ttf 
+	CCOPT += -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -mwindows -D_WIN32 
+	LIBS  =  -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -mwindows -D_WIN32 
 endif
 
 ifdef LINUX
-	SDLADDONLIBS += -lSDL2_ttf
-	CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) $(NCURSESADDONLIBS) -DLINUX
-	LIBS  =  -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDLADDONLIBS) $(NCURSESADDONLIBS) -DLINUX
+	SDL_ADD_LIBS += -lSDL2_ttf
+	CCOPT += -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -DLINUX
+	LIBS  =  -Wl,-rpath,/usr/lib64 -Wl,--enable-new-dtags $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -DLINUX
 endif
 
+DEBUG_ADD_FLAGS = -O2
 ifdef DEBUG
-	CCOPT += -g -ggdb
-else
-	CCOPT += -O2
+	DEBUG_ADD_FLAGS = -g -ggdb
 endif
 
 CATTIE_EXEC=cattie
 
 OBJS += \
-	src/cattie.o \
-	src/trace.o \
-	GXRF/GXRF.o \
-	src/cmdline.o \
-	src/util.o \
-	src/sl.o
+	$(SRC_PATH)/cattie.o \
+	$(SRC_PATH)/trace.o \
+	$(SRC_PATH)/cmdline.o \
+	$(SRC_PATH)/util.o \
+	$(SRC_PATH)/sl.o \
+	$(GXRF_PATH)/GXRF.o
 
 all: clean $(CATTIE_EXEC)
 
@@ -59,22 +64,22 @@ cattie: $(OBJS)
 	$(CC) $(LDOPT) $(INCDIR) -o $(CATTIE_EXEC) $(OBJS) $(LIBS) 
 
 %.o: %.c
-	$(CC) -c $(CCOPT) $(INCDIR) $< -o $@
+	$(CC) -c $(CCOPT) $(DEBUG_ADD_FLAGS) $(INCDIR) $< -o $@
 
 ifdef LINUX
 install: all
-	bash ./scripts/install_linux.sh
+	bash ./$(SCRIPTS_PATH)/install_linux.sh
 
 uninstall:
-	bash ./scripts/uninstall_linux.sh
+	bash ./$(SCRIPTS_PATH)/uninstall_linux.sh
 endif
 
 ifdef _WIN32
 install: all
-	./scripts/install_win32.bat
+	./$(SCRIPTS_PATH)/install_win32.bat
 
 uninstall:
-	./scripts/uninstall_win32.bat
+	./$(SCRIPTS_PATH)/uninstall_win32.bat
 endif
 
 distclean: clean
