@@ -6,7 +6,7 @@
 #ifndef _MENU_H
   #define _MENU_H
 
-  #define MAX_MENU_OPTIONS 7
+  #define MAX_MENU_OPTIONS 6
 
   enum eMenuOption{
     MENU_OPT_1 = 0,

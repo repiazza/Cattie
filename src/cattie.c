@@ -41,8 +41,7 @@ STRUCT_PLAYER gstPlayer;
     "/usr/share/cattie/img/forward.png",
     "/usr/share/cattie/img/laser.png",
     "/usr/share/cattie/img/rotate2.png",
-    "/usr/share/cattie/img/gear.png",
-    NULL
+    "/usr/share/cattie/img/gear.png"
   };
 #else
   char *ppszInstalledImagePath[] = {
@@ -50,8 +49,7 @@ STRUCT_PLAYER gstPlayer;
     "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\forward.png",
     "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\laser.png",
     "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\rotate2.png",
-    "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\gear.png",
-    NULL
+    "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\gear.png"
   };
 #endif
 
@@ -61,8 +59,7 @@ char *ppszMenuOpt[MAX_MENU_OPTIONS] = {
     "option 3",
     "option 4",
     "option 5",
-    "Sair",
-    NULL
+    "Sair"
 };
 
 char *ppszImagePath[] = {
@@ -70,8 +67,7 @@ char *ppszImagePath[] = {
     "img/forward.png",
     "img/laser.png",
     "img/rotate2.png",
-    "img/gear.png",
-    NULL
+    "img/gear.png"
 };
 
 /* Receive the name of program */
