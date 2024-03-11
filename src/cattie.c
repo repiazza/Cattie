@@ -84,7 +84,6 @@ STRUCT_COMMAND_LINE gstCmdLine;
  * Procedures and functions
  * 
  **/
-
 void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
   if(DEBUG_MSGS) vTraceBegin();
   
@@ -98,8 +97,8 @@ void vInitRect(SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight){
     vTraceVarArgs(
   "pSDL_RECT->x = %d | pSDL_RECT->y = %d\n\t\t"
   "pSDL_RECT->w = %d | pSDL_RECT->h = %d\n",
-        (pSDL_RECT->x), (pSDL_RECT->y),
-        (pSDL_RECT->w), (pSDL_RECT->h)
+      (pSDL_RECT->x), (pSDL_RECT->y),
+      (pSDL_RECT->w), (pSDL_RECT->h)
     );
   }
 
@@ -527,18 +526,6 @@ int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev){
 
   return 0;
 }
-
-void vInitPlayerAttr(int iDirection)
-{
-    gstPlayer.iCurrX = 0;
-    gstPlayer.iCurrY = 0;
-    if ( iDirection == EVEN ){
-      gstPlayer.iFacingPos = SOUTH;
-    }
-    else{
-      gstPlayer.iFacingPos = EAST;
-    }
-  }
 
 /**
  * Print the version of the software

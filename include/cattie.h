@@ -1,22 +1,22 @@
 /**
  * cattie.h
  *
- * Written by Renato Fermi <repizza@gmail.com>
+ * Written by Renato Fermi <repizza@gmail.com> 
  *
  * Window
+ * 
  */
 
-#ifndef _CATTIE_H_INC
-  #define _CATTIE_H_INC
+#ifndef _CATTIE_H
+  #define _CATTIE_H
 
 /******************************************************************************
  *                                                                            *
  *                                 Includes                                   *
  *                                                                            *
  ******************************************************************************/
-  #ifndef GXRF_H_INC
-    #include <GXRF.h>
-  #endif /* GXRF_H_INC */
+  
+  #include <GXRF.h>
   
 /******************************************************************************
  *                                                                            *
@@ -47,8 +47,6 @@
   #define LASER_IMG_PATH_IDX   2
   #define ROTATE_IMG_PATH_IDX  3
   #define GEAR_IMG_PATH_IDX    4
-
-  // #define _MAX_IMG_PATH 4
 
   #define DEVELOPER     "Renato Fermi & Gustavo Bacagine"
   #define VERSION       "1.0"
@@ -106,6 +104,6 @@
   int iWalk();
   int iTurn();
   int iFireLaser();  
-  void vInitPlayerAttr(int iDirection);
-#endif /* _CATTIE_H_INC */
+
+#endif /* _CATTIE_H */
 
