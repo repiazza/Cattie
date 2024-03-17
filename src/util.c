@@ -25,7 +25,7 @@ char *szTokenName[] = {
  *                                                                            *
  ******************************************************************************/
 
-bool bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode)
+int bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode)
 {
   if((*fppFile = fopen(kpszFileName, kpszMode)) == NULL)
   {
@@ -35,7 +35,7 @@ bool bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode)
   return TRUE;
 }
 
-bool bCloseFile(FILE **fppFile)
+int bCloseFile(FILE **fppFile)
 {
   if(*fppFile != NULL)
   {
@@ -48,7 +48,7 @@ bool bCloseFile(FILE **fppFile)
   return FALSE;
 }
 
-bool bFileExist(const char *kpszFileName)
+int bFileExist(const char *kpszFileName)
 {
   FILE *fpFile;
   
@@ -67,7 +67,7 @@ bool bFileExist(const char *kpszFileName)
  *                              STRING FUNCTIONS                              *
  *                                                                            *
  ******************************************************************************/
-bool bStrIsEmpty(const char *kpszStr)
+int bStrIsEmpty(const char *kpszStr)
 {
   if(kpszStr == NULL || !strcmp(kpszStr, "") || !strcmp(kpszStr, "\n"))
   {
@@ -194,7 +194,7 @@ int iCheckCfgPrm(void)
 /**
  * Load the cattie's parameters file.
  */
-bool bLoadCfgFile(const char *kpszFileName)
+int bLoadCfgFile(const char *kpszFileName)
 {
   FILE *fpFile = NULL;
   char szLine[2048];
@@ -233,7 +233,7 @@ bool bLoadCfgFile(const char *kpszFileName)
   return TRUE;
 }
 
-bool bTerminalSupportColors(void)
+int bTerminalSupportColors(void)
 {
   char *szTerm = getenv("TERM");
 

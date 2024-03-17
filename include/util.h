@@ -75,17 +75,17 @@
    * kpszFileName: the name of file
    * kpszMode: mode used in fopen
    */
-  bool bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode);
+  int bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode);
 
   /**
    * Close file safety
    */
-  bool bCloseFile(FILE **fppFile);
+  int bCloseFile(FILE **fppFile);
 
   /**
    * Check if file exists
    */
-  bool bFileExist(const char *kpszFileName);
+  int bFileExist(const char *kpszFileName);
 
   /******************************************************************************
    *                                                                            *
@@ -96,7 +96,7 @@
   /**
    * Check if string is empty
    */
-  bool bStrIsEmpty(const char *kpszStr);
+  int bStrIsEmpty(const char *kpszStr);
 
   /******************************************************************************
    *                                                                            *
@@ -122,12 +122,12 @@
   /**
    * Load the cattie's parameters file.
    */
-  bool bLoadCfgFile(const char *kpszFileName);
+  int bLoadCfgFile(const char *kpszFileName);
 
   /**
    * Check if your terminal have support a colored text
    */
-  bool bTerminalSupportColors(void);
+  int bTerminalSupportColors(void);
 
   /**
    * Print a formatted error message

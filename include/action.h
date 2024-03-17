@@ -7,6 +7,8 @@
 
   #define _MAX_MOV_ACTION BOARD_COLS*BOARD_ROWS*10
   #define ACTIONS_PER_LINE 20
+  #define FULL_TURN   360
+  #define SINGLE_TURN 90
 
   extern int gbACTION_Check;
   extern int giACTION_List[_MAX_MOV_ACTION];
@@ -53,7 +55,7 @@
       vTraceMsg(szWrk);
     }
     memset(szWrkMsg, 0, sizeof(szWrkMsg));
-    sprintf(szWrkMsg, "giActionCtr=%d giACTION_AssertedSteps=%d\n", giACTION_StepCtr, giACTION_AssertedSteps);
+    sprintf(szWrkMsg, "giACTION_StepCtr=%d giACTION_AssertedSteps=%d\n", giACTION_StepCtr, giACTION_AssertedSteps);
       
     vTraceMsg(szWrkMsg);
     vTraceMsg("\n=================================");
@@ -74,8 +76,10 @@
         return 0;
       }
 
+      if ( giACTION_StepCtr == giACTION_AssertedSteps )
+        giACTION_AssertedSteps--;
+      
       giACTION_List[giACTION_StepCtr--] = 0;
-      giACTION_AssertedSteps--;
       vTraceEnd();
       return 0;
     }
