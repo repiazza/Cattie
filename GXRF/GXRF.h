@@ -17,14 +17,9 @@
  ******************************************************************************/
   #include <SDL2/SDL.h>
   #include <SDL2/SDL_image.h>
-
-  #ifdef LINUX
-    #include <SDL2/SDL_ttf.h>
-  #else
-    #include <SDL2/SDL_TTF.h>
-  #endif /* LINUX */
-    #include <stdarg.h>
-    #include <trace.h>
+  #include <SDL2/SDL_ttf.h>
+  #include <stdarg.h>
+  #include <trace.h>
 
 /******************************************************************************
  *                                                                            *

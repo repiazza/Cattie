@@ -6,8 +6,8 @@
  * Trace functions and global variables
  */
 
-#ifndef TRACE_h_
-  #define TRACE_h_
+#ifndef TRACE_H_
+  #define TRACE_H_
 
 /******************************************************************************
  *                                                                            *

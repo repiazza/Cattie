@@ -47,6 +47,9 @@
   #define LASER_IMG_PATH_IDX   2
   #define ROTATE_IMG_PATH_IDX  3
   #define GEAR_IMG_PATH_IDX    4
+  #define END_PATH_LIST        5  // Must be the last
+ 
+  #define NEXT_IMG_PATH 1
 
   #define DEVELOPER     "Renato Fermi & Gustavo Bacagine"
   #define VERSION       "1.0"
@@ -58,20 +61,12 @@
   #define EVEN 0
   #define ODD  1  
   
+
 /******************************************************************************
  *                                                                            *
  *                  Typedefs, structures, unions and enums                    *
  *                                                                            *
  ******************************************************************************/
-
-  typedef struct STRUCT_PLAYER {
-    int iCurrX;
-    int iCurrY;
-    int iFacingPos;
-    SDL_Rect *pSDL_RECT_Player;
-  } STRUCT_PLAYER;
-
-
   typedef enum SquareType{
     INVALID_SQUARE = -1,
     WALL_SQUARE = 0,
@@ -86,6 +81,13 @@
     WEST
   } eWndRose;
 
+  typedef struct STRUCT_PLAYER {
+    int iCurrX;
+    int iCurrY;
+    int iFacingPos;
+    SDL_Rect *pSDL_RECT_Player;
+  } STRUCT_PLAYER;
+  
 /******************************************************************************
  *                                                                            *
  *                     Global variables and constants                         *

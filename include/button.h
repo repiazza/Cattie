@@ -20,7 +20,36 @@
   } STRUCT_BUTTON_LIST, *PSTRUCT_BUTTON_LIST;
 
   extern STRUCT_BUTTON_LIST gstButtonList;
-
+  
+  SDL_Rect *pBUTTON_GetRectByImg(int iImgIx){
+    STRUCT_BUTTON_LIST *pstWrkButton;
+    for ( pstWrkButton = &gstButtonList; pstWrkButton != NULL; pstWrkButton = pstWrkButton->pstNext ){
+      switch (iImgIx){
+        case PLAYER_IMG_PATH_IDX:
+            return gstPlayer.pSDL_RECT_Player;
+          break;
+        case FORWARD_IMG_PATH_IDX:
+          if ( pstWrkButton->iAction == FORWARD )
+            return pstWrkButton->pSDL_RECT_Button;
+          break;
+        case LASER_IMG_PATH_IDX:
+          if ( pstWrkButton->iAction == FIRE_LASER )
+            return pstWrkButton->pSDL_RECT_Button;
+          break;
+        case GEAR_IMG_PATH_IDX:
+          if ( pstWrkButton->iAction == CONFIGURE )
+            return pstWrkButton->pSDL_RECT_Button;
+          break;
+        case ROTATE_IMG_PATH_IDX:
+          if ( pstWrkButton->iAction == TURN )
+            return pstWrkButton->pSDL_RECT_Button;
+          break;
+        default:
+          break;
+      }
+    }
+    return NULL;
+  }
   int iBUTTON_CheckInteraction(SDL_Event *pSDL_EVENT_Ev, int iXCursor, int iYCursor){
     STRUCT_BUTTON_LIST *pstWrkButtonList;
 
@@ -94,11 +123,15 @@
   void vBUTTON_FreeList(){
     STRUCT_BUTTON_LIST *pstWrkButton;
 
+    if(DEBUG_MSGS) vTraceBegin();
+    
     for ( pstWrkButton = gstButtonList.pstNext; pstWrkButton != NULL; ){ 
       STRUCT_BUTTON_LIST *pstLastButton = pstWrkButton;
       pstWrkButton = pstWrkButton->pstNext;
       free(pstLastButton);
     }
+    
+    if(DEBUG_MSGS) vTraceEnd();
   }
 
   void vBUTTON_InitList(){
@@ -109,7 +142,7 @@
   void vBUTTON_Draw(SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Button, int iButtonType){
     if(DEBUG_MSGS) vTraceBegin();
 
-    if ( iButtonType == BUTTON_DIRECTION )
+    if ( iButtonType == BUTTON_DIRECTION || iButtonType == BUTTON_CONFIGURE )
     {
       if(DEBUG_MORE_MSGS) vTraceVarArgs("iButtonType == BUTTON_DIRECTION");
       

@@ -68,24 +68,15 @@ STRUCT_CMDLINE astCmdOpt[] = {
 
 char *szGetProgramName(const char *szPathName)
 {
-  char *pszProgramName = 0;
-#ifdef LINUX
-  if((pszProgramName = strrchr(szPathName, '/')) != 0)
-  {
-    ++pszProgramName; /* Skip '/' */
-  }
-#else
-  if((pszProgramName = strrchr(szPathName, '\\')) != 0)
-  {
-    ++pszProgramName; /* Skip '\' */
-  }
-#endif /* LINUX */
-  else
-  {
-    pszProgramName = (char *) szPathName; /* Nenhum dir. component */
-  }
+  char cDlm = '/';
 
-  return pszProgramName;
+#ifdef _WIN32
+  cDlm = '\\';
+#endif /* WIN32 */
+
+  return strrchr(szPathName, cDlm) == NULL 
+          ? (char *) szPathName
+          : (strrchr(szPathName, cDlm) + 1); 
 }
 
 void vShowOptions(PSTRUCT_CMDLINE astCmdOpt)

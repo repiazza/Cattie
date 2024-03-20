@@ -29,6 +29,23 @@
 
     vTraceEnd();
   }
+  
+  void vBOARD_DrawEdges(SDL_Renderer *renderer){
+    int ii;
+    int jj;
+    
+    if(DEBUG_MSGS) vTraceBegin();
+
+    for (ii = 0; ii < BOARD_ROWS; ii++) {
+      for (jj = 0; jj < BOARD_COLS; jj++) {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_Rect SDLRECT_Edges = {ii * COL_RATIO, jj * COL_RATIO, COL_RATIO, COL_RATIO};
+        SDL_RenderDrawRect(renderer, &SDLRECT_Edges);
+      }
+    }
+
+    if(DEBUG_MSGS) vTraceEnd();
+  }
 
   void vBOARD_Trace(){
     int ii;
