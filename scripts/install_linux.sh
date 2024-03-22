@@ -50,6 +50,8 @@ cp -rv ./img/cat2.png /usr/share/cattie/img
 cp -rv ./img/forward.png /usr/share/cattie/img
 cp -rv ./img/laser.png /usr/share/cattie/img
 cp -rv ./img/rotate2.png /usr/share/cattie/img
+cp -rv ./img/gear.png /usr/share/cattie/img
+cp -rv ./img/confirm.png /usr/share/cattie/img
 
 # Installing the documentation
 cp -rvf ./man/cattie.1 /usr/share/man/man1

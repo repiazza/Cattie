@@ -1,10 +1,14 @@
 #!/bin/bash
 # 
-# uninstall_linux.sh: Script to uninstall cattie
+# ===========================================================
+# 
+# uninstall_linux.sh 
 # 
 # Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com>
 # 
-# Date: 21/10/2023
+# Script to uninstall cattie
+#
+# ===========================================================
 
 # Checking if user is root
 if [[ $EUID -ne 0 ]]; then
@@ -13,7 +17,7 @@ if [[ $EUID -ne 0 ]]; then
     printf "\033[1;31mE:\033[m This script must be run as root\n"
   fi
   
-  print "E: This script must be run as root\n"
+  print "ERR: This script must be run as root\n"
 
   exit 1
 fi

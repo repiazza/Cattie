@@ -13,15 +13,17 @@
       "/usr/share/cattie/img/forward.png",
       "/usr/share/cattie/img/laser.png",
       "/usr/share/cattie/img/rotate2.png",
-      "/usr/share/cattie/img/gear.png"
+      "/usr/share/cattie/img/gear.png",
+      "/usr/share/cattie/img/confirm.png"
     };
   #else
     char *ppszInstalledImagePath[] = {
-      "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\cat2.png",
-      "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\forward.png",
-      "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\laser.png",
-      "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\rotate2.png",
-      "C:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\gear.png"
+      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\cat2.png",
+      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\forward.png",
+      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\laser.png",
+      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\rotate2.png",
+      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\gear.png"
+      "D:\\Renato\\Documents\\CSDL2\\Cattie_GXRF\\img\\confirm.png"
     };
   #endif
 

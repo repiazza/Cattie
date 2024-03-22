@@ -139,7 +139,7 @@ int iParseCfgLine(char *pszLineContents)
     case DEBUG_LEVEL      : pDestVar = gstCmdLine.szDebugLevel; break;
     case WINDOW_RESOLUTION: 
     case WINDOW_HEIGHT    : 
-    case WINDOW_WIDTH     : break;
+    case WINDOW_WIDTH     : break; 
     default               : return 0;
   }
   
