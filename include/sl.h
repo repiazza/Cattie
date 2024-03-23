@@ -9,8 +9,8 @@
 
 /* Library modified by Gustavo Bacagine in 2020/07/07 */
 
-#ifndef _SL_H
-  #define _SL_H
+#ifndef _SL_H_
+  #define _SL_H_
 
   #define D51HEIGHT	10
   #define D51FUNNEL	 7
@@ -156,7 +156,7 @@
 
   /* Inclui os prototipos das
   * funções nessa biblioteca */
-  void add_smoke(int y, int x);
+  void add_smoke(int y, int x );
   void add_man(int y, int x);
   int add_C51(int x);
   int add_D51(int x);
@@ -166,4 +166,4 @@
   //void train(void);
   void vShowTrain(void);
 
-#endif // _SL_H
+#endif // _SL_H_

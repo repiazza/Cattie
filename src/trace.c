@@ -26,13 +26,13 @@ char gszConfFile[_MAX_PATH];
 
 int giNoNL = FALSE;
 
-void vTraceMsgNoNL(char *szMsg){
+void vTraceMsgNoNL( char *szMsg ) {
   giNoNL = TRUE;
-  vTraceMsg(szMsg);
+  vTraceMsg( szMsg );
   giNoNL = FALSE;
-}
+} /* vTraceMsgNoNL */
 
-void vTraceMsg(char *szMsg){
+void vTraceMsg( char *szMsg ) {
   FILE *pfLog;
   char szDateTimeNow_us[128];
   struct tm *st_tm_Now;
@@ -46,7 +46,7 @@ void vTraceMsg(char *szMsg){
   memset(szDateTimeNow_us, 0, sizeof(szDateTimeNow_us));
 
   snprintf(szDateTimeNow_us, sizeof(szDateTimeNow_us),
-"[%02d/%02d/%04d %02d:%02d:%02d.%03ld] ",
+    "[%02d/%02d/%04d %02d:%02d:%02d.%03ld] ",
     (int) st_tm_Now->tm_mday, 
     (int) st_tm_Now->tm_mon+1, 
     (int) st_tm_Now->tm_year+1900,
@@ -64,30 +64,31 @@ void vTraceMsg(char *szMsg){
     fprintf(pfLog, "%s%s\n", szDateTimeNow_us, szMsg);
 
   fclose(pfLog);
-}
+  pfLog = NULL;
+} /* vTraceMsg */
 
-void vTracePid(char *szMsg, int iMsgLen){
-  char *pszMyMsg;
+void vTracePid( char *szMsg, int iMsgLen ) {
+  char *pszMyMsg = NULL;
   int iNewMsgLen = iMsgLen + 16;
   int iPid;
   
   iPid = getpid();
   
-  if ( (pszMyMsg = (char *) malloc(iNewMsgLen)) == NULL )
+  if ( (pszMyMsg = ( char * ) malloc(iNewMsgLen)) == NULL )
     return;
 
-  memset (pszMyMsg, 0, iNewMsgLen);
-  sprintf(pszMyMsg, "%d %s", iPid, szMsg);
+  memset ( pszMyMsg, 0x00, iNewMsgLen );
+  sprintf( pszMyMsg, "%d %s", iPid, szMsg );
 
-  vTraceMsg(pszMyMsg);
+  vTraceMsg( pszMyMsg );
 
-  free(pszMyMsg);
-}
+  free( pszMyMsg );
+  pszMyMsg = NULL;
+} /* vTracePid */
 
-void _vTraceVarArgs(const char *kpszModuleName,
-                    const int kiLine, 
-                    const char *kpszFmt, ...)
-{
+void _vTraceVarArgs( const char *kpszModuleName,
+                     const int kiLine,
+                     const char *kpszFmt, ... ) {
   va_list args;
   FILE *pfLog = NULL;
   char szDbg[2048];
@@ -99,19 +100,18 @@ void _vTraceVarArgs(const char *kpszModuleName,
   st_tm_Now = localtime(&lTime);
   gettimeofday(&tv, NULL);
 
-  memset(szDbg, 0, sizeof(szDbg));
+  memset( szDbg, 0x00, sizeof( szDbg ) );
 
-  if((pfLog = fopen(gszTraceFile, "a")) == NULL)
-  {
+  if ( ( pfLog = fopen( gszTraceFile, "a" ) ) == NULL ) {
     fprintf(stderr, "E: Impossible create or open file %s!\n"
                     "%s\n", gszTraceFile, strerror(errno));
-    exit(EXIT_FAILURE);
+    exit( EXIT_FAILURE );
   }
   
-  va_start(args, kpszFmt);
+  va_start( args, kpszFmt );
 
   snprintf(szDbg, sizeof(szDbg), 
-"[%02d/%02d/%04d %02d:%02d:%02d.%03ld] %s:%d ", 
+    "[%02d/%02d/%04d %02d:%02d:%02d.%03ld] %s:%d ",
     (int) st_tm_Now->tm_mday, 
     (int) st_tm_Now->tm_mon+1, 
     (int) st_tm_Now->tm_year+1900,
@@ -123,18 +123,17 @@ void _vTraceVarArgs(const char *kpszModuleName,
     kiLine
   );
 
-  strcat(szDbg, kpszFmt);
-  strcat(szDbg, "\n");
-  vfprintf(pfLog, szDbg, args);
+  strcat( szDbg, kpszFmt );
+  strcat( szDbg, "\n" );
+  vfprintf( pfLog, szDbg, args) ;
 
-  va_end(args);
+  va_end( args );
 
-  fclose(pfLog);
+  fclose( pfLog );
   pfLog = NULL;
-}
+} /* _vTraceVarArgs */
 
-int iGetDebugLevel(const char *kpszConfFile)
-{
+int iGetDebugLevel( const char *kpszConfFile ) {
   FILE *fpConfFile = NULL;
   int iDebugLevel = 0;
   char szLine[256];
@@ -144,12 +143,11 @@ int iGetDebugLevel(const char *kpszConfFile)
   int ii = 0;
   char szLevel[2] = "";
 
-  memset(szLine , 0, iLineLen       );
-  memset(szLevel, 0, sizeof(szLevel));
+  memset( szLine , 0, iLineLen          );
+  memset( szLevel, 0, sizeof( szLevel ) );
   
-  if((fpConfFile = fopen(kpszConfFile, "r")) == NULL)
-  {
-    fprintf(stderr, "E: %s %s", kpszConfFile, strerror(errno));
+  if ( ( fpConfFile = fopen( kpszConfFile, "r" ) ) == NULL ) {
+    fprintf( stderr, "E: %s %s", kpszConfFile, strerror( errno ) );
 
     return 0;
   }
@@ -157,55 +155,49 @@ int iGetDebugLevel(const char *kpszConfFile)
   /**
    * bacagine - 2023-11-10 - Reading the .conf file
    */
-  while(fgets(szLine, iLineLen, fpConfFile) != NULL)
-  {
+  while ( fgets( szLine, iLineLen, fpConfFile ) != NULL ) {
     /**
      * Ignore commented lines
      */
-    if(strstr(szLine, "#")) continue;
+    if ( strstr( szLine, "#" ) ) continue;
 
     pTok = strtok(szLine, " = ");
 
-    if(strstr(szLine, "DEBUG_LEVEL"))
-    {
+    if ( strstr(szLine, "DEBUG_LEVEL" ) ) {
       bFoundDebugLevel = TRUE;
       
       /**
        * bacagine - 2023-11-10 - Getting the value after '='
        * symbom and converting form string to char.
        */
-      while(pTok != NULL)
-      {
-        if(ii == 1)
-        {
+      while ( pTok != NULL ) {
+        if ( ii == 1 ) {
           /**
            * bacagine - 2023-11-10 - Verify if have value after '=' symbol.
            */
-          if(bStrIsEmpty(pTok))
-          {
+          if ( bStrIsEmpty( pTok ) ) {
             fprintf(stderr, "E: DEBUG_LEVEL is empty in file %s!\n", kpszConfFile);
               
-            fclose(fpConfFile);
+            fclose( fpConfFile );
             fpConfFile = NULL;
             
             return 0;
           }
 
-          snprintf(szLevel, sizeof(szLevel), "%s", pTok);
-          iDebugLevel = atoi(szLevel);
+          snprintf( szLevel, sizeof( szLevel ), "%s", pTok );
+          iDebugLevel = atoi( szLevel );
 
           break;
         }
 
-        pTok = strtok(NULL, " = ");
+        pTok = strtok( NULL, " = " );
 
         ii++;
       } /* while pTok */
 
       break;
     }
-    else
-    {
+    else {
       continue;
     }
   } /* while fgets */
@@ -215,11 +207,10 @@ int iGetDebugLevel(const char *kpszConfFile)
    * variable in file print a error 
    * message to user
    */
-  if(bFoundDebugLevel == FALSE)
-  {
+  if ( bFoundDebugLevel == FALSE ) {
     fprintf(stderr, "E: Not found variable DEBUG_LEVEL in file %s!\n", kpszConfFile);
         
-    fclose(fpConfFile);
+    fclose( fpConfFile );
     fpConfFile = NULL;
 
     return 0;
@@ -228,24 +219,22 @@ int iGetDebugLevel(const char *kpszConfFile)
   /**
    * If DEBUG_LEVEL in file is incorret
    */
-  if(iDebugLevel < 0 || iDebugLevel > 9)
-  {
+  if ( iDebugLevel < 0 || iDebugLevel > 9 ) {
     fprintf(stderr, "E: Invalid value of log level in file %s!\n", kpszConfFile);
         
-    fclose(fpConfFile);
+    fclose( fpConfFile );
     fpConfFile = NULL;
 
     return 0;
   }
 
-  fclose(fpConfFile);
+  fclose( fpConfFile );
   fpConfFile = NULL;
 
   return iDebugLevel;
-}
+} /* iGetDebugLevel */
 
-void vSetConfFile(void)
-{
+void vSetConfFile( void ) {
 #ifdef _WIN32
   int ii = 0;
 #endif /* _WIN32 */
@@ -254,43 +243,36 @@ void vSetConfFile(void)
    * bacagine - 2023-11-10 - Setting the name of the configuration file
    */
 
-  if(!bStrIsEmpty(gstCmdLine.szConfFile))
-  {
-    snprintf(gszConfFile, sizeof(gszConfFile), "%s", gstCmdLine.szConfFile);
+  if ( !bStrIsEmpty( gstCmdLine.szConfFile ) ) {
+    snprintf( gszConfFile, sizeof( gszConfFile ), "%s", gstCmdLine.szConfFile );
     return;
   }
 #ifdef LINUX
-  else if(bFileExist("/etc/cattie.conf"))
-  {
-    snprintf(gszConfFile, sizeof(gszConfFile), "/etc/cattie.conf");
+  else if ( bFileExist("/etc/cattie.conf") ) {
+    snprintf( gszConfFile, sizeof( gszConfFile ), "/etc/cattie.conf" );
     return;
   }
-  else if(bFileExist("~/.cattie.conf"))
-  {
-    snprintf(gszConfFile, sizeof(gszConfFile), "~/.cattie.conf");
+  else if ( bFileExist("~/.cattie.conf") ) {
+    snprintf( gszConfFile, sizeof( gszConfFile ), "~/.cattie.conf" );
     return;
   }
-  else
-  {
-    snprintf(gszConfFile, sizeof(gszConfFile), "%s.conf", gkpszProgramName);
+  else {
+    snprintf( gszConfFile, sizeof( gszConfFile ), "%s.conf", gkpszProgramName );
     return;
   }
 #else
-  else
-  {
-    while(gkpszProgramName[ii] != '.')
-    {
+  else {
+    while ( gkpszProgramName[ii] != '.' ) {
       gszConfFile[ii] = gkpszProgramName[ii];
       ii++;
     }
 
-    strcat(gszConfFile, ".conf");
+    strcat( gszConfFile, ".conf" );
   }
 #endif /* LINUX */
-}
+} /* vSetConfFile */
 
-void vSetLogFile(void)
-{
+void vSetLogFile( void ) {
 #ifdef _WIN32
   int ii = 0;
 #endif /* _WIN32 */
@@ -299,46 +281,39 @@ void vSetLogFile(void)
    * bacagine - 2023-11-10 - Setting the name of the log file
    */
 
-  if(!bStrIsEmpty(gstCmdLine.szTraceFile))
-  {
-    snprintf(gszTraceFile, (size_t) sizeof(gszTraceFile)-8, "%s", gstCmdLine.szTraceFile);
+  if(!bStrIsEmpty( gstCmdLine.szTraceFile ) ) {
+    snprintf( gszTraceFile, (size_t) sizeof( gszTraceFile ) - 8, "%s", gstCmdLine.szTraceFile );
     return;
   }
 #ifdef LINUX
-  else
-  {
-    snprintf(gszTraceFile, sizeof(gszTraceFile), "%s.log", gkpszProgramName);
+  else {
+    snprintf( gszTraceFile, sizeof( gszTraceFile ), "%s.log", gkpszProgramName );
     return;
   }
 #else
-  else
-  {
-    while(gkpszProgramName[ii] != '.')
-    {
+  else {
+    while ( gkpszProgramName[ii] != '.' ) {
       gszTraceFile[ii] = gkpszProgramName[ii];
       ii++;
     }
-    strcat(gszTraceFile, ".log");  
+    strcat( gszTraceFile, ".log" );
   }
 #endif /* LINUX */
-}
+} /* vSetLogFile */
 
-void vSetDebugLevel(void)
-{
+void vSetDebugLevel( void ) {
   /**
    * bacagine - 2023-11-10 - Getting the debug level
    */
-  if(!bStrIsEmpty(gstCmdLine.szDebugLevel))
-  {
-    giDebugLevel = atoi(gstCmdLine.szDebugLevel);
+  if( !bStrIsEmpty( gstCmdLine.szDebugLevel ) ) {
+    giDebugLevel = atoi( gstCmdLine.szDebugLevel );
   }
-  else
-  {
-    giDebugLevel = iGetDebugLevel(gszConfFile);
+  else {
+    giDebugLevel = iGetDebugLevel( gszConfFile );
   }
-}
+} /* vSetDebugLevel */
 
-void vInitLogs(void){
+void vInitLogs( void ) {
   memset(gszTraceFile, 0, sizeof(gszTraceFile));
   memset(gszConfFile , 0, sizeof(gszConfFile));
   
@@ -347,5 +322,5 @@ void vInitLogs(void){
   vSetLogFile();
   
   vSetDebugLevel();
-}
+} /* vInitLogs */
 

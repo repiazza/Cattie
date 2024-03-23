@@ -66,8 +66,7 @@ STRUCT_CMDLINE astCmdOpt[] = {
   }
 };
 
-char *szGetProgramName(const char *szPathName)
-{
+char *szGetProgramName( const char *szPathName ) {
   char cDlm = '/';
 
 #ifdef _WIN32
@@ -77,143 +76,117 @@ char *szGetProgramName(const char *szPathName)
   return strrchr(szPathName, cDlm) == NULL 
           ? (char *) szPathName
           : (strrchr(szPathName, cDlm) + 1); 
-}
+} /* szGetProgramName */
 
-void vShowOptions(PSTRUCT_CMDLINE astCmdOpt)
-{
+void vShowOptions( PSTRUCT_CMDLINE astCmdOpt ) {
   int ii = 0;
 
-  for(ii = 0; astCmdOpt[ii].iRequired != CMDDATA_NULL; ii++)
-  {
-    if(astCmdOpt[ii].iRequired == CMDDATA_NODATA)
-    {
-      if(astCmdOpt[ii].pszShort == NULL || !strcmp(astCmdOpt[ii].pszShort, ""))
-      {
+  for ( ii = 0; astCmdOpt[ii].iRequired != CMDDATA_NULL; ii++ ) {
+    if ( astCmdOpt[ii].iRequired == CMDDATA_NODATA ) {
+      if ( astCmdOpt[ii].pszShort == NULL || !strcmp( astCmdOpt[ii].pszShort, "" ) ) {
         printf("  --%s\n", astCmdOpt[ii].pszLong);
       }
-      else if(astCmdOpt[ii].pszLong == NULL || !strcmp(astCmdOpt[ii].pszLong, ""))
-      {
+      else if ( astCmdOpt[ii].pszLong == NULL || !strcmp( astCmdOpt[ii].pszLong, "" ) ) {
         printf("  -%s\n", astCmdOpt[ii].pszShort);
       }
-      else
-      {
+      else {
         printf("  --%s, -%s\n", astCmdOpt[ii].pszLong, astCmdOpt[ii].pszShort);
       }
     }
-    else
-    {
-      if(astCmdOpt[ii].pszShort == NULL || !strcmp(astCmdOpt[ii].pszShort, ""))
-      {
+    else {
+      if ( astCmdOpt[ii].pszShort == NULL || !strcmp( astCmdOpt[ii].pszShort, "" ) ) {
         printf("  --%s=%s\n", astCmdOpt[ii].pszLong, astCmdOpt[ii].pszArgument);
       }
-      else if(astCmdOpt[ii].pszLong == NULL || !strcmp(astCmdOpt[ii].pszLong, ""))
-      {
+      else if ( astCmdOpt[ii].pszLong == NULL || !strcmp( astCmdOpt[ii].pszLong, "" ) ) {
         printf("  -%s%s\n", astCmdOpt[ii].pszShort, astCmdOpt[ii].pszArgument);
       }
-      else
-      {
+      else {
         printf("  --%s=%s, -%s%s\n", astCmdOpt[ii].pszLong, astCmdOpt[ii].pszArgument,
                                      astCmdOpt[ii].pszShort, astCmdOpt[ii].pszArgument);
       }
     }
     printf("    %s\n\n", astCmdOpt[ii].pszHelp);
-  }
-}
+  } /* for*/
+} /* vShowOptions */
 
-void vShowSyntax(const char *pszMsg, PSTRUCT_CMDLINE astCmdOpt)
-{
+void vShowSyntax( const char *pszMsg, PSTRUCT_CMDLINE astCmdOpt ) {
   printf("%s\n", pszMsg);
-  vShowOptions(astCmdOpt);
-}
+  vShowOptions( astCmdOpt );
+} /* vShowSyntax */
 
-bool bCommandLineIsOK(int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt)
-{
+int bCommandLineIsOK( int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt ) {
   int ii = 0;
   int jj = 0;
   char *pszArgument = NULL;
   char *pszParameter = NULL;
-  bool bLongCmd = false;
-  bool bShortCmd = false;
+  bool bLongCmd = FALSE;
+  bool bShortCmd = FALSE;
 
   for(ii = 1; ii < argc; ii++)
   {
-    int iReallocBuffer = snprintf(NULL, 0, "%s", argv[ii]);
-    char *pszArgv = (char *) malloc(sizeof(char) * (iReallocBuffer+1));
+    int iReallocBuffer = snprintf( NULL, 0, "%s", argv[ii] );
+    char *pszArgv = ( char * ) malloc(sizeof( char ) * ( iReallocBuffer + 1 ) );
 
     snprintf(pszArgv, iReallocBuffer+1, "%s", argv[ii]);
 
-    pszArgument = strtok(pszArgv, "=");
+    pszArgument = strtok( pszArgv, "=" );
 
-    if(argv[ii][0] == '-' && argv[ii][1] == '-')
-    {
-      bLongCmd = true;
+    if ( argv[ii][0] == '-' && argv[ii][1] == '-' ) {
+      bLongCmd = TRUE;
 
       pszParameter = strtok(NULL, "=");
 
       strcpy(pszArgument, &pszArgument[2]);
     }
-    else if(argv[ii][0] == '-')
-    {
-      bShortCmd = true;
-      pszParameter = (char *) malloc(sizeof(char) * strlen(pszArgument)-1);
-      strcpy(pszParameter, &pszArgument[2]);
+    else if ( argv[ii][0] == '-' ) {
+      bShortCmd = TRUE;
+      pszParameter = ( char * ) malloc( sizeof( char ) * strlen( pszArgument ) - 1 );
+      strcpy( pszParameter, &pszArgument[2] );
 
-      snprintf(pszArgument, strlen(pszArgument), "%c", pszArgument[1]);
+      snprintf( pszArgument, strlen( pszArgument ), "%c", pszArgument[1] );
     }
-    else
-    {
-      free(pszArgv);
+    else {
+      free( pszArgv );
       pszArgv = NULL;
 
-      return false;
+      return FALSE;
     }
 
-    for(jj = 0; astCmdOpt[jj].iRequired != CMDDATA_NULL; jj++)
-    {
-      if(bLongCmd)
-      {
-        if(!strcmp(pszArgument, astCmdOpt[jj].pszLong))
-        {
-          astCmdOpt[jj].bSet = true;
+    for ( jj = 0; astCmdOpt[jj].iRequired != CMDDATA_NULL; jj++ ) {
+      if ( bLongCmd ) {
+        if ( !strcmp ( pszArgument, astCmdOpt[jj].pszLong ) ) {
+          astCmdOpt[jj].bSet = TRUE;
 
-          if(astCmdOpt[jj].iRequired == CMDDATA_REQUIRED)
-          {
-            if(pszParameter == NULL) return false;
-            snprintf(astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter);
+          if ( astCmdOpt[jj].iRequired == CMDDATA_REQUIRED ) {
+            if ( pszParameter == NULL) return FALSE;
+            snprintf( astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter );
           }
 
-          if(astCmdOpt[jj].iRequired == CMDDATA_OPTIONAL)
-          {
-            if(pszParameter == NULL)
-            {
-              bLongCmd = false;
+          if ( astCmdOpt[jj].iRequired == CMDDATA_OPTIONAL ) {
+            if ( pszParameter == NULL ) {
+              bLongCmd = FALSE;
 
               continue;
             }
-            snprintf(astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter);
+            snprintf( astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter );
           }
         }
       } // bLongCmd
-      else if(bShortCmd)
-      {
-        if(!strcmp(pszArgument, astCmdOpt[jj].pszShort))
-        {
-          astCmdOpt[jj].bSet = true;
+      else if ( bShortCmd ) {
+        if ( !strcmp (pszArgument, astCmdOpt[jj].pszShort ) ) {
+          astCmdOpt[jj].bSet = TRUE;
 
-          if(astCmdOpt[jj].iRequired == CMDDATA_NODATA)
-          {
-            bShortCmd = false;
+          if ( astCmdOpt[jj].iRequired == CMDDATA_NODATA ) {
+            bShortCmd = FALSE;
 
-            free(pszParameter);
+            free( pszParameter );
             pszParameter = NULL;
 
             continue;
           }
-          if(astCmdOpt[jj].iRequired == CMDDATA_REQUIRED)
-          {
-            if(pszParameter[0] == 0)
-            {
-              bShortCmd = false;
+          if ( astCmdOpt[jj].iRequired == CMDDATA_REQUIRED ) {
+            if ( pszParameter[0] == 0 ) {
+              bShortCmd = FALSE;
 
               free(pszParameter);
               pszParameter = NULL;
@@ -221,16 +194,14 @@ bool bCommandLineIsOK(int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt)
               free(pszArgv);
               pszArgv = NULL;
 
-              return false;
+              return FALSE;
             }
             snprintf(astCmdOpt[jj].pszData, astCmdOpt[jj].lDataLength, "%s", pszParameter);
           }
 
-          if(astCmdOpt[jj].iRequired == CMDDATA_OPTIONAL)
-          {
-            if(pszParameter[0] == 0)
-            {
-              bShortCmd = false;
+          if ( astCmdOpt[jj].iRequired == CMDDATA_OPTIONAL ) {
+            if (pszParameter[0] == 0 ) {
+              bShortCmd = FALSE;
 
               free(pszParameter);
               pszParameter = NULL;
@@ -242,32 +213,29 @@ bool bCommandLineIsOK(int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt)
           }
         }
       } // bShortCmd
-      else
-      {
-        bLongCmd = false;
-        bShortCmd = false;
+      else {
+        bLongCmd = FALSE;
+        bShortCmd = FALSE;
 
         free(pszArgv);
         pszArgv = NULL;
       }
     } // for
 
-    if(bShortCmd)
-    {
+    if ( bShortCmd ) {
       free(pszParameter);
       pszParameter = NULL;
 
-      bShortCmd = false;
+      bShortCmd = FALSE;
     }
 
-    if(bLongCmd)
-    {
-      bLongCmd = false;
+    if ( bLongCmd ) {
+      bLongCmd = FALSE;
     }
 
-    free(pszArgv);
+    free( pszArgv );
     pszArgv = NULL;
   } // for
 
-  return true;
-}
+  return TRUE;
+} /* bCommandLineIsOK */

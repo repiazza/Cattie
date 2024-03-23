@@ -4,11 +4,10 @@
  * Written by Renato Fermi <repizza@gmail.com> 
  *
  * Window
- * 
  */
 
-#ifndef _CATTIE_H
-  #define _CATTIE_H
+#ifndef _CATTIE_H_
+  #define _CATTIE_H_
 
 /******************************************************************************
  *                                                                            *
@@ -67,14 +66,14 @@
  *                  Typedefs, structures, unions and enums                    *
  *                                                                            *
  ******************************************************************************/
-  typedef enum SquareType{
+  typedef enum SquareType {
     INVALID_SQUARE = -1,
     WALL_SQUARE = 0,
     PATH_SQUARE,
     END_SQUARE
   } eSqType;
   
-  typedef enum WindRose{
+  typedef enum WindRose {
     NORTH = 1,
     EAST,
     SOUTH,
@@ -96,6 +95,7 @@
 
   extern char *ppszImagePath[];
   extern STRUCT_PLAYER gstPlayer;
+  extern SDL_Rect *pSDL_RECT_Menu;
 
 /******************************************************************************
  *                                                                            *
@@ -103,9 +103,9 @@
  *                                                                            *
  ******************************************************************************/ 
 
-  int iWalk();
-  int iTurn();
-  int iFireLaser();  
+  int iWalk( void );
+  int iTurn( void );
+  int iFireLaser( void );
 
-#endif /* _CATTIE_H */
+#endif /* _CATTIE_H_ */
 

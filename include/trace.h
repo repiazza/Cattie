@@ -6,8 +6,8 @@
  * Trace functions and global variables
  */
 
-#ifndef TRACE_H_
-  #define TRACE_H_
+#ifndef _TRACE_H_
+  #define _TRACE_H_
 
 /******************************************************************************
  *                                                                            *
@@ -62,44 +62,44 @@
    *  If not found DEBUG_LEVEL or can't read .conf file, return 0.
    *  If can read .conf file return the value of DEBUG_LEVEL
    */
-  int iGetDebugLevel(const char *kpszConfFile);
+  int iGetDebugLevel( const char *kpszConfFile );
 
   /**
    * bacagine - 2023-11-10 - Set the name of the .conf file
    */
-  void vSetConfFile(void);
+  void vSetConfFile( void );
 
   /**
    * bacagine - 2023-11-10 - Set the name of the .log file
    */
-  void vSetLogFile(void);
+  void vSetLogFile( void );
   
   /**
    * bacagine - 2023-11-10 - Set the value of giDebugLevel
    */
-  void vSetDebugLevel(void);
+  void vSetDebugLevel( void );
 
-  void vTraceMsg(char *szMsg);
-  void vTracePid(char *szMsg, int iMsgLen);
-  void vTraceMsgNoNL(char *szMsg);
-  void vInitLogs(void);
+  void vTraceMsg( char *szMsg );
+  void vTracePid( char *szMsg, int iMsgLen );
+  void vTraceMsgNoNL( char *szMsg );
+  void vInitLogs( void );
 
   /**
    * bacagine - 2023-mm-dd - Advanced trace function
    */
-  void _vTraceVarArgs(const char *kpszModuleName,
-                      const int kiLine,
-                      const char *kpszFmt, ...);
+  void _vTraceVarArgs( const char *kpszModuleName,
+                       const int kiLine,
+                       const char *kpszFmt, ... );
   
   /**
    * bacagine - 2023-mm-dd A detailed and excessive sample of what was passed on the command line
    */
-  void vTraceCommandLine(int argc, char **argv);
+  void vTraceCommandLine( int argc, char **argv );
 
   /**
    * bacagine - 2023-mm-dd - A detailed and excessive sampling of the system's environment variables
    */
-  void vTraceEnvp(char **envp);
+  void vTraceEnvp( char **envp );
   
-#endif /* TRACE_H */
+#endif /* _TRACE_H */
 

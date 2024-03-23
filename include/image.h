@@ -1,6 +1,11 @@
+/**
+ * image.h
+ *
+ * Written by Renato Fermi <repizza@gmail.com>
+ */
 
-#ifndef IMAGE_h_
-  #define IMAGE_h_
+#ifndef _IMAGE_H_
+  #define _IMAGE_H_
 
   #define ASSERT_IMG_PATH(ndx, ppConfigPath, ppDefaultPath) \
             bFileExist(ppConfigPath[ndx])\
@@ -44,5 +49,5 @@
     "Sair"
   };
 
-#endif /* IMAGE_H */
+#endif /* _IMAGE_H */
   

@@ -10,6 +10,8 @@ UNAME_S := $(shell uname -s)
 
 ifneq ($(findstring _NT-, $(UNAME_S)),)
 	_WIN32 = 1
+else
+	LINUX = 1
 endif
 
 CC    = gcc

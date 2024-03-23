@@ -8,8 +8,8 @@
  * 
  */
 
-#ifndef _UTIL_H
-  #define _UTIL_H
+#ifndef _UTIL_H_
+  #define _UTIL_H_
 
   /******************************************************************************
    *                                                                            *
@@ -75,17 +75,17 @@
    * kpszFileName: the name of file
    * kpszMode: mode used in fopen
    */
-  int bOpenFile(FILE **fppFile, const char *kpszFileName, const char *kpszMode);
+  int bOpenFile( FILE **fppFile, const char *kpszFileName, const char *kpszMode );
 
   /**
    * Close file safety
    */
-  int bCloseFile(FILE **fppFile);
+  int bCloseFile( FILE **fppFile );
 
   /**
    * Check if file exists
    */
-  int bFileExist(const char *kpszFileName);
+  int bFileExist( const char *kpszFileName );
 
   /******************************************************************************
    *                                                                            *
@@ -96,7 +96,7 @@
   /**
    * Check if string is empty
    */
-  int bStrIsEmpty(const char *kpszStr);
+  int bStrIsEmpty( const char *kpszStr );
 
   /******************************************************************************
    *                                                                            *
@@ -107,32 +107,37 @@
   /**
    * 
    */
-  int iValidToken(char *pTokSearch);
+  int iValidToken( char *pTokSearch );
 
   /**
    * Parse the cattie.conf file
    */
-  int iParseCfgFile(char *pszFileContents);
+  int iParseCfgFile( char *pszFileContents );
 
   /**
    *
    */
-  int iCheckCfgPrm(void);
+  int iCheckCfgPrm( void );
 
   /**
    * Load the cattie's parameters file.
    */
-  int bLoadCfgFile(const char *kpszFileName);
+  int bLoadCfgFile( const char *kpszFileName );
 
   /**
    * Check if your terminal have support a colored text
    */
-  int bTerminalSupportColors(void);
+  int bTerminalSupportColors( void );
 
   /**
    * Print a formatted error message
    */
-  void vPrintErrorMessage(const char *kpszFmt, ...);
+  void vPrintErrorMessage( const char *kpszFmt, ... );
 
-  #endif /* _UTIL_H */
+  /**
+   *
+   */
+  int bAreCoordsInSDL_Rect( SDL_Rect *pSDL_RECT, int iX, int iY );
+
+  #endif /* _UTIL_H_ */
 

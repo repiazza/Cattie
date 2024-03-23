@@ -8,8 +8,8 @@
  * Date: 21/10/2023
  */
 
-#ifndef _CONSTS_H
-  #define _CONSTS_H
+#ifndef _CONSTS_H_
+  #define _CONSTS_H_
 
   #ifdef _WIN32
     #include <windows.h>
@@ -52,5 +52,5 @@
   /* Receive the name of program */
   extern const char *gkpszProgramName;
 
-#endif /* _CONSTS_H */
+#endif /* _CONSTS_H_ */
 

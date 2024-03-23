@@ -8,8 +8,8 @@
  * Date: 21/10/2023
  */
 
-#ifndef _CMDLINE_H
-  #define _CMDLINE_H
+#ifndef _CMDLINE_H_
+  #define _CMDLINE_H_
 
   /******************************************************************************
    *                                                                            *
@@ -22,7 +22,6 @@
 
   #include <stdlib.h>
   #include <string.h>
-  #include <stdbool.h>
 
   #define CMDTYPE_INT    0
   #define CMDTYPE_STR    1
@@ -94,17 +93,18 @@
    * for example, if argv[0] == "/usr/bin/program", the function returns
    * only the string "program".
    */
-  char *szGetProgramName(const char *szPathName);
+  char *szGetProgramName( const char *szPathName );
+
   /**
    * Print the help message for the user
    */
-  void vShowOptions(PSTRUCT_CMDLINE astCmdOpt);
-  void vShowSyntax(const char *pszMsg, PSTRUCT_CMDLINE astCmdOpt);
+  void vShowOptions( PSTRUCT_CMDLINE astCmdOpt );
+  void vShowSyntax( const char *pszMsg, PSTRUCT_CMDLINE astCmdOpt );
 
   /**
    * Check if what wass passed on the command line is valid
    */
-  bool bCommandLineIsOK(int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt);
+  int bCommandLineIsOK( int argc, char **argv, PSTRUCT_CMDLINE astCmdOpt );
 
 #endif /* _CMDLINE_H */
 
