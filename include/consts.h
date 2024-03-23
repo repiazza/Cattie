@@ -35,6 +35,8 @@
    * compilation.
    */
   #define UNUSED(X) (void) X
+  
+  #define CATTIE_INSTALL_PATH "/usr/share/cattie"
 
   /******************************************************************************
    *                                                                            *

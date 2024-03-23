@@ -56,6 +56,7 @@ OBJS += \
 	$(SRC_PATH)/cmdline.o \
 	$(SRC_PATH)/util.o \
 	$(SRC_PATH)/sl.o \
+	$(SRC_PATH)/player.o \
 	$(GXRF_PATH)/GXRF.o
 
 all: clean $(CATTIE_EXEC)
