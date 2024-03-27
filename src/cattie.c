@@ -17,6 +17,7 @@
 #include <util.h>
 #include <image.h>
 #include <sl.h>
+#include <hud.h>
 
 #ifdef _WIN32
   #include <windows.h>
@@ -32,6 +33,8 @@
 
 STRUCT_BUTTON_LIST gstButtonList;
 STRUCT_TEXTURE_LIST gstTextureList;
+STRUCT_PLAYER gstPlayer;
+STRUCT_HUD_LIST gstHudList;
 int giBOARD_Main[BOARD_ROWS][BOARD_COLS];
 int giDeg = 0;
 int gbRunning = TRUE;
@@ -40,7 +43,6 @@ int giACTION_List[_MAX_MOV_ACTION];
 int giACTION_StepCtr = 0;
 int giACTION_AssertedSteps = 0;
 int giMENU_SelectedItem = 0;
-STRUCT_PLAYER gstPlayer;
 
 /* Receive the name of program */
 const char *gkpszProgramName;
@@ -93,30 +95,6 @@ SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath ) {
 
   return SDL_SRFC_Img;
 } /* pSDL_SRFC_LoadImage */
-
-void vDrawCommandHUD( SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Hud ) {
-  if( DEBUG_MSGS ) vTraceBegin();
-
-  SDL_SetRenderTarget( renderer, NULL );
-  SDL_SetRenderDrawColor( renderer, 17, 84, 143, 96 );
-  SDL_RenderFillRect( renderer, pSDL_RECT_Hud );
-  SDL_SetRenderDrawColor( renderer, 17, 84, 143, 255 );
-  SDL_RenderDrawRect( renderer, pSDL_RECT_Hud );
-  
-  if( DEBUG_MSGS ) vTraceEnd();
-} /* vDrawCommandHUD */
-
-void vDrawButtonHUD( SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Hud ) {
-  if( DEBUG_MSGS ) vTraceBegin();
-
-  SDL_SetRenderTarget( renderer, NULL );
-  SDL_SetRenderDrawColor( renderer, 128, 4, 0, 128 );
-  SDL_RenderFillRect( renderer, pSDL_RECT_Hud );
-  SDL_SetRenderDrawColor( renderer, 128, 0, 0, 255 );
-  SDL_RenderDrawRect( renderer, pSDL_RECT_Hud );
-
-  if( DEBUG_MSGS ) vTraceEnd();
-} /* vDrawButtonHUD */
 
 void vInitializeImagePosition( SDL_Rect *pSDL_Rect_Im ) {
   int iLocation = -2;
@@ -277,39 +255,6 @@ void vSetButtonDimensions( SDL_Rect *pSDL_RECT_Btn, int iTrslt ) {
   if ( DEBUG_MSGS ) vTraceEnd();
 } /* vSetButtonDimensions */
 
-void vSetTmpHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
-  if ( DEBUG_MSGS ) vTraceBegin();
-
-  pSDL_RECT_Hud->w = 2 * atoi( gstCmdLine.szWinWidth ) / 4 - 20;
-  pSDL_RECT_Hud->h = COL_RATIO - 10;
-  pSDL_RECT_Hud->x = 0.06 * atoi( gstCmdLine.szWinWidth ) - 10;
-  pSDL_RECT_Hud->y = atoi( gstCmdLine.szWinHeight ) - 0.06 * atoi( gstCmdLine.szWinHeight ) - ( 30 + pSDL_RECT_Hud->h );
-
-  if ( DEBUG_MSGS ) vTraceEnd();
-} /* vSetTmpHUDRect */
-
-void vSetCmdHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
-  if ( DEBUG_MSGS ) vTraceBegin();
-
-  pSDL_RECT_Hud->x = atoi( gstCmdLine.szWinWidth ) / 4;
-  pSDL_RECT_Hud->y = 0;
-  pSDL_RECT_Hud->w = 2 * pSDL_RECT_Hud->x;
-  pSDL_RECT_Hud->h = COL_RATIO;
-
-  if ( DEBUG_MSGS ) vTraceEnd();
-} /* vSetCmdHUDRect */
-
-void vSetButtonHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
-  if ( DEBUG_MSGS ) vTraceBegin();
-
-  pSDL_RECT_Hud->x = 0.06 * atoi( gstCmdLine.szWinWidth ) - 10;
-  pSDL_RECT_Hud->y = atoi( gstCmdLine.szWinHeight ) - 0.06 * atoi( gstCmdLine.szWinHeight ) - 30;
-  pSDL_RECT_Hud->w = 2 * atoi( gstCmdLine.szWinWidth ) / 4 - 20;
-  pSDL_RECT_Hud->h = COL_RATIO - 10;
-
-  if( DEBUG_MSGS ) vTraceEnd();
-} /* vSetButtonHUDRect */
-
 int iWasClicked(void) {
   int iRsl = MENU_OPT_NONE;
   int iX;
@@ -358,7 +303,7 @@ int iHandleClick( SDL_Texture *pSDL_TXTR_CmdListHud ) {
     case FIRE_LASER:
     case ERASE: {
       iACTION_AddStep2List( iAction );
-      // vUpdateCmdTmpList(iAction, pSDL_TXTR_CmdListHud);
+      /* vUpdateCmdTmpList(iAction, pSDL_TXTR_CmdListHud); */
       if ( DEBUG_MSGS ) vACTION_TraceList();
       break;
     }
@@ -387,19 +332,6 @@ int iHandleClick( SDL_Texture *pSDL_TXTR_CmdListHud ) {
 
   return REDRAW_NONE;
 } /* iHandleClick */
-
-#if 0
-void vUpdateCmdTmpList( int iAct, SDL_Rect *pSDL_Rect, SDL_Texture *pSDL_TXTR_CmdListHud, SDL_Renderer *pSDL_Rndr ) {
-  if ( pSDL_TXTR_CmdListHud == NULL ) {
-    pSDL_TXTR_CmdListHud = IMG_LoadTexture( pSDL_Rndr, ppszInstalledImagePath[( iAct == 0 ? iAct : ( iAct - 1 ) )] );
-  }
-  SDL_SetTextureAlphaMod( pSDL_TXTR_CmdListHud, (Uint8)(255) );
-  // SDL_Rect dstRect = { x ,y, w, h };
-  SDL_RenderCopy( pSDL_Rndr, pSDL_TXTR_CmdListHud, NULL, pSDL_Rect );
-  
-  return;
-} /* vUpdateCmdTmpList */
-#endif
 
 int iHandleEventKey( SDL_Event *pSDL_EVENT_Ev ) {
   int iRslAction = REDRAW_NONE;
@@ -562,6 +494,7 @@ int SDL_main( int argc, char *argv[] ) {
   uint64_t ui64ElapsedTime;
   SDL_Texture *pSDL_TXTR_TemporaryCmdList = NULL;
   SDL_Rect SDL_RECT_Player;
+  SDL_Rect SDL_RECT_TmpHud;
   SDL_Rect SDL_RECT_Hud;
   SDL_Rect SDL_RECT_ButtonHud;
   SDL_Rect SDL_RECT_ButtonArrowRight;
@@ -676,8 +609,13 @@ int SDL_main( int argc, char *argv[] ) {
   // HUDs
   //
   // Set Hud Rect Dimensions
+  vSetTmpHUDRect( &SDL_RECT_TmpHud );
   vSetCmdHUDRect( &SDL_RECT_Hud );
   vSetButtonHUDRect( &SDL_RECT_ButtonHud );
+  vHUD_InitList();
+  pSDL_HUD_AddToList(&SDL_RECT_TmpHud, "\x11\x54\x8F\x60");    // 17, 84, 143, 96
+  pSDL_HUD_AddToList(&SDL_RECT_Hud, "\x11\x54\x8F\x60");       // 17, 84, 143, 96
+  pSDL_HUD_AddToList(&SDL_RECT_ButtonHud, "\x80\x04\x00\x80"); // 128, 4, 0, 128
 
   //
   // Board
@@ -737,6 +675,7 @@ int SDL_main( int argc, char *argv[] ) {
 
   }
 
+  pSDL_TXTR_AddToList( renderer, &SDL_RECT_TmpHud, NULL, BLENDED_SURFACE_NONE );
   pSDL_TXTR_AddToList( renderer, &SDL_RECT_Hud, NULL, BLENDED_SURFACE_NONE );
   pSDL_TXTR_AddToList( renderer, &SDL_RECT_ButtonHud, NULL, BLENDED_SURFACE_NONE );
   pSDL_TXTR_AddToList( renderer, NULL, NULL, BLENDED_SURFACE_TXTR );
@@ -844,9 +783,11 @@ int SDL_main( int argc, char *argv[] ) {
     
     vSetCmdHUDRect( &SDL_RECT_Hud );
     vSetButtonHUDRect( &SDL_RECT_ButtonHud );
-
-    vDrawCommandHUD( renderer, &SDL_RECT_Hud );
-    vDrawButtonHUD ( renderer, &SDL_RECT_ButtonHud );
+    
+    /* vDrawTmpHUD    ( renderer, &SDL_RECT_TmpHud    ); */
+    /* vDrawCommandHUD( renderer, &SDL_RECT_Hud       ); */
+    /* vDrawButtonHUD ( renderer, &SDL_RECT_ButtonHud ); */
+    vHUD_DrawList( renderer );
   
     vBUTTON_DrawList( renderer );
 
@@ -869,6 +810,7 @@ int SDL_main( int argc, char *argv[] ) {
   TTF_CloseFont( pttf_Font );
   vBUTTON_FreeList();
   vTXTR_FreeList( DESTROY_TEXTURES );
+  vHUD_FreeList();
   SDL_DestroyRenderer( renderer );
   SDL_DestroyWindow( window );
   SDL_Quit();

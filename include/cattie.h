@@ -106,6 +106,7 @@
   int iWalk( void );
   int iTurn( void );
   int iFireLaser( void );
+  void vUpdateCmdTmpList( int iAct, SDL_Rect *pSDL_Rect, SDL_Texture *pSDL_TXTR_CmdListHud, SDL_Renderer *pSDL_Rndr ); 
 
 #endif /* _CATTIE_H_ */
 
