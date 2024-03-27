@@ -13,6 +13,7 @@
 #ifndef _MENU_H_
   #define _MENU_H_
 
+  #define MENU_OPT_NONE -1
   #define MAX_MENU_OPTIONS 6
 
   typedef enum eMenuOption {
@@ -76,9 +77,10 @@
     } /* for */
   } /* vDrawMenu */
 
-  // Update vMENU_HandleKey function to handle text rendering
-  void vMENU_HandleKey( SDL_Keycode peSDL_KeyCode, char **ppszOptionTitle ) {
-    if ( gbDrawMenu == FALSE ) return;
+  // Update iMENU_HandleKey function to handle text rendering
+  int iMENU_HandleKey( SDL_Keycode peSDL_KeyCode, char **ppszOptionTitle ) {
+    int iDrawAction = REDRAW_NONE;
+    if ( gbDrawMenu == FALSE ) return iDrawAction;
 
     switch ( peSDL_KeyCode ) {
       case SDLK_UP: {
@@ -86,6 +88,7 @@
         if (giMENU_SelectedItem < 0) {
             giMENU_SelectedItem = MAX_MENU_OPTIONS - 1;
         }
+        iDrawAction = REDRAW_IMAGE;
         break;
       }
       case SDLK_DOWN: {
@@ -93,6 +96,7 @@
         if (giMENU_SelectedItem >= MAX_MENU_OPTIONS) {
             giMENU_SelectedItem = 0;
         }
+        iDrawAction = REDRAW_IMAGE;
         break;
       }
       case SDLK_RETURN: {
@@ -106,19 +110,21 @@
           gbDrawMenu = FALSE;
 
         // Handle menu item selection
+        iDrawAction = REDRAW_IMAGE;
         break;
       }
       default: break;
     } /* switch */
-  } /* vMENU_HandleKey */
+    return iDrawAction;
+  } /* iMENU_HandleKey */
 
   int iMENU_HandleMouseMotion( SDL_Rect *pSDL_RECT_Mn, int iXCursor, int iYCursor ) {
     SDL_Rect *pSDL_RECT_Wrk = NULL;
     int iInitCt = 0;
 
-    if( DEBUG_MSGS ) vTraceBegin();
+    // if( DEBUG_MSGS ) vTraceBegin();
 
-    if ( gbDrawMenu == FALSE ) return -1;
+    if ( gbDrawMenu == FALSE ) return REDRAW_NONE;
 
     for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; iInitCt < MAX_MENU_OPTIONS; pSDL_RECT_Wrk++, iInitCt++ ) {
       if ( pSDL_RECT_Wrk == NULL )
@@ -131,17 +137,14 @@
       }
     }
 
-    if( DEBUG_MSGS ) vTraceEnd();
+    // if( DEBUG_MSGS ) vTraceEnd();
 
-    return 0;
+    return REDRAW_NONE;
   } /* iMENU_HandleMouseMotion */
 
-  void vMENU_ToggleVisibility( void ) {
-      if ( gbDrawMenu == FALSE )
-        gbDrawMenu = TRUE;
-
-      return;
-  } /* vMENU_ToggleVisibility */
+  int iMENU_ToggleVisibility( void ) {
+      return gbDrawMenu ? FALSE : TRUE;
+  } /* iMENU_ToggleVisibility */
 
   int iMENU_HandleMouseClick( SDL_Rect *pSDL_RECT_Mn, int iXCursor, int iYCursor, char **ppszOptionTitle ) {
     SDL_Rect *pSDL_RECT_Wrk = NULL;
@@ -149,7 +152,7 @@
 
     if( DEBUG_MSGS ) vTraceBegin();
 
-    if ( gbDrawMenu == FALSE ) return -1;
+    if ( gbDrawMenu == FALSE ) return MENU_OPT_NONE;
 
     for ( pSDL_RECT_Wrk = pSDL_RECT_Mn; iInitCt < MAX_MENU_OPTIONS; pSDL_RECT_Wrk++, iInitCt++ ) {
       if ( pSDL_RECT_Wrk == NULL ) break;
@@ -170,7 +173,7 @@
 
     if( DEBUG_MSGS ) vTraceEnd();
 
-    return 0;
+    return MENU_OPT_NONE;
   } /* iMENU_HandleMouseClick */
 
 #endif /* _MENU_H_ */

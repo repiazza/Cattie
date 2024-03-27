@@ -213,7 +213,7 @@ int iWalk( void ) {
   if ( iBOARD_IsValidSquare( iNextX, iNextY ) <= WALL_SQUARE ) {
     if( DEBUG_MSGS ) vTraceVarArgs("%s - end return -1");
 
-    return -1;
+    return ERROR_WALKING;
   }
 
   gstPlayer.iCurrX = iNextX;
@@ -237,7 +237,7 @@ int iWalk( void ) {
 
   if( DEBUG_MSGS ) vTraceEnd();
 
-  return gstPlayer.iFacingPos;
+  return REDRAW_IMAGE;
 } /* iWalk */
 
 int iTurn( void ) {
@@ -310,32 +310,26 @@ void vSetButtonHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
   if( DEBUG_MSGS ) vTraceEnd();
 } /* vSetButtonHUDRect */
 
-int iWasClicked( SDL_Event *pSDL_EVENT_Ev ) {
-  STRUCT_BUTTON_LIST *pstWrkButtonList;
-  int iRsl = 0;
+int iWasClicked(void) {
+  int iRsl = MENU_OPT_NONE;
+  int iX;
+  int iY;
 
   if( DEBUG_MSGS ) vTraceBegin();
+  
+  SDL_GetMouseState( &iX, &iY );
 
-  for ( pstWrkButtonList = &gstButtonList; pstWrkButtonList != NULL; pstWrkButtonList = pstWrkButtonList->pstNext ) {
-    int iClickEvX = pSDL_EVENT_Ev->button.x;
-    int iClickEvY = pSDL_EVENT_Ev->button.y;
-    SDL_Rect *pSDL_RECT_Btn = pstWrkButtonList->pSDL_RECT_Button;
-
-    if ( pSDL_RECT_Btn == NULL )
-      break;
-
-    if ( bAreCoordsInSDL_Rect(pSDL_RECT_Btn, iClickEvX, iClickEvY) ) {
-      // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end pstWrkButtonList->iAction == %d", pstWrkButtonList->iAction);
-      return pstWrkButtonList->iAction;
-    }
+  if ( (iRsl = iBUTTON_CheckInteraction(iX, iY)) != REDRAW_NONE ){
+    return iRsl;
   }
 
-  iRsl = iMENU_HandleMouseClick( pSDL_RECT_Menu, pSDL_RECT_Menu->x, pSDL_RECT_Menu->y, ppszMenuOpt );
+  iRsl = iMENU_HandleMouseClick( pSDL_RECT_Menu, iX, iY, ppszMenuOpt );
 
   if( DEBUG_MSGS ) vTraceEnd();
 
-  return iRsl != -1 ? iRsl : FALSE;
+  return iRsl;
 } /* iWasClicked */
+
 
 SDL_Texture* createSquareTexture( SDL_Renderer* renderer ) {
   if( DEBUG_MSGS ) vTraceBegin();
@@ -351,14 +345,14 @@ SDL_Texture* createSquareTexture( SDL_Renderer* renderer ) {
   return texture;
 } /* createSquareTexture */
 
-int iHandleClick( SDL_Event *pSDL_EVENT_Ev, SDL_Texture *pSDL_TXTR_CmdListHud ) {
-  int iAction = 0;
+int iHandleClick( SDL_Texture *pSDL_TXTR_CmdListHud ) {
+  int iAction = REDRAW_NONE;
 
   if( DEBUG_MSGS ) vTraceBegin();
   
   UNUSED( pSDL_TXTR_CmdListHud );
 
-  switch( ( iAction = iWasClicked(pSDL_EVENT_Ev) ) ) {
+  switch( ( iAction = iWasClicked() ) ) {
     case FORWARD:
     case TURN:
     case FIRE_LASER:
@@ -375,7 +369,7 @@ int iHandleClick( SDL_Event *pSDL_EVENT_Ev, SDL_Texture *pSDL_TXTR_CmdListHud ) 
     }
     case CONFIGURE: {
       if ( DEBUG_MSGS ) vTraceMsg("Configure!\n");
-      vMENU_ToggleVisibility();
+      gbDrawMenu = iMENU_ToggleVisibility();
       return REDRAW_MENU_CLKD;
     }
     case MENU_OPT_1:
@@ -391,7 +385,7 @@ int iHandleClick( SDL_Event *pSDL_EVENT_Ev, SDL_Texture *pSDL_TXTR_CmdListHud ) 
 
   if ( DEBUG_MSGS ) vTraceEnd();
 
-  return 0;
+  return REDRAW_NONE;
 } /* iHandleClick */
 
 #if 0
@@ -408,7 +402,10 @@ void vUpdateCmdTmpList( int iAct, SDL_Rect *pSDL_Rect, SDL_Texture *pSDL_TXTR_Cm
 #endif
 
 int iHandleEventKey( SDL_Event *pSDL_EVENT_Ev ) {
-  vMENU_HandleKey( pSDL_EVENT_Ev->key.keysym.sym, ppszMenuOpt );
+  int iRslAction = REDRAW_NONE;
+  
+  if ( iMENU_HandleKey( pSDL_EVENT_Ev->key.keysym.sym, ppszMenuOpt ) == REDRAW_IMAGE )
+    return REDRAW_IMAGE;
 
   if ( DEBUG_MSGS ) vTraceBegin();
 
@@ -427,7 +424,7 @@ int iHandleEventKey( SDL_Event *pSDL_EVENT_Ev ) {
 
   if( DEBUG_MSGS ) vTraceEnd();
 
-  return 0;
+  return iRslAction;
 } /* iHandleEventKey */
 
 int iCheckMenuInteraction( SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCursor ) {
@@ -472,7 +469,7 @@ int iCheckMenuInteraction( SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCur
   return 0;
 } /* iCheckMenuInteraction */
 
-int iHandleMouseMotion( SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev ) {
+int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu) {
   int iX;
   int iY;
 
@@ -482,19 +479,19 @@ int iHandleMouseMotion( SDL_Rect *pSDL_RECT_Menu, SDL_Event *pSDL_EVENT_Ev ) {
 
   SDL_GetMouseState( &iX, &iY );
 
-  if ( iBUTTON_CheckInteraction( pSDL_EVENT_Ev, iX, iY ) == REDRAW_IMAGE ) {
+  if ( iBUTTON_CheckInteraction( iX, iY ) == REDRAW_IMAGE ) {
     // if(DEBUG_MORE_MSGS) vTraceVarArgs("%s end - return %d", REDRAW_IMAGE);
 
     return REDRAW_IMAGE;
   }
 
-  if ( iMENU_HandleMouseMotion( pSDL_RECT_Menu, iX, iY ) ) {
+  if ( iMENU_HandleMouseMotion( pSDL_RECT_Menu, iX, iY ) == REDRAW_IMAGE ) {
     return REDRAW_IMAGE;
   }
   
   // if(DEBUG_MORE_MSGS) vTraceEnd();
 
-  return 0;
+  return REDRAW_NONE;
 } /* iHandleMouseMotion */
 
 /**
@@ -560,7 +557,7 @@ static void vPrintUsage( void )
  */
 int SDL_main( int argc, char *argv[] ) {
   int iXTranslation = 0;
-  int iRedrawAction = -1;
+  int iRedrawAction = REDRAW_IMAGE;
   int iImageIx;
   uint64_t ui64ElapsedTime;
   SDL_Texture *pSDL_TXTR_TemporaryCmdList = NULL;
@@ -775,10 +772,11 @@ int SDL_main( int argc, char *argv[] ) {
       }
 
       iRedrawAction = iACTION_ExecuteStep( giACTION_AssertedSteps++ );
-      if  ( iRedrawAction < 0 )
+      if  ( iRedrawAction == ERROR_WALKING ){
         gbRunning = FALSE;
+        break;
+      }
 
-      iRedrawAction = REDRAW_IMAGE;
       if ( DEBUG_MSGS ) { 
         char szMsg[256] = "";
 
@@ -798,7 +796,7 @@ int SDL_main( int argc, char *argv[] ) {
       break;
     } /* while */
 
-    while ( !gbACTION_Check && SDL_PollEvent(&event) ) {
+    while ( !gbACTION_Check && iRedrawAction != REDRAW_IMAGE && SDL_PollEvent(&event)  ) {
       // The player hasn't choose its route yet,
       // so we must watch all interaction events... 
       switch (event.type) {
@@ -807,24 +805,18 @@ int SDL_main( int argc, char *argv[] ) {
           break;
         }
         case SDL_MOUSEBUTTONDOWN: {
-          if ( (iRedrawAction = iHandleClick( &event, pSDL_TXTR_TemporaryCmdList ) ) > 0 ) {
-            gbRunning = FALSE;
-            iRedrawAction = REDRAW_NONE;
-            break;
-          }
-
+          iRedrawAction = iHandleClick( pSDL_TXTR_TemporaryCmdList );
           if ( iRedrawAction == REDRAW_MENU_CLKD )
             iRedrawAction = REDRAW_IMAGE;
             
           break;
         }
         case SDL_KEYDOWN: {
-          iHandleEventKey(&event);
-          iRedrawAction = REDRAW_IMAGE;
+          iRedrawAction = iHandleEventKey(&event);
           break;
         }
         case SDL_MOUSEMOTION: {
-          iRedrawAction = iHandleMouseMotion(pSDL_RECT_Menu, &event);
+          iRedrawAction = iHandleMouseMotion(pSDL_RECT_Menu);
           break;
         }
         default: break;
@@ -835,7 +827,7 @@ int SDL_main( int argc, char *argv[] ) {
       break;
 
     // If nothing has changed, we will not redraw...
-    if ( iRedrawAction != REDRAW_IMAGE && iRedrawAction != -1 ) {
+    if ( iRedrawAction != REDRAW_IMAGE ) {
       continue;
     }
 
@@ -870,7 +862,7 @@ int SDL_main( int argc, char *argv[] ) {
     if ( ui64ElapsedTime <= VSYNC_TIME ) SDL_Delay( VSYNC_TIME - ui64ElapsedTime );
     
     // Redoing action, as we got no relevant interaction, no draw allowed.
-    iRedrawAction = 0;
+    iRedrawAction = REDRAW_NONE;
   } /* while */
   
   // Clean up

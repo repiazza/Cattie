@@ -62,10 +62,8 @@
     return NULL;
   } /* pBUTTON_GetRectByImg */
 
-  int iBUTTON_CheckInteraction( SDL_Event *pSDL_EVENT_Ev, int iXCursor, int iYCursor ) {
+  int iBUTTON_CheckInteraction( int iXCursor, int iYCursor ) {
     STRUCT_BUTTON_LIST *pstWrkButtonList = NULL;
-
-    UNUSED( pSDL_EVENT_Ev );
 
     for ( pstWrkButtonList = &gstButtonList; pstWrkButtonList != NULL; pstWrkButtonList = pstWrkButtonList->pstNext ) {
       SDL_Rect *pSDL_RECT_Btn = pstWrkButtonList->pSDL_RECT_Button;
@@ -78,7 +76,7 @@
       }
     }
 
-    return 0;
+    return REDRAW_NONE;
   } /* iBUTTON_CheckInteraction */
 
   int iGetButtonTypebyAction( int iAction ) {
