@@ -2,8 +2,8 @@
 *.o
 *.exe
 cattie.log
-.vscode/settings.json
+.vscode/*
 menu.c
 exploit.txt
 cattie
-.vscode/c_cpp_properties.json
+.kdev4/*
