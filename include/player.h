@@ -1,11 +1,10 @@
 /**
  * player.h
  *
- * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com>
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com> in March 2024
  *
- * Description: Modulo para a pontuacao dos jogares do cattie
+ * Player data structures and score evaluation. 
  *
- * Date: 2024-03-23
  */
 
 #ifndef _PLAYER_H_

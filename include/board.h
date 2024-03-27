@@ -3,6 +3,8 @@
  *
  * Written by Renato Fermi <repizza@gmail.com>
  *
+ * Board data, types and specs
+ * 
  */
 
 #include <stdlib.h>

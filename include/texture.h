@@ -3,7 +3,8 @@
  * 
  * Written by Renato Fermi <repizza@gmail.com>
  *
- * Handles surfaces, textures, images, etc.
+ * Handles surfaces, textures, images...
+ *  |- Mainly data structures and rendering
  */
 
 #include <cattie.h>

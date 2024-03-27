@@ -2,6 +2,9 @@
  * button.h
  *
  * Written by Renato Fermi <repizza@gmail.com>
+ * 
+ * Button data structures and rendering
+ * 
  */
 
 #include <cattie.h>

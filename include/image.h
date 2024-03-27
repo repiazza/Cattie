@@ -2,6 +2,9 @@
  * image.h
  *
  * Written by Renato Fermi <repizza@gmail.com>
+ * 
+ * Temporary path handling 
+ * TODO: rework this logic.
  */
 
 #ifndef _IMAGE_H_

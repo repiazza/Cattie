@@ -1,11 +1,10 @@
 /**
  * cmdline.h
  *
- * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com>
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com> in November 2023
  *
- * My cmdline file
+ * Command Line handle functions
  *
- * Date: 21/10/2023
  */
 
 #ifndef _CMDLINE_H_

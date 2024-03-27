@@ -111,9 +111,10 @@
 
   /**
    * Parse the cattie.conf file
-   */
-  int iParseCfgFile( char *pszFileContents );
-
+   *
+   * int iParseCfgFile( char *pszFileContents );
+  */
+   
   /**
    *
    */

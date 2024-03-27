@@ -3,7 +3,8 @@
  *
  * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com> in March 2024
  *
- * Description: Hud module
+ * Hud data structures and rendering
+ * 
  */
 
 #ifndef _HUD_H_
@@ -110,43 +111,6 @@
 
     return pstWrkHud->pSDL_Rect;
   } /* pSDL_HUD_AddToList */
-#if 0
-  void vDrawCommandHUD( SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Hud ) {
-    if( DEBUG_MSGS ) vTraceBegin();
-
-    SDL_SetRenderTarget( renderer, NULL );
-    SDL_SetRenderDrawColor( renderer, 17, 84, 143, 96 );
-    SDL_RenderFillRect( renderer, pSDL_RECT_Hud );
-    SDL_SetRenderDrawColor( renderer, 17, 84, 143, 255 );
-    SDL_RenderDrawRect( renderer, pSDL_RECT_Hud );
-    
-    if( DEBUG_MSGS ) vTraceEnd();
-  } /* vDrawCommandHUD */
-
-  void vDrawTmpHUD( SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Hud ) {
-    if( DEBUG_MSGS ) vTraceBegin();
-
-    SDL_SetRenderTarget( renderer, NULL );
-    SDL_SetRenderDrawColor( renderer, 17, 84, 143, 96 );
-    SDL_RenderFillRect( renderer, pSDL_RECT_Hud );
-    SDL_SetRenderDrawColor( renderer, 17, 84, 143, 255 );
-    SDL_RenderDrawRect( renderer, pSDL_RECT_Hud );
-    
-    if( DEBUG_MSGS ) vTraceEnd();
-  } /* vDrawTmpHUD */
-
-  void vDrawButtonHUD( SDL_Renderer *renderer, SDL_Rect *pSDL_RECT_Hud ) {
-    if( DEBUG_MSGS ) vTraceBegin();
-
-    SDL_SetRenderTarget( renderer, NULL );
-    SDL_SetRenderDrawColor( renderer, 128, 4, 0, 128 );
-    SDL_RenderFillRect( renderer, pSDL_RECT_Hud );
-    SDL_SetRenderDrawColor( renderer, 128, 0, 0, 255 );
-    SDL_RenderDrawRect( renderer, pSDL_RECT_Hud );
-
-    if( DEBUG_MSGS ) vTraceEnd();
-  } /* vDrawButtonHUD */
-#endif /* 0 */
   void vSetTmpHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
     if ( DEBUG_MSGS ) vTraceBegin();
 
@@ -177,7 +141,7 @@
     pSDL_RECT_Hud->w = 2 * atoi( gstCmdLine.szWinWidth ) / 4 - 20;
     pSDL_RECT_Hud->h = COL_RATIO - 10;
 
-    if( DEBUG_MSGS ) vTraceEnd();
+    if( DEBUG_MSGS ) vTraceEnd(); 
   } /* vSetButtonHUDRect */
 
 #endif /* _HUD_H_ */

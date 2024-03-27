@@ -2,6 +2,8 @@
  * action.h
  *
  * Written by Renato Fermi <repizza@gmail.com>
+ * 
+ * Action step handling
  */
 
 #include <cattie.h>

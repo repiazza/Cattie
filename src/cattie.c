@@ -519,7 +519,7 @@ int SDL_main( int argc, char *argv[] ) {
   }
 
   /**
-   * Check if command line is OK
+   * Check CmdLine Args
    */
   if ( !bCommandLineIsOK( argc, argv, astCmdOpt ) ) {
     vPrintUsage();
@@ -541,6 +541,7 @@ int SDL_main( int argc, char *argv[] ) {
 
   if ( astCmdOpt[5].bSet ) {
     vShowTrain();
+
     exit( EXIT_SUCCESS );
   }
 
@@ -556,12 +557,10 @@ int SDL_main( int argc, char *argv[] ) {
       char szMsg[256] = "";
 
       memset( szMsg, 0x00, sizeof( szMsg ) );
-
       sprintf(szMsg,
         "Couldn't initialize SDL: %s\n",
         SDL_GetError()
       );
-
       vTraceMsg( szMsg );
     }
 
@@ -573,12 +572,10 @@ int SDL_main( int argc, char *argv[] ) {
       char szMsg[256] = "";
 
       memset( szMsg, 0x00, sizeof( szMsg ) );
-
       sprintf(szMsg,
         "Couldn't initialize Font: %s",
         TTF_FONT_TITLE
       );
-
       vTraceMsg(szMsg);
     }
 
@@ -629,18 +626,18 @@ int SDL_main( int argc, char *argv[] ) {
   // Clear structure
   vBUTTON_InitList();
 
-  // Set Button Sizes
+  // Set button size and position [x,y] and width + height
   vSetButtonDimensions( &SDL_RECT_ButtonArrowRight, iXTranslation );
   iXTranslation += SDL_RECT_ButtonArrowRight.w + 10;
-  vSetButtonDimensions( &SDL_RECT_ButtonTurnArrow, iXTranslation );
+  vSetButtonDimensions( &SDL_RECT_ButtonTurnArrow,  iXTranslation );
   iXTranslation += SDL_RECT_ButtonTurnArrow.w + 10;
-  vSetButtonDimensions( &SDL_RECT_ButtonFireLaser, iXTranslation );
+  vSetButtonDimensions( &SDL_RECT_ButtonFireLaser,  iXTranslation );
   iXTranslation += SDL_RECT_ButtonFireLaser.w + 50;
-  vSetButtonDimensions( &SDL_RECT_ButtonUndoLast, iXTranslation );
+  vSetButtonDimensions( &SDL_RECT_ButtonUndoLast,   iXTranslation );
   iXTranslation += SDL_RECT_ButtonUndoLast.w + 50;
-  vSetButtonDimensions( &SDL_RECT_ButtonConfirm, iXTranslation );
+  vSetButtonDimensions( &SDL_RECT_ButtonConfirm,    iXTranslation );
   iXTranslation += SDL_RECT_ButtonConfirm.w + 100;
-  vSetButtonDimensions( &SDL_RECT_ButtonConfigure, iXTranslation );
+  vSetButtonDimensions( &SDL_RECT_ButtonConfigure,  iXTranslation );
 
   // Square Edges
   vBOARD_DrawEdges( renderer );

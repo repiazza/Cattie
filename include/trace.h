@@ -4,6 +4,7 @@
  * Written by Renato Fermi <repiazza@gmail.com>
  *
  * Trace functions and global variables
+ * 
  */
 
 #ifndef _TRACE_H_

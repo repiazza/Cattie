@@ -2,6 +2,9 @@
  * menu.h
  *
  * Written by Renato Fermi <repizza@gmail.com>
+ * 
+ * Menu data structures and rendering
+ * 
  */
 
 #include <stdlib.h>

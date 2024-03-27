@@ -2,6 +2,9 @@
  * font.h
  *
  * Written by Renato Fermi <repizza@gmail.com>
+ * 
+ * SDL2 TTF Handling 
+ * 
  */
 
 #include <SDL2/SDL_ttf.h>

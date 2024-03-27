@@ -1,11 +1,10 @@
 /**
  * consts.h
  *
- * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com>
+ * Written by Gustavo Bacagine <gustavo.bacagine@protonmail.com> in November 2023
  *  
- * My consts file
+ * Constants and OS env variables.
  *
- * Date: 21/10/2023
  */
 
 #ifndef _CONSTS_H_
