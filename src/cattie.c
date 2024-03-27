@@ -781,6 +781,7 @@ int SDL_main( int argc, char *argv[] ) {
     
     iBOARD_Colorfy( renderer );
     
+    vSetTmpHUDRect( &SDL_RECT_TmpHud );
     vSetCmdHUDRect( &SDL_RECT_Hud );
     vSetButtonHUDRect( &SDL_RECT_ButtonHud );
     
