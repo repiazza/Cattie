@@ -52,19 +52,25 @@
   
   void vHUD_Draw(SDL_Renderer *renderer, STRUCT_HUD_LIST *pSDL_HUD_List) {
     SDL_Rect *pSDL_RECT_Hud = NULL;
-    char *pszRGBA = NULL;
+    unsigned int iR;
+    unsigned int iG;
+    unsigned int iB;
+    unsigned int iAlpha;
 
     if( DEBUG_MSGS ) vTraceBegin();
     
     if ( pSDL_HUD_List == NULL ) return;
     
-    pszRGBA = pSDL_HUD_List->szRGBA;
+    iR     = (unsigned char) pSDL_HUD_List->szRGBA[0];
+    iG     = (unsigned char) pSDL_HUD_List->szRGBA[1];
+    iB     = (unsigned char) pSDL_HUD_List->szRGBA[2];
+    iAlpha = (unsigned char) pSDL_HUD_List->szRGBA[3];
     pSDL_RECT_Hud = pSDL_HUD_List->pSDL_Rect;
 
     SDL_SetRenderTarget( renderer, NULL );
-    SDL_SetRenderDrawColor( renderer, (int) pszRGBA[0], (int) pszRGBA[1], (int) pszRGBA[2], (int) pszRGBA[3] );
+    SDL_SetRenderDrawColor( renderer, iR, iG, iB, iAlpha );
     SDL_RenderFillRect( renderer, pSDL_RECT_Hud );
-    SDL_SetRenderDrawColor( renderer, (int) pszRGBA[0], (int) pszRGBA[1], (int) pszRGBA[2], 0xFF );
+    SDL_SetRenderDrawColor( renderer,  iR, iG, iB, 0xFF );
     SDL_RenderDrawRect( renderer, pSDL_RECT_Hud );
     
     if( DEBUG_MSGS ) vTraceEnd();
@@ -73,7 +79,7 @@
   void vHUD_DrawList(SDL_Renderer *renderer) {
     PSTRUCT_HUD_LIST pstWrkHud = NULL;
 
-    for ( pstWrkHud = &gstHudList; pstWrkHud != NULL; ) {
+    for ( pstWrkHud = &gstHudList; pstWrkHud != NULL; pstWrkHud = pstWrkHud->pstNext ) {
       vHUD_Draw(renderer, pstWrkHud);
     }
   }
