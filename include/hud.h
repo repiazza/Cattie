@@ -9,10 +9,30 @@
 
 #ifndef _HUD_H_
   #define _HUD_H_
+
+  #define ZERO_RGB 'Z'
+
+  #define SET_RENDER_DRAW_COLOR(RENDERER, RGBA) \
+            SDL_SetRenderDrawColor( \
+              RENDERER, \
+              (unsigned char)(RGBA[0] != ZERO_RGB ? RGBA[0] : 0x00), \
+              (unsigned char)(RGBA[1] != ZERO_RGB ? RGBA[1] : 0x00), \
+              (unsigned char)(RGBA[2] != ZERO_RGB ? RGBA[2] : 0x00), \
+              (unsigned char)(RGBA[3] != ZERO_RGB ? RGBA[3] : 0x00) \
+            )
+  
+  #define RENDER_RECT(RENDERER, HUDRECT, operation) do { \
+            if(strcmp(operation, "Fill") == 0) { \
+                SDL_RenderFillRect(RENDERER, HUDRECT); \
+            } else if(strcmp(operation, "Draw") == 0) { \
+                SDL_RenderDrawRect(RENDERER, HUDRECT); \
+            } \
+          } while(0)
   
   typedef struct STRUCT_HUD_LIST {
     SDL_Rect *pSDL_Rect;
-    char szRGBA[5];
+    char szFillRGBA[5];
+    char szDrawRGBA[5];
     struct STRUCT_HUD_LIST *pstNext;
   } STRUCT_HUD_LIST, *PSTRUCT_HUD_LIST;
   
@@ -41,39 +61,32 @@
     if ( DEBUG_MSGS ) vTraceEnd();
   }
 
-  void vHUD_SetRGBA(SDL_Rect *pSDL_Rect_HUD, const char *kpszRGBA) {
+  void vHUD_SetRGBA(SDL_Rect *pSDL_Rect_HUD, const char *kpszFillRGBA, const char *kpszDrawRGBA) {
     PSTRUCT_HUD_LIST pstWrkHud = NULL;
 
-    for ( pstWrkHud = &gstHudList; pstWrkHud != NULL && pstWrkHud->pSDL_Rect != pSDL_Rect_HUD; );
+    for ( pstWrkHud = &gstHudList; pstWrkHud != NULL && pstWrkHud->pSDL_Rect != pSDL_Rect_HUD; pstWrkHud = pstWrkHud->pstNext);
 
     if ( pstWrkHud == NULL ) return;
 
-    snprintf(pstWrkHud->szRGBA, sizeof(pstWrkHud->szRGBA), "%s", kpszRGBA);
+    snprintf(pstWrkHud->szFillRGBA, sizeof(pstWrkHud->szFillRGBA), "%s", kpszFillRGBA);
+    snprintf(pstWrkHud->szDrawRGBA, sizeof(pstWrkHud->szDrawRGBA), "%s", kpszDrawRGBA);
   }
   
   void vHUD_Draw(SDL_Renderer *renderer, STRUCT_HUD_LIST *pSDL_HUD_List) {
     SDL_Rect *pSDL_RECT_Hud = NULL;
-    unsigned int iR;
-    unsigned int iG;
-    unsigned int iB;
-    unsigned int iAlpha;
 
     if( DEBUG_MSGS ) vTraceBegin();
     
     if ( pSDL_HUD_List == NULL ) return;
-    
-    iR     = (unsigned char) pSDL_HUD_List->szRGBA[0];
-    iG     = (unsigned char) pSDL_HUD_List->szRGBA[1];
-    iB     = (unsigned char) pSDL_HUD_List->szRGBA[2];
-    iAlpha = (unsigned char) pSDL_HUD_List->szRGBA[3];
-    pSDL_RECT_Hud = pSDL_HUD_List->pSDL_Rect;
 
-    SDL_SetRenderTarget( renderer, NULL );
-    SDL_SetRenderDrawColor( renderer, iR, iG, iB, iAlpha );
-    SDL_RenderFillRect( renderer, pSDL_RECT_Hud );
-    SDL_SetRenderDrawColor( renderer,  iR, iG, iB, 0xFF );
-    SDL_RenderDrawRect( renderer, pSDL_RECT_Hud );
+    pSDL_RECT_Hud = pSDL_HUD_List->pSDL_Rect;
     
+    SET_RENDER_DRAW_COLOR(renderer, pSDL_HUD_List->szFillRGBA);
+    RENDER_RECT(renderer, pSDL_RECT_Hud, "Fill");
+    
+    SET_RENDER_DRAW_COLOR(renderer, pSDL_HUD_List->szDrawRGBA);
+    RENDER_RECT(renderer, pSDL_RECT_Hud, "Draw");
+
     if( DEBUG_MSGS ) vTraceEnd();
   }
 
@@ -85,7 +98,7 @@
     }
   }
 
-  SDL_Rect *pSDL_HUD_AddToList( SDL_Rect *pSDL_Rect, const char *kpszRGBA ) {
+  SDL_Rect *pSDL_HUD_AddToList( SDL_Rect *pSDL_Rect, const char *kpszFillRGBA, const char *kpszDrawRGBA ) {
     STRUCT_HUD_LIST *pstWrkHud;
 
     if ( DEBUG_MSGS ) vTraceBegin();
@@ -103,7 +116,8 @@
 
     memset( pstWrkHud, 0x00, sizeof( STRUCT_HUD_LIST ) );
 
-    snprintf(pstWrkHud->szRGBA, sizeof(pstWrkHud->szRGBA), "%s", kpszRGBA);
+    snprintf(pstWrkHud->szFillRGBA, sizeof(pstWrkHud->szFillRGBA), "%s", kpszFillRGBA);
+    snprintf(pstWrkHud->szDrawRGBA, sizeof(pstWrkHud->szDrawRGBA), "%s", kpszDrawRGBA);
     pstWrkHud->pSDL_Rect = pSDL_Rect;
     pstWrkHud->pstNext = NULL;
 
@@ -111,6 +125,7 @@
 
     return pstWrkHud->pSDL_Rect;
   } /* pSDL_HUD_AddToList */
+  
   void vSetTmpHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
     if ( DEBUG_MSGS ) vTraceBegin();
 

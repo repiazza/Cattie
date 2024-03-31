@@ -17,6 +17,7 @@
 #include <util.h>
 #include <image.h>
 #include <sl.h>
+#include <rect.h>
 #include <hud.h>
 
 #ifdef _WIN32
@@ -35,6 +36,9 @@ STRUCT_BUTTON_LIST gstButtonList;
 STRUCT_TEXTURE_LIST gstTextureList;
 STRUCT_PLAYER gstPlayer;
 STRUCT_HUD_LIST gstHudList;
+STRUCT_RECT_DIMENSIONS gstButtonHUD_Dimension;
+STRUCT_RECT_DIMENSIONS gstCmdHUD_Dimensions;
+STRUCT_RECT_DIMENSIONS gstTmpHUD_Dimensions;
 int giBOARD_Main[BOARD_ROWS][BOARD_COLS];
 int giDeg = 0;
 int gbRunning = TRUE;
@@ -606,13 +610,18 @@ int SDL_main( int argc, char *argv[] ) {
   // HUDs
   //
   // Set Hud Rect Dimensions
-  vSetTmpHUDRect( &SDL_RECT_TmpHud );
-  vSetCmdHUDRect( &SDL_RECT_Hud );
-  vSetButtonHUDRect( &SDL_RECT_ButtonHud );
+  vRECT_InitGlobalDimensions();
+  iRECT_SetDimensions(&SDL_RECT_TmpHud, &gstTmpHUD_Dimensions);
+  iRECT_SetDimensions(&SDL_RECT_Hud, &gstCmdHUD_Dimensions);
+  iRECT_SetDimensions(&SDL_RECT_ButtonHud, &gstButtonHUD_Dimension);
+  // vSetTmpHUDRect( &SDL_RECT_TmpHud );
+  // vSetCmdHUDRect( &SDL_RECT_Hud );
+  // vSetButtonHUDRect( &SDL_RECT_ButtonHud );
   vHUD_InitList();
-  pSDL_HUD_AddToList(&SDL_RECT_TmpHud, "\x11\x54\x8F\x60");    // 17, 84, 143, 96
-  pSDL_HUD_AddToList(&SDL_RECT_Hud, "\x11\x54\x8F\x60");       // 17, 84, 143, 96
-  pSDL_HUD_AddToList(&SDL_RECT_ButtonHud, "\x80\x04\x00\x80"); // 128, 4, 0, 128
+  
+  pSDL_HUD_AddToList(&SDL_RECT_TmpHud,    "\x11\x54\x8F\x60", "\x11\x54\x8F\xFF"); //  17, 84, 143,  96 |  17, 84, 143, 255
+  pSDL_HUD_AddToList(&SDL_RECT_Hud,       "\x11\x54\x8F\x60", "\x11\x54\x8F\xFF"); //  17, 84, 143,  96 |  17, 84, 143, 255
+  pSDL_HUD_AddToList(&SDL_RECT_ButtonHud, "\x80\x04Z\x80", "\x80ZZ\xFF"); // 128,  4,   0, 128 | 128,  0,   0, 255
 
   //
   // Board
@@ -778,14 +787,13 @@ int SDL_main( int argc, char *argv[] ) {
     
     iBOARD_Colorfy( renderer );
     
-    vSetTmpHUDRect( &SDL_RECT_TmpHud );
-    vSetCmdHUDRect( &SDL_RECT_Hud );
-    vSetButtonHUDRect( &SDL_RECT_ButtonHud );
-    
-    /* vDrawTmpHUD    ( renderer, &SDL_RECT_TmpHud    ); */
-    /* vDrawCommandHUD( renderer, &SDL_RECT_Hud       ); */
-    /* vDrawButtonHUD ( renderer, &SDL_RECT_ButtonHud ); */
-    vHUD_DrawList( renderer );
+    iRECT_SetDimensions(&SDL_RECT_TmpHud, &gstTmpHUD_Dimensions);
+    iRECT_SetDimensions(&SDL_RECT_Hud, &gstCmdHUD_Dimensions);
+    iRECT_SetDimensions(&SDL_RECT_ButtonHud, &gstButtonHUD_Dimension);
+  // vSetTmpHUDRect( &SDL_RECT_TmpHud );
+  // vSetCmdHUDRect( &SDL_RECT_Hud );
+  // vSetButtonHUDRect( &SDL_RECT_ButtonHud );
+    vHUD_DrawList( renderer ); 
   
     vBUTTON_DrawList( renderer );
 
