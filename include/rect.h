@@ -13,7 +13,7 @@
 
   
   typedef struct STRUCT_RECT_VALUES {
-      double dFactor;
+      double dFactor;    // Angular coefficient
       double dAddAmount;
   } STRUCT_RECT_VALUES, *PSTRUCT_RECT_VALUES;
 

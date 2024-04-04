@@ -121,4 +121,39 @@
     return 0;
   } /* iACTION_AddStep2List */
 
+  int iACTION_CheckSteps ( int iRedrawCurrentAction ) {
+    int iRedrawReturnStatus = iRedrawCurrentAction;
+
+    if ( giACTION_AssertedSteps > 0 )
+      SDL_Delay( SECOND );
+
+    if ( giACTION_AssertedSteps >= giACTION_StepCtr ) {
+      gbACTION_Check = FALSE;
+      return iRedrawReturnStatus;
+    }
+
+    iRedrawReturnStatus = iACTION_ExecuteStep( giACTION_AssertedSteps++ );
+    if  ( iRedrawReturnStatus == ERROR_WALKING ){
+      return iRedrawReturnStatus;
+    }
+
+    if ( DEBUG_MSGS ) { 
+      char szMsg[256] = "";
+
+      memset( szMsg, 0x00, sizeof( szMsg ) );
+
+      sprintf(szMsg,
+    "iACTION_CheckSteps Redraw(b4/now)=%d/%d"
+    " giACTION_AssertedSteps=%d giACTION_StepCtr=%d\n",
+        iRedrawCurrentAction,
+        iRedrawReturnStatus,
+        giACTION_AssertedSteps,
+        giACTION_StepCtr
+      );
+
+      vTraceMsg( szMsg );
+    }
+    return iRedrawReturnStatus;
+  }
+
 #endif /* _ACTION_H_ */

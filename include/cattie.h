@@ -30,6 +30,7 @@
   #define WINDOW_RATIO  gstCmdLine.szWinWidth/gstCmdLine.szWinHeight
 
   #define REDRAW_MENU_CLKD -10
+  #define REDRAW_ERROR -1
   #define REDRAW_NONE  0
   #define REDRAW_IMAGE 1
   #define ERROR_WALKING 10
@@ -60,7 +61,7 @@
 
   #define EVEN 0
   #define ODD  1  
-  
+
 
 /******************************************************************************
  *                                                                            *
@@ -107,6 +108,9 @@
   int iWalk( void );
   int iTurn( void );
   int iFireLaser( void );
-
+  int iHandleClick( SDL_Texture *pSDL_TXTR_CmdListHud );
+  int iHandleEventKey( SDL_Event *pSDL_EVENT_Ev );
+  int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu);
+  
 #endif /* _CATTIE_H_ */
 

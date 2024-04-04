@@ -37,6 +37,9 @@
   
   #define CATTIE_INSTALL_PATH "/usr/share/cattie"
 
+  #define MILLISECOND 1
+  #define SECOND (1000 * MILLISECOND)
+
   /******************************************************************************
    *                                                                            *
    *                  Typedefs, structures, unions and enums                    *

@@ -19,6 +19,7 @@
 #include <sl.h>
 #include <rect.h>
 #include <hud.h>
+#include <event.h>
 
 #ifdef _WIN32
   #include <windows.h>
@@ -512,6 +513,8 @@ int SDL_main( int argc, char *argv[] ) {
   SDL_Renderer* renderer;
   SDL_Event event;
 
+  UNUSED(pSDL_TXTR_TemporaryCmdList);
+
   memset( &gstCmdLine, 0x00, sizeof( gstCmdLine ) );
 
   gkpszProgramName = szGetProgramName( argv[0] );
@@ -706,66 +709,21 @@ int SDL_main( int argc, char *argv[] ) {
   // Main loop
   while ( gbRunning ) {
     // The player has choose its route already?
-    while ( gbACTION_Check ) {
-      // yes ...
-      if ( giACTION_AssertedSteps > 0 )
-        SDL_Delay( 1000 );
-
-      if ( giACTION_AssertedSteps >= giACTION_StepCtr ) {
-        gbACTION_Check = FALSE;
-        break;
-      }
-
-      iRedrawAction = iACTION_ExecuteStep( giACTION_AssertedSteps++ );
-      if  ( iRedrawAction == ERROR_WALKING ){
+    if ( gbACTION_Check ){
+      iRedrawAction = iACTION_CheckSteps(iRedrawAction);
+      if ( iRedrawAction == ERROR_WALKING )
         gbRunning = FALSE;
-        break;
-      }
-
-      if ( DEBUG_MSGS ) { 
-        char szMsg[256] = "";
-
-        memset( szMsg, 0x00, sizeof( szMsg ) );
-
-        sprintf(szMsg,
-          "iExecuteActionFromList Rsl(Redraw)=%d"
-          " gbRunning=%d giACTION_AssertedSteps=%d giACTION_StepCtr=%d\n",
-          iRedrawAction, 
-          gbRunning,
-          giACTION_AssertedSteps,
-          giACTION_StepCtr
-        );
-
-        vTraceMsg( szMsg );
-      }
-      break;
-    } /* while */
+    }
 
     while ( !gbACTION_Check && iRedrawAction != REDRAW_IMAGE && SDL_PollEvent(&event)  ) {
       // The player hasn't choose its route yet,
       // so we must watch all interaction events... 
-      switch (event.type) {
-        case SDL_QUIT: {
-          gbRunning = FALSE;
-          break;
-        }
-        case SDL_MOUSEBUTTONDOWN: {
-          iRedrawAction = iHandleClick( pSDL_TXTR_TemporaryCmdList );
-          if ( iRedrawAction == REDRAW_MENU_CLKD )
-            iRedrawAction = REDRAW_IMAGE;
-            
-          break;
-        }
-        case SDL_KEYDOWN: {
-          iRedrawAction = iHandleEventKey(&event);
-          break;
-        }
-        case SDL_MOUSEMOTION: {
-          iRedrawAction = iHandleMouseMotion(pSDL_RECT_Menu);
-          break;
-        }
-        default: break;
-      } /* switch */
+      iRedrawAction = iEVENT_HandlePollEv(&event, iRedrawAction);
+      if ( iRedrawAction == REDRAW_ERROR ){
+        gbRunning = FALSE;
+        break;
+      }
+
     } /* while */
 
     if ( iRedrawAction == ERROR_WALKING )
@@ -787,12 +745,12 @@ int SDL_main( int argc, char *argv[] ) {
     
     iBOARD_Colorfy( renderer );
     
-    iRECT_SetDimensions(&SDL_RECT_TmpHud, &gstTmpHUD_Dimensions);
-    iRECT_SetDimensions(&SDL_RECT_Hud, &gstCmdHUD_Dimensions);
-    iRECT_SetDimensions(&SDL_RECT_ButtonHud, &gstButtonHUD_Dimension);
-  // vSetTmpHUDRect( &SDL_RECT_TmpHud );
-  // vSetCmdHUDRect( &SDL_RECT_Hud );
-  // vSetButtonHUDRect( &SDL_RECT_ButtonHud );
+    // iRECT_SetDimensions(&SDL_RECT_TmpHud, &gstTmpHUD_Dimensions);
+    // iRECT_SetDimensions(&SDL_RECT_Hud, &gstCmdHUD_Dimensions);
+    // iRECT_SetDimensions(&SDL_RECT_ButtonHud, &gstButtonHUD_Dimension);
+  vSetTmpHUDRect( &SDL_RECT_TmpHud );
+  vSetCmdHUDRect( &SDL_RECT_Hud );
+  vSetButtonHUDRect( &SDL_RECT_ButtonHud );
     vHUD_DrawList( renderer ); 
   
     vBUTTON_DrawList( renderer );
