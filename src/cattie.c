@@ -706,13 +706,11 @@ int SDL_main( int argc, char *argv[] ) {
   iGXRF_ADD2ArgList( &SDL_RECT_ButtonArrowRight, ( void * ) ( eSDLTypes=SDL_RECT ), &SDL_RECT_ButtonArrowRight );
   iGXRF_ADD2ArgList( &SDL_RECT_ButtonArrowRight, ( void * ) "int", ( void * ) BUTTON_DIRECTION );
 */
-  // Main loop
+  // Main loop -- runs till not to run anymore :)
   while ( gbRunning ) {
     // The player has choose its route already?
     if ( gbACTION_Check ){
       iRedrawAction = iACTION_CheckSteps(iRedrawAction);
-      if ( iRedrawAction == ERROR_WALKING )
-        gbRunning = FALSE;
     }
 
     while ( !gbACTION_Check && iRedrawAction != REDRAW_IMAGE && SDL_PollEvent(&event)  ) {
@@ -723,11 +721,12 @@ int SDL_main( int argc, char *argv[] ) {
         gbRunning = FALSE;
         break;
       }
-
     } /* while */
 
-    if ( iRedrawAction == ERROR_WALKING )
+    if ( iRedrawAction == ERROR_WALKING ){
+      gbRunning = FALSE;
       break;
+    }
 
     // If nothing has changed, we will not redraw...
     if ( iRedrawAction != REDRAW_IMAGE ) {
@@ -748,9 +747,9 @@ int SDL_main( int argc, char *argv[] ) {
     // iRECT_SetDimensions(&SDL_RECT_TmpHud, &gstTmpHUD_Dimensions);
     // iRECT_SetDimensions(&SDL_RECT_Hud, &gstCmdHUD_Dimensions);
     // iRECT_SetDimensions(&SDL_RECT_ButtonHud, &gstButtonHUD_Dimension);
-  vSetTmpHUDRect( &SDL_RECT_TmpHud );
-  vSetCmdHUDRect( &SDL_RECT_Hud );
-  vSetButtonHUDRect( &SDL_RECT_ButtonHud );
+    vSetTmpHUDRect( &SDL_RECT_TmpHud );
+    vSetCmdHUDRect( &SDL_RECT_Hud );
+    vSetButtonHUDRect( &SDL_RECT_ButtonHud );
     vHUD_DrawList( renderer ); 
   
     vBUTTON_DrawList( renderer );

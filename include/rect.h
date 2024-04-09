@@ -71,4 +71,33 @@
     (&gstButtonHUD_Dimension)->stH.dAddAmount = -10;
   }
 
+
+    // Definições de proporções como percentuais da tela
+  #define HUD_X_FACTOR 0.06  // Porcentagem da largura da tela
+  #define HUD_Y_FACTOR 0.04  // Porcentagem da altura da tela
+  #define HUD_WIDTH_FACTOR 0.5  // 50% da largura da tela
+  #define HUD_HEIGHT_FACTOR 0.05  // 5% da altura da tela
+
+  void vCalculateHUDRect(SDL_Rect *rect, double xFactor, double yFactor, double widthFactor, double heightFactor) {
+    if (!rect) return;
+
+    int screenWidth = atoi(gstCmdLine.szWinWidth);
+    int screenHeight = atoi(gstCmdLine.szWinHeight);
+
+    rect->x = (int)(xFactor * screenWidth);
+    rect->y = (int)(yFactor * screenHeight);
+    rect->w = (int)(widthFactor * screenWidth);
+    rect->h = (int)(heightFactor * screenHeight);
+  }
+
+  void vInitializeAllHUDRects() {
+    SDL_Rect tmpHudRect, cmdHudRect, buttonHudRect;
+
+    vCalculateHUDRect(&tmpHudRect, HUD_X_FACTOR, HUD_Y_FACTOR, HUD_WIDTH_FACTOR, HUD_HEIGHT_FACTOR);
+    vCalculateHUDRect(&cmdHudRect, HUD_X_FACTOR, HUD_Y_FACTOR, HUD_WIDTH_FACTOR, HUD_HEIGHT_FACTOR);
+    vCalculateHUDRect(&buttonHudRect, HUD_X_FACTOR, HUD_Y_FACTOR, HUD_WIDTH_FACTOR, HUD_HEIGHT_FACTOR);
+
+  }
+
+
 #endif
