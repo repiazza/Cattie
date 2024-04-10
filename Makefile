@@ -1,10 +1,5 @@
-# 
-#   Makefile for Cattie
-#
-#   Written by Renato Fermi <repiazza@gmail.com> in January 2023
-#
-#
-
+# Makefile for Cattie
+# Written by Renato Fermi <repiazza@gmail.com> in January 2023
 
 UNAME_S := $(shell uname -s)
 
@@ -30,6 +25,9 @@ INCDIR+= -I$(INCLUDE_PATH)/
 SDL_ADD_LIBS     = -lSDL2main -lSDL2 -lSDL2_image
 NCURSES_ADD_LIBS = -lncurses
 
+OBJ_DIR = obj
+BIN_DIR = bin
+
 ifdef _WIN32
 	NCURSES_ADD_LIBS += -DNCURSES_STATIC
 	SDL_ADD_LIBS += -lSDL2_ttf 
@@ -48,26 +46,32 @@ ifdef DEBUG
 	DEBUG_ADD_FLAGS = -g -ggdb
 endif
 
-CATTIE_EXEC=cattie
+CATTIE_EXEC=$(BIN_DIR)/cattie
 
-OBJS += \
-	$(SRC_PATH)/cattie.o \
-	$(SRC_PATH)/trace.o \
-	$(SRC_PATH)/cmdline.o \
-	$(SRC_PATH)/util.o \
-	$(SRC_PATH)/sl.o \
-	$(SRC_PATH)/player.o \
-	$(GXRF_PATH)/GXRF.o
+OBJS = \
+	$(OBJ_DIR)/cattie.o \
+	$(OBJ_DIR)/trace.o \
+	$(OBJ_DIR)/cmdline.o \
+	$(OBJ_DIR)/util.o \
+	$(OBJ_DIR)/sl.o \
+	$(OBJ_DIR)/player.o \
+	$(OBJ_DIR)/GXRF.o
 
-all: clean $(CATTIE_EXEC)
+all: clean directories $(CATTIE_EXEC)
 
 clean:
-	rm -f $(OBJS) $(CATTIE_EXEC)
+	rm -rf $(OBJ_DIR) $(BIN_DIR) *.log
 
-cattie: $(OBJS)
-	$(CC) $(LDOPT) $(INCDIR) -o $(CATTIE_EXEC) $(OBJS) $(LIBS) 
+directories:
+	mkdir -p $(OBJ_DIR) $(BIN_DIR)
 
-%.o: %.c
+$(CATTIE_EXEC): $(OBJS)
+	$(CC) $(LDOPT) $(INCDIR) -o $@ $(OBJS) $(LIBS) 
+
+$(OBJ_DIR)/%.o: $(SRC_PATH)/%.c
+	$(CC) -c $(CCOPT) $(DEBUG_ADD_FLAGS) $(INCDIR) $< -o $@
+
+$(OBJ_DIR)/%.o: $(GXRF_PATH)/%.c
 	$(CC) -c $(CCOPT) $(DEBUG_ADD_FLAGS) $(INCDIR) $< -o $@
 
 ifdef LINUX
@@ -87,7 +91,5 @@ uninstall:
 endif
 
 distclean: clean
-	rm -rvf *.log
 
-.PHONY: all clean install uninstall distclean
-
+.PHONY: all clean install uninstall distclean directories

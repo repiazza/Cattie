@@ -1,6 +1,6 @@
 
-*.o
-*.exe
+obj/
+bin/*.exe
 cattie.log
 .vscode/*
 menu.c

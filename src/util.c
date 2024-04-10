@@ -25,6 +25,93 @@ char *szTokenName[] = {
  *                                                                            *
  ******************************************************************************/
 
+#ifdef _WIN32
+  int iDIR_SplitFilename(char* szFilename, char* szPath, char* szName, char* szExt)
+  {
+    char szDrive[_MAX_DRIVE];
+    char szDir[_MAX_DIR];
+    _splitpath(
+      szFilename,
+      szDrive,
+      szDir,
+      szName,
+      szExt
+      );
+    strcpy(szPath, szDrive);
+    strcat(szPath, szDir);
+    return 0;
+  }
+  int iDIR_IsDir(char* szDir)
+  {
+    HANDLE hArquivo;
+    WIN32_FIND_DATA wfdArquivo;
+    hArquivo = FindFirstFile(szDir, &wfdArquivo);
+    if ( hArquivo == INVALID_HANDLE_VALUE )
+      return -1;
+    FindClose(hArquivo);
+    if ( wfdArquivo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+      return 1;
+    return 0;
+  }
+#else
+  /*
+   * Is directory: 1
+   * Exists, not directory: 0
+   * Does not exist: -1
+   * **/ 
+  int iDIR_IsDir(char* szDir)
+  {
+    struct stat stStat;
+    if ( stat(szDir, &stStat) != 0 )
+      return -1;
+    if ( S_ISDIR(stStat.st_mode) )
+      return 1;
+    return 0;
+  }
+  int iDIR_SplitFilename(char* szFilename, char* szPath, char* szName, char* szExt)
+  {
+    char szWrk[_MAX_PATH];
+    char szBase[_MAX_PATH];
+    char* pszBase;
+    int ii;
+    strcpy(szWrk, szFilename);
+    pszBase = dirname(szWrk);
+    if ( pszBase == NULL ) {
+      szPath[0] = 0;
+    }
+    else {
+      strcpy(szPath, pszBase);
+    }
+    strcpy(szWrk, szFilename);
+    pszBase = basename(szWrk);
+    strcpy(szBase, pszBase);
+    for ( ii = strlen(szBase)-1;  ii && szBase[ii] != '.';  ii-- ) {
+      if ( szBase[ii] == '\n' || szBase[ii] == '\r' )
+        szBase[ii] = 0;
+    }
+    if ( ii > 0 ) { // found dot
+      strcpy(szExt, &szBase[ii]);
+      szBase[ii] = 0;
+      strcpy(szName, szBase);
+    }
+    else {
+      strcpy(szName, szBase);
+      *szExt = 0;
+    }
+    if ( DEBUG_MORE_DETAILS ) {
+      char szDbg[1024];
+      sprintf(szDbg, "iDIR_SplitFilename('%s', ...) szPath=[%s] szName=[%s] szExt=[%s]",
+        szFilename,
+        szPath,
+        szName,
+        szExt
+      );
+      vTrace(szDbg);
+    }
+    return 0;
+  }
+#endif
+
 int bOpenFile( FILE **fppFile, const char *kpszFileName, const char *kpszMode ) {
   if ( ( *fppFile = fopen( kpszFileName, kpszMode ) ) == NULL ) {
     return FALSE;
