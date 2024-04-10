@@ -249,17 +249,6 @@ int iFireLaser( void ) {
   return REDRAW_IMAGE;
 } /* iFireLaser */
 
-void vSetButtonDimensions( SDL_Rect *pSDL_RECT_Btn, int iTrslt ) {
-  if ( DEBUG_MSGS ) vTraceBegin();
-
-  pSDL_RECT_Btn->w = 0.06 * atoi( gstCmdLine.szWinWidth );
-  pSDL_RECT_Btn->h = 0.06 * atoi( gstCmdLine.szWinHeight );
-  pSDL_RECT_Btn->x = pSDL_RECT_Btn->w + iTrslt;
-  pSDL_RECT_Btn->y = atoi( gstCmdLine.szWinHeight ) - pSDL_RECT_Btn->h - 20;
-
-  if ( DEBUG_MSGS ) vTraceEnd();
-} /* vSetButtonDimensions */
-
 int iWasClicked(void) {
   int iRsl = MENU_OPT_NONE;
   int iX;
@@ -279,7 +268,6 @@ int iWasClicked(void) {
 
   return iRsl;
 } /* iWasClicked */
-
 
 SDL_Texture* createSquareTexture( SDL_Renderer* renderer ) {
   if( DEBUG_MSGS ) vTraceBegin();
@@ -493,7 +481,6 @@ static void vPrintUsage( void )
  *  
  */
 int SDL_main( int argc, char *argv[] ) {
-  int iXTranslation = 0;
   int iRedrawAction = REDRAW_IMAGE;
   int iImageIx;
   uint64_t ui64ElapsedTime;
@@ -502,12 +489,6 @@ int SDL_main( int argc, char *argv[] ) {
   SDL_Rect SDL_RECT_TmpHud;
   SDL_Rect SDL_RECT_Hud;
   SDL_Rect SDL_RECT_ButtonHud;
-  SDL_Rect SDL_RECT_ButtonArrowRight;
-  SDL_Rect SDL_RECT_ButtonTurnArrow;
-  SDL_Rect SDL_RECT_ButtonFireLaser;
-  SDL_Rect SDL_RECT_ButtonUndoLast;
-  SDL_Rect SDL_RECT_ButtonConfirm;
-  SDL_Rect SDL_RECT_ButtonConfigure;
   TTF_Font *pttf_Font;
   SDL_Window* window;
   SDL_Renderer* renderer;
@@ -635,32 +616,14 @@ int SDL_main( int argc, char *argv[] ) {
   // Buttons
   //
 
-  // Clear structure
+  // Init Structure
   vBUTTON_InitList();
 
-  // Set button size and position [x,y] and width + height
-  vSetButtonDimensions( &SDL_RECT_ButtonArrowRight, iXTranslation );
-  iXTranslation += SDL_RECT_ButtonArrowRight.w + 10;
-  vSetButtonDimensions( &SDL_RECT_ButtonTurnArrow,  iXTranslation );
-  iXTranslation += SDL_RECT_ButtonTurnArrow.w + 10;
-  vSetButtonDimensions( &SDL_RECT_ButtonFireLaser,  iXTranslation );
-  iXTranslation += SDL_RECT_ButtonFireLaser.w + 50;
-  vSetButtonDimensions( &SDL_RECT_ButtonUndoLast,   iXTranslation );
-  iXTranslation += SDL_RECT_ButtonUndoLast.w + 50;
-  vSetButtonDimensions( &SDL_RECT_ButtonConfirm,    iXTranslation );
-  iXTranslation += SDL_RECT_ButtonConfirm.w + 100;
-  vSetButtonDimensions( &SDL_RECT_ButtonConfigure,  iXTranslation );
+  // Init button rect
+  vBUTTON_InitButtonHUDRect();
 
   // Square Edges
   vBOARD_DrawEdges( renderer );
-
-  // Add them to list
-  iBUTTON_AddToList( &SDL_RECT_ButtonArrowRight   , FORWARD    );
-  iBUTTON_AddToList( &SDL_RECT_ButtonTurnArrow    , TURN       );
-  iBUTTON_AddToList( &SDL_RECT_ButtonFireLaser    , FIRE_LASER );
-  iBUTTON_AddToList( &SDL_RECT_ButtonUndoLast     , ERASE      );
-  iBUTTON_AddToList( &SDL_RECT_ButtonConfirm      , CONFIRM    );
-  iBUTTON_AddToList( &SDL_RECT_ButtonConfigure    , CONFIGURE  );
 
   SDL_RenderPresent( renderer );
 

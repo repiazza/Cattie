@@ -262,8 +262,8 @@ int bAreCoordsInSDL_Rect( SDL_Rect *pSDL_RECT, int iX, int iY ) {
 
   if ( iX < 0 ||
         iY < 0 ||
-        iX > atoi( gstCmdLine.szWinWidth ) ||
-        iY > atoi( gstCmdLine.szWinHeight ) ) return FALSE;
+        iX > INT_WINDOW_WIDTH ||
+        iY > INT_WINDOW_HEIGHT ) return FALSE;
 
   if ( iX >= pSDL_RECT->x
         && iY >= pSDL_RECT->y

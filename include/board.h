@@ -19,8 +19,8 @@
 
   #define BOARD_SIZE BOARD_ROWS * BOARD_COLS
   
-  #define ROW_RATIO  atoi( gstCmdLine.szWinHeight ) / BOARD_ROWS
-  #define COL_RATIO  atoi( gstCmdLine.szWinWidth ) / BOARD_COLS
+  #define ROW_RATIO  INT_WINDOW_HEIGHT / BOARD_ROWS
+  #define COL_RATIO  INT_WINDOW_WIDTH  / BOARD_COLS
 
   extern int giBOARD_Main[BOARD_ROWS][BOARD_COLS];
 
