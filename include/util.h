@@ -21,7 +21,10 @@
   #include <ctype.h>
   #include <consts.h>
   #include <cmdline.h>
-
+  #ifdef LINUX
+    #include <sys/stat.h>
+    #include <libgen.h>
+  #endif
   /******************************************************************************
    *                                                                            *
    *                             Defines and macros                             *

@@ -98,7 +98,7 @@ char *szTokenName[] = {
       strcpy(szName, szBase);
       *szExt = 0;
     }
-    if ( DEBUG_MORE_DETAILS ) {
+    if ( DEBUG_MORE_MSGS ) {
       char szDbg[1024];
       sprintf(szDbg, "iDIR_SplitFilename('%s', ...) szPath=[%s] szName=[%s] szExt=[%s]",
         szFilename,
@@ -106,7 +106,7 @@ char *szTokenName[] = {
         szName,
         szExt
       );
-      vTrace(szDbg);
+      vTraceMsg(szDbg);
     }
     return 0;
   }
