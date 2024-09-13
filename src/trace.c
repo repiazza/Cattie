@@ -55,6 +55,7 @@ void vTraceMsg( char *szMsg ) {
     (int) st_tm_Now->tm_sec,
     (long)tv.tv_usec / 1000
   );  
+  
 
   if ( (pfLog=fopen(gstCmdLine.szTraceFile, "a+")) == NULL )
     return;
@@ -91,6 +92,9 @@ void _vTraceVarArgs( const char *kpszModuleName,
                      const char *kpszFmt, ... ) {
   va_list args;
   FILE *pfLog = NULL;
+  char szPath[_MAX_PATH];
+  char szName[_MAX_PATH];
+  char szExt[_MAX_PATH];
   char szDbg[2048];
   struct tm *st_tm_Now;
   struct timeval tv;
@@ -100,8 +104,21 @@ void _vTraceVarArgs( const char *kpszModuleName,
   st_tm_Now = localtime(&lTime);
   gettimeofday(&tv, NULL);
 
-  memset( szDbg, 0x00, sizeof( szDbg ) );
+  memset ( szDbg, 0x00, sizeof( szDbg ) );
+  memset ( szPath, 0x00, sizeof(szPath) );
+  memset ( szName, 0x00, sizeof(szName) );
+  memset ( szExt, 0x00, sizeof(szExt)   );
 
+  iDIR_SplitFilename(gstCmdLine.szTraceFile, szPath, szName, szExt);
+  sprintf(szPath, "%s/%s", ROOT_PATH_FROM_BIN, gstCmdLine.szTraceFile);
+
+  if ( !iDIR_IsDir(szPath) ){
+    if ( !iDIR_MkDir(szPath) ){
+      fprintf(stderr, "E: Impossible create dir %s!\n"
+                      "%s\n", szPath, strerror(errno));
+      exit( EXIT_FAILURE );
+    }
+  }
   if ( ( pfLog = fopen( gszTraceFile, "a" ) ) == NULL ) {
     fprintf(stderr, "E: Impossible create or open file %s!\n"
                     "%s\n", gszTraceFile, strerror(errno));

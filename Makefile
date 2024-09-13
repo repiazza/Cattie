@@ -21,6 +21,8 @@ INCDIR=  -I.
 INCDIR+= -I$(SRC_PATH)/
 INCDIR+= -I$(GXRF_PATH)/
 INCDIR+= -I$(INCLUDE_PATH)/
+INCDIR+= -ID:/msys64/mingw64/include
+
 
 SDL_ADD_LIBS     = -lSDL2main -lSDL2 -lSDL2_image
 NCURSES_ADD_LIBS = -lncurses
@@ -31,8 +33,8 @@ BIN_DIR = bin
 ifdef _WIN32
 	NCURSES_ADD_LIBS += -DNCURSES_STATIC
 	SDL_ADD_LIBS += -lSDL2_ttf 
-	CCOPT += -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -mwindows -D_WIN32 
-	LIBS  =  -LC:/msys64/mingw32/bin/../lib -lmingw32 $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -mwindows -D_WIN32 
+	CCOPT += -LD:/msys64/usr/lib -LD:/msys64/mingw64/lib -lmingw32 $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -mwindows -D_WIN32 
+	LIBS  =  -LD:/msys64/usr/lib -LD:/msys64/mingw64/lib -lmingw32 $(SDL_ADD_LIBS) $(NCURSES_ADD_LIBS) -mwindows -D_WIN32 
 endif
 
 ifdef LINUX

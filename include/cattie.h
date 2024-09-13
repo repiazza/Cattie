@@ -112,6 +112,7 @@
   int iHandleClick( SDL_Texture *pSDL_TXTR_CmdListHud );
   int iHandleEventKey( SDL_Event *pSDL_EVENT_Ev );
   int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu);
+  SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath );
   
 #endif /* _CATTIE_H_ */
 

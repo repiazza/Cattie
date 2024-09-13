@@ -24,6 +24,8 @@
   #ifdef LINUX
     #include <sys/stat.h>
     #include <libgen.h>
+  #else
+    #include <winbase.h>
   #endif
   /******************************************************************************
    *                                                                            *
@@ -31,7 +33,7 @@
    *                                                                            *
    ******************************************************************************/
   #define TOKEN_MISMATCH -1
-
+  #define ROOT_PATH_FROM_BIN "../"
   /******************************************************************************
    *                                                                            *
    *                  Typedefs, structures, unions and enums                    *
@@ -143,5 +145,8 @@
    */
   int bAreCoordsInSDL_Rect( SDL_Rect *pSDL_RECT, int iX, int iY );
 
+  int iDIR_SplitFilename(char* szFilename, char* szPath, char* szName, char* szExt);
+  int iDIR_IsDir(char* szDir);
+  int iDIR_MkDir(char *szDir);
   #endif /* _UTIL_H_ */
 

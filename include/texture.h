@@ -65,7 +65,9 @@
     memset( pstWrkTxtr, 0x00, sizeof( STRUCT_TEXTURE_LIST ) );
     pstWrkTxtr->pszImgPath = NULL;
     if ( !bStrIsEmpty( pszImgPath ) ) {  // Img type Txtr
-      pstWrkTxtr->pSDL_Texture = IMG_LoadTexture( renderer, pszImgPath );
+      SDL_Surface* pSDLSurface = SDL_CreateRGBSurface( 0, 800, 800, 8, 0, 0, 0, 0 );
+      pSDLSurface =  pSDL_SRFC_LoadImage( pszImgPath );
+      pstWrkTxtr->pSDL_Texture = SDL_CreateTextureFromSurface( renderer, pSDLSurface );
       pstWrkTxtr->pszImgPath = pszImgPath;
     }
     else if ( pSDL_Rect != NULL ) {    // Rect type Txtr

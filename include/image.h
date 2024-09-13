@@ -9,7 +9,7 @@
 
 #ifndef _IMAGE_H_
   #define _IMAGE_H_
-
+  
   #define ASSERT_IMG_PATH(ndx, ppConfigPath, ppDefaultPath) \
             bFileExist(ppConfigPath[ndx])\
               ? ppConfigPath[ndx]\
@@ -51,6 +51,8 @@
     "option 5",
     "Sair"
   };
+  
+  SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath );
 
 #endif /* _IMAGE_H */
   

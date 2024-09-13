@@ -31,7 +31,7 @@ STRUCT_CMDLINE astCmdOpt[] = {
   },
 /* 02 */
   { "trace",       "t",                  CMDDATA_REQUIRED,          CMDTYPE_STR,                     "<file>",
-     FALSE,         "cattie.log",       gstCmdLine.szTraceFile,    sizeof(gstCmdLine.szTraceFile),
+     FALSE,         "log/cattie.log",       gstCmdLine.szTraceFile,    sizeof(gstCmdLine.szTraceFile),
     "<file> is the path of the debug file"
   },
 /* 03 */

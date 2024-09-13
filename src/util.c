@@ -26,6 +26,11 @@ char *szTokenName[] = {
  ******************************************************************************/
 
 #ifdef _WIN32
+  // Return 0 if error
+  int iDIR_MkDir(char *szDir)
+  {
+    return CreateDirectory(szDir, NULL);
+  }
   int iDIR_SplitFilename(char* szFilename, char* szPath, char* szName, char* szExt)
   {
     char szDrive[_MAX_DRIVE];
@@ -47,7 +52,7 @@ char *szTokenName[] = {
     WIN32_FIND_DATA wfdArquivo;
     hArquivo = FindFirstFile(szDir, &wfdArquivo);
     if ( hArquivo == INVALID_HANDLE_VALUE )
-      return -1;
+      return 0;
     FindClose(hArquivo);
     if ( wfdArquivo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
       return 1;
@@ -63,7 +68,7 @@ char *szTokenName[] = {
   {
     struct stat stStat;
     if ( stat(szDir, &stStat) != 0 )
-      return -1;
+      return 0;
     if ( S_ISDIR(stStat.st_mode) )
       return 1;
     return 0;
@@ -110,6 +115,20 @@ char *szTokenName[] = {
     }
     return 0;
   }
+    // Return 0 if error
+  int iDIR_MkDir(char *szDir) //linux
+  {
+    int iRsl;
+    if ( DEBUG_ALL )
+      vTraceStr("iDIR_MkDir(%s)", szDir);
+    iRsl = mkdir(szDir,
+      S_IRUSR | S_IWUSR | S_IXUSR |
+      S_IRGRP | S_IWGRP | S_IXGRP |
+      S_IROTH
+    );
+    return (iRsl == 0);
+  }
+
 #endif
 
 int bOpenFile( FILE **fppFile, const char *kpszFileName, const char *kpszMode ) {
@@ -263,9 +282,13 @@ int iCheckCfgPrm( void ) {
 int bLoadCfgFile( const char *kpszFileName ) {
   FILE *fpFile = NULL;
   char szLine[2048];
+  char szFullPath[256];
 
   memset( szLine, 0x00, sizeof( szLine ) );
+  memset( szFullPath, 0x00, sizeof( szFullPath ) );
 
+  sprintf(szFullPath, "%s/%s", ROOT_PATH_FROM_BIN, kpszFileName);
+  
   if(!bOpenFile( &fpFile, kpszFileName, "r" ) ) {
     return FALSE;
   }
