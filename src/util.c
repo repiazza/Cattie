@@ -119,8 +119,8 @@ char *szTokenName[] = {
   int iDIR_MkDir(char *szDir) //linux
   {
     int iRsl;
-    if ( DEBUG_ALL )
-      vTraceStr("iDIR_MkDir(%s)", szDir);
+    if ( DEBUG_LEVEL)
+      vTracePid("iDIR_MkDir(%s)", strlen(szDir));
     iRsl = mkdir(szDir,
       S_IRUSR | S_IWUSR | S_IXUSR |
       S_IRGRP | S_IWGRP | S_IXGRP |

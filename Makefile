@@ -25,7 +25,7 @@ INCDIR+= -ID:/msys64/mingw64/include
 
 
 SDL_ADD_LIBS     = -lSDL2main -lSDL2 -lSDL2_image
-NCURSES_ADD_LIBS = -lncurses
+NCURSES_ADD_LIBS = -lncurses -ltinfo
 
 OBJ_DIR = obj
 BIN_DIR = bin
