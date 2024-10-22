@@ -110,7 +110,10 @@ void _vTraceVarArgs( const char *kpszModuleName,
   memset ( szExt, 0x00, sizeof(szExt)   );
 
   iDIR_SplitFilename(gstCmdLine.szTraceFile, szPath, szName, szExt);
-  sprintf(szPath, "%s/%s", ROOT_PATH_FROM_BIN, gstCmdLine.szTraceFile);
+
+  // #TODO: szPath is 255 byte limited, we are copying more than this,
+  // take a look at include/cmdline.h line 56
+  sprintf(szPath, "%s%s", ROOT_PATH_FROM_BIN, gstCmdLine.szTraceFile);
 
   if ( !iDIR_IsDir(szPath) ){
     if ( !iDIR_MkDir(szPath) ){
