@@ -9,6 +9,7 @@
 
 #include <cattie.h>
 #include <util.h>
+#include <image.h>
 
 #ifndef _TEXTURE_H_
   #define _TEXTURE_H_

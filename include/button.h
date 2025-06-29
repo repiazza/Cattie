@@ -12,6 +12,9 @@
 
 #ifndef _BUTTON_H_
   #define _BUTTON_H_
+
+  #define BUTTON_SIZE_RATIO 0.06
+
   typedef enum ButtonAction {
     FORWARD = 6,
     TURN,
@@ -204,8 +207,8 @@
   void vBUTTON_SetDimensions( SDL_Rect *pSDL_RECT_Btn, int iXTrslt, int iYTrslt ) {
     if ( DEBUG_MSGS ) vTraceBegin();
 
-    pSDL_RECT_Btn->w = 0.06 * INT_WINDOW_WIDTH;
-    pSDL_RECT_Btn->h = 0.06 * INT_WINDOW_HEIGHT;
+    pSDL_RECT_Btn->w = BUTTON_SIZE_RATIO * INT_WINDOW_WIDTH;
+    pSDL_RECT_Btn->h = BUTTON_SIZE_RATIO * INT_WINDOW_HEIGHT;
     pSDL_RECT_Btn->x = pSDL_RECT_Btn->w + iXTrslt;
     pSDL_RECT_Btn->y = INT_WINDOW_HEIGHT - pSDL_RECT_Btn->h - iYTrslt;
 
@@ -234,14 +237,26 @@
     vBUTTON_SetDimensions( &SDL_RECT_ButtonArrowRight, iXTranslation , iYTranslation);
     iXTranslation += SDL_RECT_ButtonArrowRight.w + 10;
     vBUTTON_SetDimensions( &SDL_RECT_ButtonTurnArrow,  iXTranslation, iYTranslation);
-    iXTranslation += SDL_RECT_ButtonTurnArrow.w + 10;
+    iXTranslation += SDL_RECT_ButtonTurnArrow.w  + 10;
     vBUTTON_SetDimensions( &SDL_RECT_ButtonFireLaser,  iXTranslation, iYTranslation);
-    iXTranslation += SDL_RECT_ButtonFireLaser.w + 50;
+    iXTranslation += SDL_RECT_ButtonFireLaser.w  + 50;
     vBUTTON_SetDimensions( &SDL_RECT_ButtonUndoLast,   iXTranslation, iYTranslation);
-    iXTranslation += SDL_RECT_ButtonUndoLast.w + 50;
+    iXTranslation += SDL_RECT_ButtonUndoLast.w   + 50;
     vBUTTON_SetDimensions( &SDL_RECT_ButtonConfirm,    iXTranslation, iYTranslation);
-    iXTranslation += SDL_RECT_ButtonConfirm.w + 100;
+    iXTranslation += SDL_RECT_ButtonConfirm.w    + 100;
     vBUTTON_SetDimensions( &SDL_RECT_ButtonConfigure,  iXTranslation, iYTranslation);
+
+    // iXTranslation += SDL_RECT_ButtonArrowRight.w;
+    // vBUTTON_SetDimensions( &SDL_RECT_ButtonArrowRight, iXTranslation, iYTranslation);
+    // iXTranslation += SDL_RECT_ButtonArrowRight.w + 30;
+    // vBUTTON_SetDimensions( &SDL_RECT_ButtonTurnArrow,  iXTranslation, iYTranslation);
+    // iXTranslation += SDL_RECT_ButtonTurnArrow.w + 30;
+    // vBUTTON_SetDimensions( &SDL_RECT_ButtonFireLaser,  iXTranslation, iYTranslation);
+    // iXTranslation += SDL_RECT_ButtonFireLaser.w + 30;
+    // vBUTTON_SetDimensions( &SDL_RECT_ButtonUndoLast,   iXTranslation, iYTranslation);
+    // iXTranslation += SDL_RECT_ButtonUndoLast.w + 30;
+    // vBUTTON_SetDimensions( &SDL_RECT_ButtonConfirm,    iXTranslation, iYTranslation);
+    
   
     /* Add them to list **/
     iBUTTON_AddToList( &SDL_RECT_ButtonArrowRight   , FORWARD    );

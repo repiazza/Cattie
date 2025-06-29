@@ -52,7 +52,24 @@
     "Sair"
   };
   
-  SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath );
+  SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath ) {
+    // Load the image
+    SDL_Surface *SDL_SRFC_Img = IMG_Load(pszImgPath);
+    
+    if ( DEBUG_MSGS ) vTraceBegin();
+  
+    if ( SDL_SRFC_Img == NULL ) {
+      printf("Error loading image: %s\n", IMG_GetError());
+  
+      if ( DEBUG_MORE_MSGS ) vTraceVarArgs("%s - end return NULL", __func__);
+  
+      return NULL;
+    }
+  
+    vTraceEnd();
+  
+    return SDL_SRFC_Img;
+  } /* pSDL_SRFC_LoadImage */
 
 #endif /* _IMAGE_H */
   

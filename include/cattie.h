@@ -30,10 +30,10 @@
   #define WINDOW_RATIO  INT_WINDOW_WIDTH/INT_WINDOW_HEIGHT
 
   #define REDRAW_MENU_CLKD -10
-  #define REDRAW_ERROR -1
-  #define REDRAW_NONE  0          /* Not to redraw the scene **/
-  #define REDRAW_IMAGE 1
-  #define ERROR_WALKING 10
+  #define REDRAW_ERROR     -1
+  #define REDRAW_NONE       0  /* Not to redraw the scene **/
+  #define REDRAW_IMAGE      1
+  #define ERROR_WALKING     10
 
   #define VSYNC_TIME 16.666666666 /* Time(ms) to ensure 60hz refresh rate **/
 
@@ -109,10 +109,9 @@
   int iWalk( void );
   int iTurn( void );
   int iFireLaser( void );
-  int iHandleClick( SDL_Texture *pSDL_TXTR_CmdListHud );
+  int iHandleClick( SDL_Rect *pSDL_Rect_CmdList );
   int iHandleEventKey( SDL_Event *pSDL_EVENT_Ev );
   int iHandleMouseMotion(SDL_Rect *pSDL_RECT_Menu);
-  SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath );
   
 #endif /* _CATTIE_H_ */
 

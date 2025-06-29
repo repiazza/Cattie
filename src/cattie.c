@@ -82,24 +82,7 @@ void vInitRect( SDL_Rect *pSDL_RECT, int iX, int iY, int iWidth, int iHeight ) {
   if ( DEBUG_MSGS ) vTraceEnd();
 } /* vInitRect */
 
-SDL_Surface *pSDL_SRFC_LoadImage( char *pszImgPath ) {
-  // Load the image
-  SDL_Surface *SDL_SRFC_Img = IMG_Load(pszImgPath);
-  
-  if ( DEBUG_MSGS ) vTraceBegin();
 
-  if ( SDL_SRFC_Img == NULL ) {
-    printf("Error loading image: %s\n", IMG_GetError());
-
-    if ( DEBUG_MORE_MSGS ) vTraceVarArgs("%s - end return NULL", __func__);
-
-    return NULL;
-  }
-
-  vTraceEnd();
-
-  return SDL_SRFC_Img;
-} /* pSDL_SRFC_LoadImage */
 
 void vInitializeImagePosition( SDL_Rect *pSDL_Rect_Im ) {
   int iLocation = -2;
@@ -156,7 +139,7 @@ int iWalk( void ) {
     memset( szMsg, 0x00, sizeof( szMsg ) );
 
     sprintf( szMsg,
-  "iWalk FacingPos=%d xPos=%d yPos=%d\n ", 
+  "iWalk FacingPos=%d xPos=%d yPos=%d", 
       gstPlayer.iFacingPos,
       gstPlayer.iCurrX,
       gstPlayer.iCurrY
@@ -194,7 +177,7 @@ int iWalk( void ) {
   }
   
   if ( iBOARD_IsValidSquare( iNextX, iNextY ) <= WALL_SQUARE ) {
-    if( DEBUG_MSGS ) vTraceVarArgs("%s - end return -1");
+    if( DEBUG_MSGS ) vTraceVarArgs("iWalk - end return -1");
 
     return ERROR_WALKING;
   }
@@ -249,26 +232,6 @@ int iFireLaser( void ) {
   return REDRAW_IMAGE;
 } /* iFireLaser */
 
-int iWasClicked(void) {
-  int iRsl = MENU_OPT_NONE;
-  int iX;
-  int iY;
-
-  if( DEBUG_MSGS ) vTraceBegin();
-  
-  SDL_GetMouseState( &iX, &iY );
-
-  if ( (iRsl = iBUTTON_CheckInteraction(iX, iY)) != REDRAW_NONE ){
-    return iRsl;
-  }
-
-  iRsl = iMENU_HandleMouseClick( pSDL_RECT_Menu, iX, iY, ppszMenuOpt );
-
-  if( DEBUG_MSGS ) vTraceEnd();
-
-  return iRsl;
-} /* iWasClicked */
-
 SDL_Texture* createSquareTexture( SDL_Renderer* renderer ) {
   if( DEBUG_MSGS ) vTraceBegin();
 
@@ -282,75 +245,6 @@ SDL_Texture* createSquareTexture( SDL_Renderer* renderer ) {
 
   return texture;
 } /* createSquareTexture */
-
-int iHandleClick( SDL_Texture *pSDL_TXTR_CmdListHud ) {
-  int iAction = REDRAW_NONE;
-
-  if( DEBUG_MSGS ) vTraceBegin();
-  
-  UNUSED( pSDL_TXTR_CmdListHud );
-
-  switch( ( iAction = iWasClicked() ) ) {
-    case FORWARD:
-    case TURN:
-    case FIRE_LASER:
-    case ERASE: {
-      iACTION_AddStep2List( iAction );
-      /* vUpdateCmdTmpList(iAction, pSDL_TXTR_CmdListHud); */
-      if ( DEBUG_MSGS ) vACTION_TraceList();
-      break;
-    }
-    case CONFIRM: {
-      if ( DEBUG_MSGS ) vTraceMsg("Confirm!\n");
-      gbACTION_Check = TRUE;
-      break;
-    }
-    case CONFIGURE: {
-      if ( DEBUG_MSGS ) vTraceMsg("Configure!\n");
-      gbDrawMenu = iMENU_ToggleVisibility();
-      return REDRAW_MENU_CLKD;
-    }
-    case MENU_OPT_1:
-    case MENU_OPT_2:
-    case MENU_OPT_3:
-    case MENU_OPT_4:
-    case MENU_OPT_5:
-    case MENU_OPT_EXIT: {
-      return REDRAW_MENU_CLKD;
-    }
-    default: break;
-  }
-
-  if ( DEBUG_MSGS ) vTraceEnd();
-
-  return REDRAW_NONE;
-} /* iHandleClick */
-
-int iHandleEventKey( SDL_Event *pSDL_EVENT_Ev ) {
-  int iRslAction = REDRAW_NONE;
-  
-  if ( iMENU_HandleKey( pSDL_EVENT_Ev->key.keysym.sym, ppszMenuOpt ) == REDRAW_IMAGE )
-    return REDRAW_IMAGE;
-
-  if ( DEBUG_MSGS ) vTraceBegin();
-
-  switch (pSDL_EVENT_Ev->key.keysym.sym) {
-    case SDLK_UP: {
-      break;
-    }
-    case SDLK_DOWN: {
-      break;
-    }
-    case SDLK_RETURN: {
-      break;
-    }
-    default: break;
-  }
-
-  if( DEBUG_MSGS ) vTraceEnd();
-
-  return iRslAction;
-} /* iHandleEventKey */
 
 int iCheckMenuInteraction( SDL_Rect *pSDL_RECT_MenuData, int iXCursor, int iYCursor ) {
   int iInitCt = 0;
@@ -679,7 +573,7 @@ int SDL_main( int argc, char *argv[] ) {
     while ( !gbACTION_Check && iRedrawAction != REDRAW_IMAGE && SDL_PollEvent(&event)  ) {
       // The player hasn't choose its route yet,
       // so we must watch all interaction events... 
-      iRedrawAction = iEVENT_HandlePollEv(&event, iRedrawAction);
+      iRedrawAction = iEVENT_HandlePollEv(&event, iRedrawAction, &SDL_RECT_TmpHud );
       if ( iRedrawAction == REDRAW_ERROR ){
         gbRunning = FALSE;
         break;

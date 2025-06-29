@@ -131,8 +131,8 @@
 
     pSDL_RECT_Hud->w = 2 * INT_WINDOW_WIDTH / 4 - 20;
     pSDL_RECT_Hud->h = COL_RATIO - 10;
-    pSDL_RECT_Hud->x = 0.06 * INT_WINDOW_WIDTH - 10;
-    pSDL_RECT_Hud->y = INT_WINDOW_HEIGHT - 0.06 * INT_WINDOW_HEIGHT - ( 30 + pSDL_RECT_Hud->h );
+    pSDL_RECT_Hud->x = HUD_X_FACTOR * INT_WINDOW_WIDTH - 10;
+    pSDL_RECT_Hud->y = INT_WINDOW_HEIGHT - HUD_X_FACTOR * INT_WINDOW_HEIGHT - ( 30 + pSDL_RECT_Hud->h );
 
     if ( DEBUG_MSGS ) vTraceEnd();
   } /* vSetTmpHUDRect */
@@ -151,8 +151,8 @@
   void vSetButtonHUDRect( SDL_Rect *pSDL_RECT_Hud ) {
     if ( DEBUG_MSGS ) vTraceBegin();
 
-    pSDL_RECT_Hud->x = 0.06 * INT_WINDOW_WIDTH - 10;
-    pSDL_RECT_Hud->y = INT_WINDOW_HEIGHT - 0.06 * INT_WINDOW_HEIGHT - 30;
+    pSDL_RECT_Hud->x = HUD_X_FACTOR * INT_WINDOW_WIDTH - 10;
+    pSDL_RECT_Hud->y = INT_WINDOW_HEIGHT - HUD_X_FACTOR * INT_WINDOW_HEIGHT - 30;
     pSDL_RECT_Hud->w = 2 * INT_WINDOW_WIDTH / 4 - 20;
     pSDL_RECT_Hud->h = COL_RATIO - 10;
 

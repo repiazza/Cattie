@@ -25,7 +25,8 @@ INCDIR+= -ID:/msys64/mingw64/include
 
 
 SDL_ADD_LIBS     = -lSDL2main -lSDL2 -lSDL2_image
-NCURSES_ADD_LIBS = -lncurses -ltinfo
+# NCURSES_ADD_LIBS = -lncurses -ltinfo
+NCURSES_ADD_LIBS = -lncurses 
 
 OBJ_DIR = obj
 BIN_DIR = bin
@@ -48,7 +49,8 @@ ifdef DEBUG
 	DEBUG_ADD_FLAGS = -g -ggdb
 endif
 
-CATTIE_EXEC=$(BIN_DIR)/cattie
+# CATTIE_EXEC=$(BIN_DIR)/cattie
+CATTIE_EXEC=cattie
 
 OBJS = \
 	$(OBJ_DIR)/cattie.o \
@@ -68,7 +70,7 @@ directories:
 	mkdir -p $(OBJ_DIR) $(BIN_DIR)
 
 $(CATTIE_EXEC): $(OBJS)
-	$(CC) $(LDOPT) $(INCDIR) -o $@ $(OBJS) $(LIBS) 
+	$(CC) $(LDOPT) $(INCDIR) -o $(BIN_DIR)/$@ $(OBJS) $(LIBS) 
 
 $(OBJ_DIR)/%.o: $(SRC_PATH)/%.c
 	$(CC) -c $(CCOPT) $(DEBUG_ADD_FLAGS) $(INCDIR) $< -o $@
