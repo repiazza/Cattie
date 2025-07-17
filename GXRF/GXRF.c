@@ -43,7 +43,7 @@ STRUCT_GXRF_RENDER *pstGXRF_FindRenderizable(void *vGXRF_Renderizable){
   return pstGXRF_WrkRender;
 }
 
-STRUCT_GXRF_RENDER *pstGXRF_FindLastRenderizable(){
+STRUCT_GXRF_RENDER *pstGXRF_FindLastRenderizable(__attribute__((unused)) void *vpPtr){
   STRUCT_GXRF_RENDER *pstGXRF_WrkRender;
   
   if ( gpstGXRF_RenderList->pstGXRF_FirstRenderizable == NULL )
